@@ -18,7 +18,6 @@ import { PermissionModule } from './permission/permission.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: true,
-      logging: true,
     }),
     UserModule,
     PermissionModule

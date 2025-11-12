@@ -22,7 +22,7 @@ export class UserService {
       return 'The cardentials are wrong!';
     }
 
-    let newUser = this.useRepository.create();
+    let newUser = this.useRepository.create(createUserDto);
     newUser = await this.useRepository.save(newUser);
 
     return newUser;
