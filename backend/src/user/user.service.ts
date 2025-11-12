@@ -28,8 +28,8 @@ export class UserService {
     return newUser;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  public async findAll() {
+    return await this.useRepository.find();
   }
 
   findOne(id: number) {
