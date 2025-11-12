@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { PermissionModule } from './permission/permission.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { PermissionModule } from './permission/permission.module';
       synchronize: true,
     }),
     UserModule,
-    PermissionModule
+    PermissionModule,
+    ProductsModule
   ],
   controllers: [AppController],
   providers: [AppService],
