@@ -7,9 +7,8 @@ export class Product {
     id: number;
 
     @Column({
-        type: 'varchar',
+        type: 'text',
         nullable: false,
-        length: 100,
         })
     name: string;
 
