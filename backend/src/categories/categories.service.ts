@@ -41,7 +41,11 @@ export class CategoriesService {
     return `This action updates a #${id} category`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  public async remove(id: number) {
+    const result = await this.categoryRepository.delete(id)
+    if (result.affected === 0) {
+      return `Category with ID ${id} not found`;
+    }
+    return `Category deleted successfully`;
   }
 }
