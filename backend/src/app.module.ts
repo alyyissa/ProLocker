@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
-import { PermissionModule } from './permission/permission.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 
@@ -22,7 +21,6 @@ import { CategoriesModule } from './categories/categories.module';
       synchronize: true,
     }),
     UserModule,
-    PermissionModule,
     ProductsModule,
     CategoriesModule
   ],
