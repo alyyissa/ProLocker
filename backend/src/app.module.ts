@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { GenderModule } from './gender/gender.module';
+import { ColorsModule } from './colors/colors.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { GenderModule } from './gender/gender.module';
     UserModule,
     ProductsModule,
     CategoriesModule,
-    GenderModule
+    GenderModule,
+    ColorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
