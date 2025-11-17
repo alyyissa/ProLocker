@@ -21,6 +21,12 @@ export class Product {
     })
     price: number
 
+    @Column({
+        type: "boolean",
+        default: true
+    })
+    available: string
+
     @CreateDateColumn()
     createdAt: Date;
 
