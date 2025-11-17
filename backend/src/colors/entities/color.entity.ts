@@ -6,7 +6,7 @@ export class Color {
     id: number
 
     @Column({
-        type: "char",
+        type: "varchar",
         length: 30,
         nullable: false
     })
