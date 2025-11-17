@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsString } from "class-validator";
 import { Entity } from "typeorm";
 
 @Entity()
@@ -10,6 +10,10 @@ export class CreateProductDto {
     @IsNotEmpty({message: 'price should not be empty'})
     @IsInt()
     price: number
+
+    @IsNotEmpty()
+    @IsBoolean()
+    isAvailable: boolean;
 
     @IsNotEmpty()
     @IsInt()

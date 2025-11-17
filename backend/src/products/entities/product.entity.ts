@@ -25,7 +25,7 @@ export class Product {
         type: "boolean",
         default: true
     })
-    available: string
+    isAvailable: boolean
 
     @CreateDateColumn()
     createdAt: Date;
