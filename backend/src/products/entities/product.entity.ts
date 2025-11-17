@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Color } from "src/colors/entities/color.entity";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Product {
@@ -27,5 +28,6 @@ export class Product {
     @DeleteDateColumn()
     deletedAt: Date;
 
-
+    @ManyToOne(() => Color, (color) => color.product)
+    color: Color
 }
