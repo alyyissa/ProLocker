@@ -62,8 +62,7 @@ export class OrdersService {
       message: 'Order created successfully',
       order: savedOrder,
     }
-
-}
+  }
 
   findAll() {
     return `This action returns all orders`;
