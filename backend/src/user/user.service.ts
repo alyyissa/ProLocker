@@ -43,7 +43,7 @@ export class UserService {
 
   public async remove(id: number) {
     //Find the user
-    // let user = await this.useRepository.findOneBy({id});
+    let user = await this.userRepository.findOneBy({id});
 
     //Delete The User
     await this.userRepository.delete(id);

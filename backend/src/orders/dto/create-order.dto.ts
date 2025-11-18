@@ -1,6 +1,18 @@
+import { IsNotEmpty, IsString } from "class-validator";
+
 export class CreateOrderDto {
-    phoneNumber: string;
-    address?: string;
-    userId: number;
     
+    @IsNotEmpty()
+    phoneNumber: string;
+
+    @IsString()
+    address?: string;
+
+    userId: number;
+
+    items:{
+        productId: number;
+        quantity: number;
+    }[];
+
 }

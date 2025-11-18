@@ -47,5 +47,5 @@ export class User {
     deletedAt: Date
 
     @OneToMany(() => Order, (order) => order.user)
-    order: Order[]
+    orders: Order[]
 }

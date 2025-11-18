@@ -24,5 +24,11 @@ export class OrderItem {
         type: 'int',
         nullable: false,
     })
+    unitPrice: number;
+
+    @Column({
+        type: 'int',
+        nullable: false,
+    })
     totalPrice: number;
 }
