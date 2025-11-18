@@ -1,7 +1,5 @@
 import { IsBoolean, IsInt, IsNotEmpty, IsString } from "class-validator";
-import { Entity } from "typeorm";
 
-@Entity()
 export class CreateProductDto {
     @IsNotEmpty({message: 'product name should not be empty'})
     @IsString()
@@ -26,5 +24,9 @@ export class CreateProductDto {
     @IsNotEmpty()
     @IsInt()
     categoryId: number;
+
+    @IsNotEmpty()
+    @IsInt()
+    sizeId: number;
 
 }

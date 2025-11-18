@@ -33,8 +33,8 @@ export class CategoriesService {
     return `This action returns all categories`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  public async findOne(id: number) {
+    return await this.categoryRepository.findOneBy({id})
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {

@@ -31,8 +31,8 @@ export class ColorsService {
     return `This action returns all colors`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} color`;
+  public async findOne(id: number) {
+    return await this.colorRepository.findOneBy({id})
   }
 
   update(id: number, updateColorDto: UpdateColorDto) {

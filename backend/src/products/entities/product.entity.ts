@@ -1,6 +1,7 @@
 import { Category } from "src/categories/entities/category.entity";
 import { Color } from "src/colors/entities/color.entity";
 import { Gender } from "src/gender/entities/gender.entity";
+import { Size } from "src/sizes/entities/size.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
@@ -44,4 +45,7 @@ export class Product {
 
     @ManyToOne(() => Gender, (gender) => gender.product)
     gender: Gender
+
+    @ManyToOne(() => Size, (size) => size.product)
+    size: Size
 }

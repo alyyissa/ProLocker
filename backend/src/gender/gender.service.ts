@@ -28,8 +28,8 @@ export class GenderService {
     return `This action returns all gender`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} gender`;
+  public async findOne(id: number) {
+    return await this.genderRepository.findOneBy({id})
   }
 
   update(id: number, updateGenderDto: UpdateGenderDto) {

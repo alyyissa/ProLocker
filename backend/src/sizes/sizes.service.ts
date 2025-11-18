@@ -31,8 +31,8 @@ export class SizesService {
     return `This action returns all sizes`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} size`;
+  public async findOne(id: number) {
+    return await this.sizeRepository.findOneBy({id})
   }
 
   update(id: number, updateSizeDto: UpdateSizeDto) {
