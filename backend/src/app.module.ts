@@ -9,6 +9,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { GenderModule } from './gender/gender.module';
 import { ColorsModule } from './colors/colors.module';
 import { SizesModule } from './sizes/sizes.module';
+import { OrdersModule } from './orders/orders.module';
+import { OrderItemsModule } from './order-items/order-items.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { SizesModule } from './sizes/sizes.module';
     GenderModule,
     ColorsModule,
     SizesModule,
+    OrdersModule,
+    OrderItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

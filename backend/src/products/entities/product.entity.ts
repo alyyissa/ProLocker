@@ -1,8 +1,10 @@
 import { Category } from "src/categories/entities/category.entity";
 import { Color } from "src/colors/entities/color.entity";
 import { Gender } from "src/gender/entities/gender.entity";
+import { OrderItem } from "src/order-items/entities/order-item.entity";
+import { Order } from "src/orders/entities/order.entity";
 import { Size } from "src/sizes/entities/size.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Product {
@@ -48,4 +50,7 @@ export class Product {
 
     @ManyToOne(() => Size, (size) => size.product)
     size: Size
+
+    @OneToMany(() => OrderItem, (item) => item.product)
+    orderItems: OrderItem[];
 }
