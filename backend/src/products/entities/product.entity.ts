@@ -39,16 +39,16 @@ export class Product {
     @DeleteDateColumn()
     deletedAt: Date;
 
-    @ManyToOne(() => Color, (color) => color.product)
+    @ManyToOne(() => Color, (color) => color.product, {eager: true})
     color: Color
 
-    @ManyToOne(() => Category, (category) => category.product)
+    @ManyToOne(() => Category, (category) => category.product, {eager: true})
     category: Category
 
-    @ManyToOne(() => Gender, (gender) => gender.product)
+    @ManyToOne(() => Gender, (gender) => gender.product, {eager: true})
     gender: Gender
 
-    @ManyToOne(() => Size, (size) => size.product)
+    @ManyToOne(() => Size, (size) => size.product, {eager: true})
     size: Size
 
     @OneToMany(() => OrderItem, (item) => item.product)

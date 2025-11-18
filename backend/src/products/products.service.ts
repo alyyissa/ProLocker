@@ -43,8 +43,11 @@ export class ProductsService {
     return await this.productRepository.save(product);
   }
 
-  findAll() {
-    return `This action returns all products`;
+  findAll(): Promise<Product[]> {
+    const products = this.productRepository.find({
+      relations: ['category', 'color', 'gender', 'size'],
+      });
+    return products;
   }
 
   findOne(id: number) {
