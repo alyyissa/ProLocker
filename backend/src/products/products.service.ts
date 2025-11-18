@@ -43,11 +43,27 @@ export class ProductsService {
     return await this.productRepository.save(product);
   }
 
-  findAll(): Promise<Product[]> {
-    const products = this.productRepository.find({
-      relations: ['category', 'color', 'gender', 'size'],
-      });
-    return products;
+  async findAll(filters?: {gender?: string, category?: string; color?: string; size?: string}): Promise<Product[]> {
+      const query = this.productRepository.createQueryBuilder('product')
+      .leftJoinAndSelect('product.gender', 'gender')
+      .leftJoinAndSelect('product.color', 'color')
+      .leftJoinAndSelect('product.size', 'size')
+      .leftJoinAndSelect('product.category', 'category');
+
+      if (filters?.gender) {
+        query.andWhere('gender.gender = :gender', { gender: filters.gender });
+      }
+      if (filters?.category) {
+        query.andWhere('category.name = :category', { category: filters.category });
+      }
+      if (filters?.color) {
+        query.andWhere('color.color = :color', { color: filters.color });
+      }
+      if (filters?.size) {
+        query.andWhere('size.size = :size', { size: filters.size });
+      }
+
+      return query.getMany();
   }
 
   findOne(id: number) {
