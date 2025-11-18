@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateGenderDto } from './dto/create-gender.dto';
 import { UpdateGenderDto } from './dto/update-gender.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,8 +28,10 @@ export class GenderService {
     return `This action returns all gender`;
   }
 
-  public async findOne(id: number) {
-    return await this.genderRepository.findOneBy({id})
+  async findOne(id: number): Promise<Gender> {
+    const gender = await this.genderRepository.findOne({where: {id}});
+    if(!gender) throw new NotFoundException(`Gender does not exist`);
+    return gender;
   }
 
   update(id: number, updateGenderDto: UpdateGenderDto) {

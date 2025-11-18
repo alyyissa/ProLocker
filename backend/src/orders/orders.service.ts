@@ -26,7 +26,44 @@ export class OrdersService {
 
   async create(createOrderDto: CreateOrderDto) {
     const user = await this.userRepository.findOneBy({id: createOrderDto.userId});
-  }
+    if (!user) throw new Error('User not found');
+
+    const order = this.orderRepository.create({
+      user,
+      phoneNumber: createOrderDto.phoneNumber,
+      address: createOrderDto.address,
+      status: "Pending",
+      orderItems: [],
+    });
+
+    let totalOrderPrice = 0;
+
+    for(const item of createOrderDto.items) {
+      const product = await this.productRepository.findOne({
+        where: { id: item.productId }
+      });
+    
+      if (!product) throw new Error(`Product with ID ${item.productId} not found`);
+
+      const orderItem = this.orderItemRepository.create({
+        order,
+        product,
+        quantity: item.quantity,
+        totalPrice: product.price * item.quantity,
+      });
+
+      totalOrderPrice += orderItem.totalPrice;
+      order.orderItems.push(orderItem);
+    }
+
+    const savedOrder = await this.orderRepository.save(order);
+
+    return{
+      message: 'Order created successfully',
+      order: savedOrder,
+    }
+
+}
 
   findAll() {
     return `This action returns all orders`;

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSizeDto } from './dto/create-size.dto';
 import { UpdateSizeDto } from './dto/update-size.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -31,8 +31,10 @@ export class SizesService {
     return `This action returns all sizes`;
   }
 
-  public async findOne(id: number) {
-    return await this.sizeRepository.findOneBy({id})
+  async findOne(id: number): Promise<Size>{
+    const size = await this.sizeRepository.findOne({where: {id}});
+    if(!size) throw new NotFoundException(`size does not exist`);
+    return size;
   }
 
   update(id: number, updateSizeDto: UpdateSizeDto) {
