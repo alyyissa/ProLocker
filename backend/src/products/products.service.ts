@@ -72,9 +72,55 @@ export class ProductsService {
     return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: number, updateProductDto: UpdateProductDto): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['color', 'size', 'category', 'gender'],
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+
+    if (updateProductDto.colorId !== undefined) {
+      const color = await this.colorService.findOne(updateProductDto.colorId);
+      product.color = color;
+    }
+
+    if (updateProductDto.genderId !== undefined) {
+      const gender = await this.genderService.findOne(updateProductDto.genderId);
+      product.gender = gender;
+    }
+
+    if (updateProductDto.categoryId !== undefined) {
+      const category = await this.categoryService.findOne(updateProductDto.categoryId);
+      product.category = category;
+    }
+
+    if (updateProductDto.sizeId !== undefined) {
+      const size = await this.sizeService.findOne(updateProductDto.sizeId);
+      product.size = size;
+    }
+
+    if (updateProductDto.name !== undefined) product.name = updateProductDto.name;
+    if (updateProductDto.price !== undefined) product.price = updateProductDto.price;
+    if (updateProductDto.isAvailable !== undefined) product.isAvailable = updateProductDto.isAvailable;
+
+    await this.productRepository.save(product);
+
+    const updated = await this.productRepository.findOne({
+      where: { id },
+      relations: ['color', 'size', 'category', 'gender'],
+    });
+
+    if (!updated) {
+      throw new NotFoundException(`Product with id ${id} not found after update`);
+    }
+
+    return updated;
   }
+
+
 
   remove(id: number) {
     return `This action removes a #${id} product`;
