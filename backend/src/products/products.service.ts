@@ -32,7 +32,8 @@ export class ProductsService {
     const product = this.productRepository.create({
       name: createProductDto.name,
       price: createProductDto.price,
-      isAvailable: createProductDto.isAvailable,
+      quantity: createProductDto.quantity,
+      sale: createProductDto.sale ?? 0,
       category: category,
       color: color,
       gender: gender,
@@ -104,8 +105,10 @@ export class ProductsService {
 
     if (updateProductDto.name !== undefined) product.name = updateProductDto.name;
     if (updateProductDto.price !== undefined) product.price = updateProductDto.price;
-    if (updateProductDto.isAvailable !== undefined) product.isAvailable = updateProductDto.isAvailable;
-
+    if (updateProductDto.status !== undefined) product.status = updateProductDto.status;
+    if (updateProductDto.quantity !== undefined) product.quantity = updateProductDto.quantity;
+    if (updateProductDto.sale !== undefined) product.sale = updateProductDto.sale;
+    
     await this.productRepository.save(product);
 
     const updated = await this.productRepository.findOne({

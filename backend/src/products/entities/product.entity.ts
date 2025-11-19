@@ -3,7 +3,8 @@ import { Color } from "src/colors/entities/color.entity";
 import { Gender } from "src/gender/entities/gender.entity";
 import { OrderItem } from "src/order-items/entities/order-item.entity";
 import { Size } from "src/sizes/entities/size.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { ProductStatus } from "../enums/product-status.enum";
 
 @Entity()
 export class Product {
@@ -23,11 +24,18 @@ export class Product {
     })
     price: number
 
-    @Column({
-        type: "boolean",
-        default: true
-    })
-    isAvailable: boolean
+    @Column({ type: 'int', default: 0 })
+    quantity: number;
+
+    @Column({ type: 'int', default: 0 })
+    sale: number;
+
+    @Column({   
+                type: 'enum',
+                enum: ProductStatus,
+                default: ProductStatus.Available
+            })
+    status: string;
 
     @CreateDateColumn()
     createdAt: Date;
@@ -52,4 +60,17 @@ export class Product {
 
     @OneToMany(() => OrderItem, (orderItem) => orderItem.product, {cascade: true})
     orderItems: OrderItem[];
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    updateStatus() {
+        if (this.quantity === 0) {
+            this.status = 'Out of Stock';
+        } else if (this.quantity < 3) {
+            this.status = 'Few Left';
+        } else {
+            this.status = 'Available';
+        }
+    }
+
 }
