@@ -1,4 +1,6 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { CreateOrderItemDto } from "src/order-items/dto/create-order-item.dto";
 
 export class CreateOrderDto {
     
@@ -8,11 +10,13 @@ export class CreateOrderDto {
     @IsString()
     address?: string;
 
+    @IsNotEmpty()
+    @IsInt()
     userId: number;
 
-    items:{
-        productId: number;
-        quantity: number;
-    }[];
+     @IsArray()
+     @ValidateNested({ each: true })
+     @Type(() => CreateOrderItemDto)
+     items: CreateOrderItemDto[];
 
 }

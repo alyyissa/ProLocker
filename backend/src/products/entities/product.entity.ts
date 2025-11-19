@@ -50,6 +50,6 @@ export class Product {
     @ManyToOne(() => Size, (size) => size.product, {eager: true})
     size: Size
 
-    @OneToMany(() => OrderItem, (item) => item.product)
+    @OneToMany(() => OrderItem, (orderItem) => orderItem.product, {cascade: true})
     orderItems: OrderItem[];
 }

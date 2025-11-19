@@ -19,7 +19,7 @@ export class Order {
     length: 255,
     nullable: true,
     })
-    address: string;
+    address?: string;
 
     @Column({
     type: 'varchar',

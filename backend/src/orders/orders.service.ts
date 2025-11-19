@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Product } from 'src/products/entities/product.entity';
 import { User } from 'src/user/entities/user.entity';
 import { OrderItem } from 'src/order-items/entities/order-item.entity';
@@ -25,46 +25,50 @@ export class OrdersService {
 ) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    const user = await this.userRepository.findOneBy({id: createOrderDto.userId});
-    if (!user) throw new Error('User not found');
-
-    const order = this.orderRepository.create({
-      user,
-      phoneNumber: createOrderDto.phoneNumber,
-      address: createOrderDto.address,
-      status: "Pending",
-      orderItems: [],
-    });
-
-    let totalOrderPrice = 0;
-
-    for(const item of createOrderDto.items) {
-      const product = await this.productRepository.findOne({
-        where: { id: item.productId }
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: createOrderDto.userId },
       });
-    
-      if (!product) throw new Error(`Product with ID ${item.productId} not found`);
+      if (!user) throw new NotFoundException('User not found');
 
-      const orderItem = this.orderItemRepository.create({
-        order,
-        product,
-        quantity: item.quantity,
-        totalPrice: product.price * item.quantity,
+      // Creating order
+      const order = await this.orderRepository.save({
+        user,
+        phoneNumber: createOrderDto.phoneNumber,
+        address: createOrderDto.address,
+        status: 'Pending',
       });
 
-      totalOrderPrice += orderItem.totalPrice;
-      order.orderItems.push(orderItem);
-    }
+      // Adding order items one-by-one
+      for (const item of createOrderDto.items) {
+        const product = await this.productRepository.findOne({
+          where: { id: item.productId },
+        });
 
-    const savedOrder = await this.orderRepository.save(order);
+        if (!product) {
+          throw new NotFoundException(
+            `Product ${item.productId} not found`,
+          );
+        }
 
-    return{
-      message: 'Order created successfully',
-      order: savedOrder,
+        await this.orderItemRepository.save({
+          order,
+          product,
+          quantity: item.quantity,
+          unitPrice: product.price,
+          totalPrice: product.price * item.quantity,
+        });
+      }
+      
+      return "Order created successfully";
+
+    } catch (error) {
+      console.error('Real Error:', error);
+      throw error;
     }
   }
 
-  findAll() {
+  async findAll(){
     return `This action returns all orders`;
   }
 
