@@ -11,6 +11,7 @@ import { SizesModule } from 'src/sizes/sizes.module';
 @Module({
   controllers: [ProductsController],
   providers: [ProductsService],
-  imports:[TypeOrmModule.forFeature([Product]), CategoriesModule, ColorsModule, GenderModule, SizesModule]
+  imports:[TypeOrmModule.forFeature([Product]), CategoriesModule, ColorsModule, GenderModule, SizesModule],
+  exports: [ProductsService],
 })
 export class ProductsModule {}

@@ -1,28 +1,28 @@
-import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min, MinLength } from "class-validator";
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min, MinLength } from "class-validator";
 import { ProductStatus } from "../enums/product-status.enum";
 
 export class CreateProductDto {
     @IsNotEmpty({message: 'product name should not be empty'})
     @IsString()
     @MinLength(3, {message: 'product name must be at least 3 characters long'})
-    name: string
+    name: string;
 
     @IsNotEmpty({message: 'price should not be empty'})
     @IsInt()
-    price: number
+    price: number;
 
     @IsNotEmpty({message: 'quantity should not be empty'})
     @IsInt()
     @Min(0, {message: 'quantity must be at least 0'})
-    quantity: number
+    quantity: number;
 
     @IsInt()
     @Min(0, {message: 'sale must be at least 0'})
-    sale?: number
+    sale?: number;
 
     @IsEnum(ProductStatus)
     @IsOptional()
-    status: ProductStatus
+    status?: ProductStatus;
 
     @IsNotEmpty()
     @IsInt()
@@ -35,9 +35,4 @@ export class CreateProductDto {
     @IsNotEmpty()
     @IsInt()
     categoryId: number;
-
-    @IsNotEmpty()
-    @IsInt()
-    sizeId: number;
-
 }

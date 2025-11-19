@@ -16,33 +16,33 @@ export class ProductsService {
     private readonly categoryService: CategoriesService,
     private readonly colorService: ColorsService,
     private readonly genderService: GenderService,
-    private readonly sizeService: SizesService,
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>
   ){}
 
   public async create(createProductDto: CreateProductDto) {
-    // Find and validate all FKs
     const category = await this.categoryService.findOne(createProductDto.categoryId);
-    const color = await this.colorService.findOne(createProductDto.colorId);
-    const gender = await this.genderService.findOne(createProductDto.genderId);
-    const size = await this.sizeService.findOne(createProductDto.sizeId);
+    if (!category) throw new NotFoundException('Category not found');
 
-    // Create the Product
+    const color = await this.colorService.findOne(createProductDto.colorId);
+    if (!color) throw new NotFoundException('Color not found');
+
+    const gender = await this.genderService.findOne(createProductDto.genderId);
+    if (!gender) throw new NotFoundException('Gender not found');
+
     const product = this.productRepository.create({
-      name: createProductDto.name,
-      price: createProductDto.price,
-      quantity: createProductDto.quantity,
-      sale: createProductDto.sale ?? 0,
-      category: category,
-      color: color,
-      gender: gender,
-      size: size,
+        name: createProductDto.name,
+        price: createProductDto.price,
+        quantity: createProductDto.quantity ?? 0,
+        sale: createProductDto.sale ?? 0,
+        category,
+        color,
+        gender,
     });
 
-    // Save it
     return await this.productRepository.save(product);
   }
+
 
   async findAll(filters?: {gender?: string, category?: string; color?: string; size?: string}): Promise<Product[]> {
       const query = this.productRepository.createQueryBuilder('product')
@@ -68,7 +68,7 @@ export class ProductsService {
   }
 
   async findOne(id: number): Promise<Product> {
-    const product = await this.productRepository.findOne({where: {id}, relations: ['category', 'color', 'gender', 'size']});
+    const product = await this.productRepository.findOne({where: {id}, relations: ['category', 'color', 'gender']});
     if(!product) throw new NotFoundException('Product not found');
     return product;
   }
@@ -76,7 +76,7 @@ export class ProductsService {
   async update(id: number, updateProductDto: UpdateProductDto): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['color', 'size', 'category', 'gender'],
+      relations: ['color', 'category', 'gender'],
     });
 
     if (!product) {
@@ -96,11 +96,6 @@ export class ProductsService {
     if (updateProductDto.categoryId !== undefined) {
       const category = await this.categoryService.findOne(updateProductDto.categoryId);
       product.category = category;
-    }
-
-    if (updateProductDto.sizeId !== undefined) {
-      const size = await this.sizeService.findOne(updateProductDto.sizeId);
-      product.size = size;
     }
 
     if (updateProductDto.name !== undefined) product.name = updateProductDto.name;

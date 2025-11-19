@@ -1,3 +1,4 @@
+import { ProductVarient } from "src/product-varient/entities/product-varient.entity";
 import { Product } from "src/products/entities/product.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -21,6 +22,6 @@ export class Size {
     })
     symbol: string
 
-    @OneToMany(() => Product, (product) => product.size)
-    product: Product[]
+    @OneToMany(() => ProductVarient, (productVarient) => productVarient.size)
+    productVarients: ProductVarient[];
 }
