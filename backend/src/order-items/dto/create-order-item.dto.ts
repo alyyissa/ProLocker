@@ -4,7 +4,7 @@ export class CreateOrderItemDto {
 
     @IsNotEmpty()
     @IsInt()
-    productId: number;
+    productVarientId: number;
 
     @IsInt()
     @Min(1)

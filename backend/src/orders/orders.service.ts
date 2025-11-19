@@ -4,9 +4,9 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
-import { Product } from 'src/products/entities/product.entity';
 import { User } from 'src/user/entities/user.entity';
 import { OrderItem } from 'src/order-items/entities/order-item.entity';
+import { ProductVarient } from 'src/product-varient/entities/product-varient.entity';
 
 @Injectable()
 export class OrdersService {
@@ -14,8 +14,8 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
 
-    @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductVarient)
+    private readonly productVarientRepository: Repository<ProductVarient>,
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -41,22 +41,23 @@ export class OrdersService {
 
       // Adding order items one-by-one
       for (const item of createOrderDto.items) {
-        const product = await this.productRepository.findOne({
-          where: { id: item.productId },
+        const productVarient  = await this.productVarientRepository.findOne({
+          where: { id: item.productVarientId },
+          relations: ['product'],
         });
 
-        if (!product) {
+        if (!productVarient ) {
           throw new NotFoundException(
-            `Product ${item.productId} not found`,
+            `Product ${item.productVarientId} not found`,
           );
         }
 
         await this.orderItemRepository.save({
           order,
-          product,
+          productVarient ,
           quantity: item.quantity,
-          unitPrice: product.price,
-          totalPrice: product.price * item.quantity,
+          unitPrice: productVarient.product.price,
+          totalPrice: productVarient.product.price * item.quantity,
         });
       }
       

@@ -24,7 +24,7 @@ export class Product {
     })
     price: number
 
-    @Column({ type: 'int', default: 0 })
+    @Column({ type: 'int', default: 0})
     quantity: number;
 
     @Column({ type: 'int', default: 0 })
@@ -54,10 +54,6 @@ export class Product {
 
     @ManyToOne(() => Gender, (gender) => gender.product, {eager: true})
     gender: Gender
-
-
-    @OneToMany(() => OrderItem, (orderItem) => orderItem.product, {cascade: true})
-    orderItems: OrderItem[];
 
     @BeforeInsert()
     @BeforeUpdate()

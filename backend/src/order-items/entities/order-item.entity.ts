@@ -1,6 +1,6 @@
 import { Order } from "src/orders/entities/order.entity";
-import { Product } from "src/products/entities/product.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ProductVarient } from "src/product-varient/entities/product-varient.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class OrderItem {
@@ -11,8 +11,9 @@ export class OrderItem {
     @ManyToOne(() => Order, (order) => order.orderItems, { onDelete: 'CASCADE' })
     order: Order
 
-    @ManyToOne(() => Product, (product) => product.orderItems)
-    product: Product
+    @ManyToOne(() => ProductVarient, (product) => product.orderItems)
+    @JoinColumn({ name: 'productVarientId' })
+    productVarient: ProductVarient
 
     @Column({
         type: 'int',
