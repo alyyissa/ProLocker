@@ -31,7 +31,7 @@ export class Order {
     @ManyToOne(() => User, (user) => user.orders)
     user: User
 
-    @OneToMany(() => OrderItem, (orderItem) => orderItem.order, { cascade: true })
+    @OneToMany(() => OrderItem, (orderItem) => orderItem.order, { cascade: true, onDelete: 'CASCADE' })
     orderItems: OrderItem[]
 
     @CreateDateColumn()
