@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 import { CategoriesService } from 'src/categories/categories.service';
 import { ColorsService } from 'src/colors/colors.service';
 import { GenderService } from 'src/gender/gender.service';
-import { SizesService } from 'src/sizes/sizes.service';
 
 @Injectable()
 export class ProductsService {
@@ -44,27 +43,23 @@ export class ProductsService {
   }
 
 
-  async findAll(filters?: {gender?: string, category?: string; color?: string; size?: string}): Promise<Product[]> {
-      const query = this.productRepository.createQueryBuilder('product')
+  async findAll(filters?: { gender?: number; category?: string; color?: string; size?: number }): Promise<Product[]> {
+    const query = this.productRepository.createQueryBuilder('product')
       .leftJoinAndSelect('product.gender', 'gender')
       .leftJoinAndSelect('product.color', 'color')
-      .leftJoinAndSelect('product.size', 'size')
       .leftJoinAndSelect('product.category', 'category');
 
-      if (filters?.gender) {
-        query.andWhere('gender.gender = :gender', { gender: filters.gender });
-      }
-      if (filters?.category) {
-        query.andWhere('category.name = :category', { category: filters.category });
-      }
-      if (filters?.color) {
-        query.andWhere('color.color = :color', { color: filters.color });
-      }
-      if (filters?.size) {
-        query.andWhere('size.size = :size', { size: filters.size });
-      }
+    if (filters?.size) {
+      query.leftJoin('product.varients', 'varient')
+          .leftJoin('varient.size', 'size')
+          .andWhere('size.id = :size', { size: filters.size });
+    }
 
-      return query.getMany();
+    if (filters?.gender) query.andWhere('gender.id = :gender', { gender: filters.gender });
+    if (filters?.category) query.andWhere('category.name = :category', { category: filters.category });
+    if (filters?.color) query.andWhere('color.color = :color', { color: filters.color });
+
+    return query.getMany();
   }
 
   async findOne(id: number): Promise<Product> {
@@ -108,7 +103,7 @@ export class ProductsService {
 
     const updated = await this.productRepository.findOne({
       where: { id },
-      relations: ['color', 'size', 'category', 'gender'],
+      relations: ['color', 'category', 'gender'],
     });
 
     if (!updated) {

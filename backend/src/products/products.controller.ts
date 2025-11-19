@@ -13,16 +13,22 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(
-    @Query('gender') gender?: string,
-    @Query('category') category?: string,
-    @Query('color') color?: string,
-    @Query('size') size?: string, 
-  ) {
-    const filters = { gender, category, color, size };
-    Object.keys(filters).forEach(key => { filters[key] === undefined && delete filters[key]});
-    return this.productsService.findAll(filters);
-  }
+findAll(
+  @Query('gender') gender?: string,
+  @Query('category') category?: string,
+  @Query('color') color?: string,
+  @Query('size') size?: string,
+) {
+  const filters: any = {};
+
+  if (gender) filters.gender = +gender; // convert to number
+  if (size) filters.size = +size;       // convert to number
+  if (category) filters.category = category;
+  if (color) filters.color = color;
+
+  return this.productsService.findAll(filters);
+}
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
