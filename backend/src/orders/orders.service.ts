@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { OrderItem } from 'src/order-items/entities/order-item.entity';
 import { ProductVarient } from 'src/product-varient/entities/product-varient.entity';
+import { OrderStatus } from './enums/orders.status.enum';
 
 @Injectable()
 export class OrdersService {
@@ -58,6 +59,7 @@ export class OrdersService {
           quantity: item.quantity,
           unitPrice: productVarient.product.price,
           totalPrice: productVarient.product.price * item.quantity,
+          status: OrderStatus.PENDING,
         });
       }
       
@@ -77,8 +79,19 @@ export class OrdersService {
     return `This action returns a #${id} order`;
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async updateStatus(id: number, updateOrderDto: UpdateOrderDto) {
+    const order = await this.orderRepository.findOne({where: {id}});
+    if(!order) throw new NotFoundException('Order not found');
+
+    if(updateOrderDto.status)
+      {
+        order.status  = updateOrderDto.status;
+      }else
+      {
+        throw new InternalServerErrorException('No status provided for update');
+      }
+
+    return this.orderRepository.save(order);
   }
 
   async remove(id: number) {

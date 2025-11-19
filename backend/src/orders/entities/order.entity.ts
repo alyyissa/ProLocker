@@ -1,6 +1,7 @@
 import { OrderItem } from "src/order-items/entities/order-item.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { OrderStatus } from "../enums/orders.status.enum";
 
 @Entity()
 export class Order {
@@ -22,9 +23,10 @@ export class Order {
     address?: string;
 
     @Column({
-    type: 'varchar',
-    length: 50,
-    nullable: true,
+    type: 'enum',
+    enum: OrderStatus,
+    default: OrderStatus.PENDING,
+    nullable: false,
     })
     status: string;
 
