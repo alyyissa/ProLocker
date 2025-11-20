@@ -24,8 +24,8 @@ export class GenderService {
     return newGender
   }
 
-  findAll() {
-    return `This action returns all gender`;
+  async findAll() {
+    return await this.genderRepository.find();
   }
 
   async findOne(id: number): Promise<Gender> {
@@ -34,11 +34,28 @@ export class GenderService {
     return gender;
   }
 
-  update(id: number, updateGenderDto: UpdateGenderDto) {
-    return `This action updates a #${id} gender`;
+  async update(id: number, updateGenderDto: UpdateGenderDto) {
+    const existingGender = await this.genderRepository.findOne({where: {id}});
+    if(!existingGender) throw new NotFoundException(`Gender with ${id} not found`);
+
+    if(updateGenderDto.gender){
+      const exists = await this.genderRepository.findOne({
+        where: {gender: updateGenderDto.gender}
+      });
+      if(exists && exists.id !== id){
+        return 'Gender already exists';
+      }
+    }
+    Object.assign(existingGender, updateGenderDto);
+    await this.genderRepository.save(existingGender);
+    return {message: `Gender updated successfully`};
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} gender`;
+  async remove(id: number) {
+    const result = await this.genderRepository.delete(id);
+    if(result.affected === 0){
+      return `Gender with ID ${id} not found`;
+    }
+    return `Gender deleted successfully`;
   }
 }
