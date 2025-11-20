@@ -13,6 +13,7 @@ export class Color {
     })
     color: string
     
+    
     @OneToMany(() => Product, (product) => product.color)
     product: Product[]
 }

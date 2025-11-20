@@ -27,8 +27,8 @@ export class ColorsService {
     return newColor;
   }
 
-  findAll() {
-    return `This action returns all colors`;
+  async findAll() {
+    return await this.colorRepository.find();
   }
 
   public async findOne(id: number): Promise<Color> {
@@ -39,11 +39,21 @@ export class ColorsService {
     return color;
   }
 
-  update(id: number, updateColorDto: UpdateColorDto) {
-    return `This action updates a #${id} color`;
+  async update(id: number, updateColorDto: UpdateColorDto) {
+    const color = await this.colorRepository.findOne({where: {id}});
+    if(!color) throw new NotFoundException(`Color with ${id} not found`);
+
+    Object.assign(color, updateColorDto);
+    return await this.colorRepository.save(color);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} color`;
+  async remove(id: number) {
+    const color = await this.colorRepository.findOne({where: {id}});
+    if(!color) throw new NotFoundException(`Color with ${id} not found`);
+
+    const colorName = color.color;
+    await this.colorRepository.remove(color);
+
+    return {message: `Color ${colorName} has been removed`}
   }
 }
