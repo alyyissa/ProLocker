@@ -30,49 +30,73 @@ export class OrdersService {
       const user = await this.userRepository.findOne({
         where: { id: createOrderDto.userId },
       });
-      if (!user) throw new NotFoundException('User not found');
 
-      // Creating order
+      if(!user) throw new NotFoundException('User not found');
+
+      const trackingNumber = this.generateTrackingNumber();
+
+      // Create Order
       const order = await this.orderRepository.save({
         user,
         phoneNumber: createOrderDto.phoneNumber,
         address: createOrderDto.address,
-        status: 'Pending',
+        firstName: createOrderDto.firstName,
+        lastName: createOrderDto.lastName,
+        apartment: createOrderDto.apartment,
+        city: createOrderDto.city,
+        email: createOrderDto.email,
+        country: createOrderDto.country ?? 'Lebanon',
+        trackingNumber,
+        status: OrderStatus.PENDING,
       });
 
-      // Adding order items one-by-one
+      // Save Order Items
       for (const item of createOrderDto.items) {
-        const productVarient  = await this.productVarientRepository.findOne({
+        const productVarient = await this.productVarientRepository.findOne({
           where: { id: item.productVarientId },
           relations: ['product'],
         });
 
-        if (!productVarient ) {
+        if (!productVarient)
           throw new NotFoundException(
             `Product ${item.productVarientId} not found`,
           );
-        }
 
         await this.orderItemRepository.save({
           order,
-          productVarient ,
+          productVarient,
           quantity: item.quantity,
           unitPrice: productVarient.product.price,
           totalPrice: productVarient.product.price * item.quantity,
           status: OrderStatus.PENDING,
         });
       }
-      
-      return "Order created successfully";
+
+      return {
+        message: 'Order created successfully',
+        trackingNumber,
+        orderId: order.id,
+      };
 
     } catch (error) {
-      console.error('Real Error:', error);
+      console.error('Order Creation Error:', error);
       throw error;
     }
   }
 
+
   async findAll(){
     return `This action returns all orders`;
+  }
+
+  private generateTrackingNumber(): string {
+    const date = new Date();
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const random = String(Math.floor(Math.random() * 99999)).padStart(5, '0');
+
+    return `ORD-${y}${m}${d}-${random}`;
   }
 
   findOne(id: number) {

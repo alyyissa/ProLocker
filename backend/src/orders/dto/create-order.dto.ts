@@ -6,10 +6,12 @@ import { OrderStatus } from "../enums/orders.status.enum";
 export class CreateOrderDto {
     
     @IsNotEmpty()
+    @IsString()
     phoneNumber: string;
 
     @IsString()
-    address?: string;
+    @IsNotEmpty()
+    address: string;
 
     @IsNotEmpty()
     @IsInt()
@@ -19,9 +21,33 @@ export class CreateOrderDto {
     @IsOptional()
     status: string;
 
-     @IsArray()
-     @ValidateNested({ each: true })
-     @Type(() => CreateOrderItemDto)
-     items: CreateOrderItemDto[];
+    @IsNotEmpty()
+    @IsString()
+    firstName: string;
+
+    @IsNotEmpty()
+    @IsString()
+    lastName: string;
+
+    @IsOptional()
+    @IsString()
+    apartment?: string;
+
+    @IsNotEmpty()
+    @IsString()
+    city: string;
+
+    @IsOptional()
+    @IsString()
+    email?: string;
+
+    @IsOptional()
+    @IsString()
+    country?: string = 'Lebanon';
+
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => CreateOrderItemDto)
+    items: CreateOrderItemDto[];
 
 }
