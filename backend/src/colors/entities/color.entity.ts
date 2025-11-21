@@ -14,6 +14,14 @@ export class Color {
     color: string
     
     
+
+    @Column({
+        unique: true,
+        nullable: false
+    })
+    slug:string;
+
+    
     @OneToMany(() => Product, (product) => product.color)
     product: Product[]
 }

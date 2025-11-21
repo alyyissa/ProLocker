@@ -11,7 +11,13 @@ export class Category {
         nullable: false,
         length: 100
     })
-    name: string
+    category: string
+
+    @Column({
+        unique: true,
+        nullable: false
+    })
+    slug:string;
 
     @OneToMany(() => Product, (product) => product.category)
     product: Product[]

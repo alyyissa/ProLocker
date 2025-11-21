@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateColorDto } from './dto/create-color.dto';
 import { UpdateColorDto } from './dto/update-color.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,17 +14,28 @@ export class ColorsService {
   ){}
 
   public async create(createColorDto: CreateColorDto) {
-    const color = await this.colorRepository.findOne({
-      where: {color: createColorDto.color} 
-    })
-    if(color){
-      return "Color Already Exists";
+
+    const slug = createColorDto.color.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+
+    const existing = await this.colorRepository.findOne({ 
+      where: [
+        {color: createColorDto.color},
+        {slug},
+      ]
+    });
+
+    if(existing){
+      throw new BadRequestException('Color already exists. Choose a different name.');
     }
 
-    let newColor = this.colorRepository.create(createColorDto);
-    newColor = await this.colorRepository.save(newColor);
+    const newColor = this.colorRepository.create({
+      ...createColorDto,
+      slug,
+    });
 
-    return newColor;
+    await this.colorRepository.save(newColor);
+
+    return { message: 'Created successfully', color: newColor };
   }
 
   async findAll() {
@@ -43,8 +54,29 @@ export class ColorsService {
     const color = await this.colorRepository.findOne({where: {id}});
     if(!color) throw new NotFoundException(`Color with ${id} not found`);
 
-    Object.assign(color, updateColorDto);
-    return await this.colorRepository.save(color);
+    const updatedData = { ...updateColorDto };
+
+    if(updateColorDto.color){
+      const slug = updateColorDto.color
+        .toLowerCase()
+        .replace(/ /g, '-')
+        .replace(/[^\w-]+/g, '');
+
+        const existing = await this.colorRepository.findOne({ 
+        where: { slug } 
+        });
+
+      if (existing && existing.id !== id) {
+        throw new BadRequestException('Slug already exists. Choose a different name.');
+      }
+      
+      updatedData['slug'] = slug;
+    }
+
+    Object.assign(color, updatedData);
+    await this.colorRepository.save(color);
+    
+    return {message: `Color updated successfully`};
   }
 
   async remove(id: number) {

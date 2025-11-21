@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,19 +14,28 @@ export class CategoriesService {
   ){}
 
   public async create(createCategoryDto: CreateCategoryDto) {
-    // Checking If Created
-    const category = await this.categoryRepository.findOne({
-      where: {name: createCategoryDto.name}
-    })
-    //Throwing Exception
-    if(category){
-      return "Already exists";
+
+    const slug = createCategoryDto.category.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+
+    const existing = await this.categoryRepository.findOne({ 
+      where: [ 
+        {category: createCategoryDto.category},
+        {slug},
+      ]
+    });
+
+    if(existing){
+      throw new BadRequestException('Category already exists. Choose a different name.');
     }
 
-    let newCategory = this.categoryRepository.create(createCategoryDto);
-    newCategory = await this.categoryRepository.save(newCategory);
+    const newCategory = this.categoryRepository.create({
+      ...createCategoryDto,
+      slug,
+    });
+    
+    await this.categoryRepository.save(newCategory);
 
-    return newCategory;
+    return {  message: 'Created successfully', category: newCategory };
   }
 
   async findAll() {
@@ -43,11 +52,31 @@ export class CategoriesService {
     const category = await this.categoryRepository.findOne({where: {id}});
     if(!category) throw new NotFoundException(`Category with ${id} not found`);
 
-    Object.assign(category, updateCategoryDto);
+    const updatedData = { ...updateCategoryDto };
+    
+    if(updateCategoryDto.category){
+      const slug = updateCategoryDto.category
+        .toLowerCase()
+        .replace(/ /g, '-')
+        .replace(/[^\w-]+/g, '');
+
+        const existing = await this.categoryRepository.findOne({ 
+        where: { slug } 
+        });
+
+      if (existing && existing.id !== id) {
+        throw new BadRequestException('Slug already exists. Choose a different name.');
+      }
+      
+      updatedData['slug'] = slug;
+    }
+
+    Object.assign(category, updatedData);
     await this.categoryRepository.save(category);
 
     return `Category updated successfully`;
   }
+
 
   async remove(id: number) {
     const result = await this.categoryRepository.delete(id)

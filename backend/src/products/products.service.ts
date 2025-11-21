@@ -42,7 +42,6 @@ export class ProductsService {
     return await this.productRepository.save(product);
   }
 
-
   async findAll(filters?: { gender?: number; category?: string; color?: string; size?: number }): Promise<Product[]> {
     const query = this.productRepository.createQueryBuilder('product')
       .leftJoinAndSelect('product.gender', 'gender')
