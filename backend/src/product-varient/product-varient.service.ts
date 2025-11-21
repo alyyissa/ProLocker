@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductVarientDto } from './dto/create-product-varient.dto';
 import { UpdateProductVarientDto } from './dto/update-product-varient.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -58,11 +58,39 @@ export class ProductVarientService {
     }
   }
 
-  update(id: number, updateProductVarientDto: UpdateProductVarientDto) {
-    return `This action updates a #${id} productVarient`;
+  async update(id: number, updateProductVarientDto: UpdateProductVarientDto) {
+    const varient = await this.variantRepository.findOne({
+      where: {id},
+      relations: ['product', 'size']
+    });
+    if(!varient) throw new NotFoundException(`Product Varient with ${id} not found`);
+
+    if(updateProductVarientDto.quantity !== undefined){
+      varient.quantity = updateProductVarientDto.quantity;
+    }
+
+    this.variantRepository.save(varient);
+
+    return { message: 'Updated successfully'};
   }
 
-  remove(id: number) {
+  async checkVariantAvailability(productId: number, sizeId: number) {
+    const variant = await this.variantRepository.findOne({
+      where: { product: { id: productId }, size: { id: sizeId } },
+    });
+
+    if (!variant) {
+      throw new NotFoundException('Variant not found');
+    }
+
+    if (variant.quantity <= 0) {
+      throw new BadRequestException('Selected size is out of stock');
+    }
+
+    return variant;
+  }
+
+  async remove(id: number) {
     return `This action removes a #${id} productVarient`;
   }
 }
