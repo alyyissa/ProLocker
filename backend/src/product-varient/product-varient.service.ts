@@ -36,8 +36,26 @@ export class ProductVarientService {
     return `This action returns all productVarient`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} productVarient`;
+  async findOne(id: number) {
+    const product = await this.productService.findOneById(id);
+    const varients = await this.variantRepository.find({
+      where: {
+        product: { id }
+      },
+      relations: ['product', 'size']
+    });
+
+    return{
+      product:{
+        name: product.name,
+        // image
+      },
+      varients: varients.map(v => ({
+        id: v.id,
+        size: v.size.size,
+        quantity: v.quantity,
+      }))
+    }
   }
 
   update(id: number, updateProductVarientDto: UpdateProductVarientDto) {

@@ -75,4 +75,16 @@ export class Product {
 
     @OneToMany(() => ProductVarient, (varient) => varient.product, {cascade: true})
     varients: ProductVarient[];
+
+    @Column({
+    type: 'simple-array',
+    nullable: true,
+    })
+    galleryImages: string[];
+
+    @Column({
+    type: 'text',
+    nullable: true,
+    })
+    mainImage: string;
 }
