@@ -27,6 +27,12 @@ export class Product {
     @Column({ type: 'int', default: 0})
     quantity: number;
 
+    @Column({
+        unique: true,
+        nullable: false
+    })
+    slug:string;
+
     @Column({ type: 'int', default: 0 })
     sale: number;
 

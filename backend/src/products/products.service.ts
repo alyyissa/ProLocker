@@ -29,6 +29,8 @@ export class ProductsService {
     const gender = await this.genderService.findOne(createProductDto.genderId);
     if (!gender) throw new NotFoundException('Gender not found');
 
+    const slug = createProductDto.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+
     const product = this.productRepository.create({
         name: createProductDto.name,
         price: createProductDto.price,
@@ -37,9 +39,12 @@ export class ProductsService {
         category,
         color,
         gender,
+        slug,
     });
 
-    return await this.productRepository.save(product);
+    await this.productRepository.save(product);
+
+    return { message: 'Product Created successfully', product };
   }
 
   async findAll(filters?: { gender?: number; category?: string; color?: string; size?: number }): Promise<Product[]> {
@@ -61,9 +66,14 @@ export class ProductsService {
     return query.getMany();
   }
 
-  async findOne(id: number): Promise<Product> {
-    const product = await this.productRepository.findOne({where: {id}, relations: ['category', 'color', 'gender']});
-    if(!product) throw new NotFoundException('Product not found');
+  async findOne(slug: string): Promise<Product> {
+
+    const product = await this.productRepository.findOne({
+      where: {slug},
+      relations: ['color', 'category', 'gender']
+    })
+
+    if(!product) throw new NotFoundException(`${slug} not found`);
     return product;
   }
 
@@ -121,4 +131,16 @@ export class ProductsService {
 
     return 'Deleted successfully';
   }
+
+  async findOneById(id: number): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+    });
+
+    if (!product) throw new NotFoundException(`Product with id ${id} not found`);
+    
+    return product;
+  }
+
+
 }

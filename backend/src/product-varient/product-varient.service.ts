@@ -17,7 +17,7 @@ export class ProductVarientService {
   ){}
   
   async create(createDto: CreateProductVarientDto) {
-    const product = await this.productService.findOne(createDto.productId);
+    const product = await this.productService.findOneById(createDto.productId);
     if (!product) {throw new NotFoundException('Product not found');}
 
     const size = await this.sizeService.findOne(createDto.sizeId);
