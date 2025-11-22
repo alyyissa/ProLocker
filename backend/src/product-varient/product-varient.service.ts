@@ -4,7 +4,7 @@ import { UpdateProductVarientDto } from './dto/update-product-varient.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductVarient } from './entities/product-varient.entity';
 import { SizesService } from 'src/sizes/sizes.service';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { ProductsService } from 'src/products/products.service';
 
 @Injectable()
@@ -92,5 +92,20 @@ export class ProductVarientService {
 
   async remove(id: number) {
     return `This action removes a #${id} productVarient`;
+  }
+
+  async reduceStock(productVarientId: number, quantity: number, manager: EntityManager) {
+    const variant = await manager.findOne(ProductVarient, { where: { id: productVarientId } });
+
+    if (!variant) {
+      throw new NotFoundException('Product variant not found');
+    }
+
+    if(variant.quantity < quantity) {
+      throw new BadRequestException('Insufficient stock for the requested quantity');
+    }
+
+    variant.quantity -= quantity;
+    await manager.save(variant);
   }
 }

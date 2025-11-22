@@ -8,6 +8,8 @@ import { User } from 'src/user/entities/user.entity';
 import { OrderItem } from 'src/order-items/entities/order-item.entity';
 import { ProductVarient } from 'src/product-varient/entities/product-varient.entity';
 import { OrderStatus } from './enums/orders.status.enum';
+import { DataSource } from 'typeorm';
+import { ProductVarientService } from 'src/product-varient/product-varient.service';
 
 @Injectable()
 export class OrdersService {
@@ -23,11 +25,16 @@ export class OrdersService {
 
     @InjectRepository(OrderItem)
     private readonly orderItemRepository: Repository<OrderItem>,
+
+    private readonly productVarientService: ProductVarientService,
+
+    private readonly datasource: DataSource,
 ) {}
 
   async create(createOrderDto: CreateOrderDto) {
+    return await this.datasource.transaction(async manager => {
     try {
-      const user = await this.userRepository.findOne({
+      const user = await manager.findOne(User, {
         where: { id: createOrderDto.userId },
       });
 
@@ -36,7 +43,7 @@ export class OrdersService {
       const trackingNumber = this.generateTrackingNumber();
 
       // Create Order
-      const order = await this.orderRepository.save({
+      const order = await manager.save(Order, {
         user,
         phoneNumber: createOrderDto.phoneNumber,
         address: createOrderDto.address,
@@ -52,7 +59,7 @@ export class OrdersService {
 
       // Save Order Items
       for (const item of createOrderDto.items) {
-        const productVarient = await this.productVarientRepository.findOne({
+        const productVarient = await manager.findOne(ProductVarient, {
           where: { id: item.productVarientId },
           relations: ['product'],
         });
@@ -62,7 +69,13 @@ export class OrdersService {
             `Product ${item.productVarientId} not found`,
           );
 
-        await this.orderItemRepository.save({
+        await this.productVarientService.reduceStock(
+          item.productVarientId,
+          item.quantity,
+          manager
+        );
+
+        await manager.save( OrderItem, {
           order,
           productVarient,
           quantity: item.quantity,
@@ -82,7 +95,9 @@ export class OrdersService {
       console.error('Order Creation Error:', error);
       throw error;
     }
+  });
   }
+
 
   async findAll(){
     return `This action returns all orders`;
