@@ -100,7 +100,11 @@ export class OrdersService {
 
 
   async findAll(){
-    return `This action returns all orders`;
+    return `This action orders`;
+  }
+
+  async findBestSellr(){
+    return `This action best seller orders`;
   }
 
   private generateTrackingNumber(): string {
