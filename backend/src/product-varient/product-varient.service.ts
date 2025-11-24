@@ -108,4 +108,8 @@ export class ProductVarientService {
     variant.quantity -= quantity;
     await manager.save(variant);
   }
+
+  async findBestSellr(){
+    return `This action returns best seller product varient`;
+  }
 }

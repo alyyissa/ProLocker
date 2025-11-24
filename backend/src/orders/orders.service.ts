@@ -103,9 +103,6 @@ export class OrdersService {
     return `This action orders`;
   }
 
-  async findBestSellr(){
-    return `This action best seller orders`;
-  }
 
   private generateTrackingNumber(): string {
     const date = new Date();
