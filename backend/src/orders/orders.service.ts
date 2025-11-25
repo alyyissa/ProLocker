@@ -10,6 +10,7 @@ import { ProductVarient } from 'src/product-varient/entities/product-varient.ent
 import { OrderStatus } from './enums/orders.status.enum';
 import { DataSource } from 'typeorm';
 import { ProductVarientService } from 'src/product-varient/product-varient.service';
+import { OrderFilterDto } from './dto/order-filter.dto';
 
 @Injectable()
 export class OrdersService {
@@ -98,11 +99,61 @@ export class OrdersService {
   });
   }
 
+  async findAll(filters: OrderFilterDto){
+    const {status, date} = filters;
 
-  async findAll(){
-    return `This action orders`;
+    const query = this.orderRepository.
+    createQueryBuilder('order')
+    .leftJoinAndSelect('order.user', 'user')
+    .leftJoinAndSelect('order.orderItems', 'orderItems');
+
+    if(status){
+      query.andWhere('order.status = :status', {status});
+    }
+
+    if (date) {
+      switch (date) {
+        case 'today':
+          query.andWhere('DATE(order.createdAt) = CURDATE()');
+          break;
+
+        case 'yesterday':
+          query.andWhere('DATE(order.createdAt) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)');
+          break;
+
+        case 'thisWeek':
+          query.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(CURDATE(), 1)');
+          break;
+
+        case 'lastWeek':
+          query.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL 1 WEEK), 1)');
+          break;
+
+        case 'thisMonth':
+          query.andWhere('MONTH(order.createdAt) = MONTH(CURDATE()) AND YEAR(order.createdAt) = YEAR(CURDATE())');
+          break;
+
+        case 'lastMonth':
+          query.andWhere(`
+            MONTH(order.createdAt) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+            AND YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+          `);
+          break;
+
+        case 'thisYear':
+          query.andWhere('YEAR(order.createdAt) = YEAR(CURDATE())');
+          break;
+
+        case 'lastYear':
+          query.andWhere('YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))');
+          break;
+      }
+    }
+    const data = await query.orderBy('order.createdAt', 'DESC').getMany();
+    const total = data.length
+
+    return {data, total: total};
   }
-
 
   private generateTrackingNumber(): string {
     const date = new Date();
