@@ -165,8 +165,14 @@ export class OrdersService {
     return `ORD-${y}${m}${d}-${random}`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: number) {
+    const order = await this.orderRepository.findOne({
+      where: {id},
+      relations: ['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product']
+    });
+    if(!order) throw new NotFoundException('Order not found');
+
+    return order;
   }
 
   async updateStatus(id: number, updateOrderDto: UpdateOrderDto) {
