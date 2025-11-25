@@ -22,6 +22,11 @@ export class OrdersController {
   findOne(@Param('id') id: string) {
     return this.ordersService.findOne(+id);
   }
+  
+  @Get('my-orders/:userId')
+  findForUser(@Param('userId') userId: string) {
+    return this.ordersService.findForUser(+userId);
+  }
 
   @Patch(':id')
   updateStatus(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {

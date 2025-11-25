@@ -175,6 +175,15 @@ export class OrdersService {
     return order;
   }
 
+  async findForUser(userId: number) {
+
+    const orders = await this.orderRepository.find({
+      where: {user: {id: userId}},
+      relations: ['orderItems', 'orderItems.productVarient'],
+      order: { createdAt: 'DESC' }
+    });
+    return orders;
+  }
   async updateStatus(id: number, updateOrderDto: UpdateOrderDto) {
     const order = await this.orderRepository.findOne({where: {id}});
     if(!order) throw new NotFoundException('Order not found');
