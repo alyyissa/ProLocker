@@ -11,6 +11,7 @@ import { OrderStatus } from './enums/orders.status.enum';
 import { DataSource } from 'typeorm';
 import { ProductVarientService } from 'src/product-varient/product-varient.service';
 import { OrderFilterDto } from './dto/order-filter.dto';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination.query.dto';
 
 @Injectable()
 export class OrdersService {
@@ -99,8 +100,8 @@ export class OrdersService {
   });
   }
 
-  async findAll(filters: OrderFilterDto){
-    const {status, date} = filters;
+  async findAll(filters: OrderFilterDto) {
+    const {status, date, page = 1, limit= 1} = filters;
 
     const query = this.orderRepository.
     createQueryBuilder('order')
@@ -149,10 +150,17 @@ export class OrdersService {
           break;
       }
     }
-    const data = await query.orderBy('order.createdAt', 'DESC').getMany();
-    const total = data.length
+    query.skip((page - 1) * limit).take(limit);
 
-    return {data, total: total};
+    const [data, total] = await query.orderBy('order.createdAt', 'DESC').getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    };
   }
 
   private generateTrackingNumber(): string {

@@ -15,8 +15,7 @@ export class OrdersController {
   }
 
   @Get()
-  findAll(@Query() filterDto: OrderFilterDto, @Query() paginationQueryDto: PaginationQueryDto) {
-    console.log(paginationQueryDto)
+  findAll(@Query() filterDto: OrderFilterDto) {
     return this.ordersService.findAll(filterDto);
   }
 
