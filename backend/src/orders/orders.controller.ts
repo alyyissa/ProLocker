@@ -3,6 +3,7 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderFilterDto } from './dto/order-filter.dto';
+import { PaginationQueryDto } from 'src/common/pagination/dto/pagination.query.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -14,7 +15,8 @@ export class OrdersController {
   }
 
   @Get()
-  findAll(@Query() filterDto: OrderFilterDto) {
+  findAll(@Query() filterDto: OrderFilterDto, @Query() paginationQueryDto: PaginationQueryDto) {
+    console.log(paginationQueryDto)
     return this.ordersService.findAll(filterDto);
   }
 
@@ -24,7 +26,7 @@ export class OrdersController {
   }
   
   @Get('my-orders/:userId')
-  findForUser(@Param('userId') userId: string) {
+  findForUser(@Param('userId') userId: string, @Query() paginationQueryDto: PaginationQueryDto) {
     return this.ordersService.findForUser(+userId);
   }
 
