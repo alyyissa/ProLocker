@@ -47,8 +47,14 @@ export class ProductsService {
     return { message: 'Product Created successfully', product };
   }
 
-  async findAll(filters?: { gender?: number; category?: string; color?: string; size?: number }): Promise<Product[]> {
-    const query = this.productRepository.createQueryBuilder('product')
+  async findAll(filters?: { gender?: number; category?: string; color?: string; size?: number },
+    options: { page?: number; limit?: number; date?: 'latest' | 'oldest' } = {}
+  ){
+
+    const { page = 1, limit = 12, date } = options;
+
+    const query = this.productRepository
+      .createQueryBuilder('product')
       .leftJoinAndSelect('product.gender', 'gender')
       .leftJoinAndSelect('product.color', 'color')
       .leftJoinAndSelect('product.category', 'category');
@@ -63,7 +69,21 @@ export class ProductsService {
     if (filters?.category) query.andWhere('category.name = :category', { category: filters.category });
     if (filters?.color) query.andWhere('color.color = :color', { color: filters.color });
 
-    return query.getMany();
+    query.skip((page - 1) * limit).take(limit);
+
+    if (date === 'latest') query.orderBy('product.createdAt', 'DESC');
+    else if (date === 'oldest') query.orderBy('product.createdAt', 'ASC');
+    else query.orderBy('product.createdAt', 'DESC');
+
+    const [data , total] = await query.getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    };
   }
 
   async findOne(slug: string): Promise<Product> {

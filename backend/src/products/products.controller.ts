@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductQueryDto } from './dto/product-query.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -14,19 +15,17 @@ export class ProductsController {
 
   @Get()
   findAll(
-    @Query('gender') gender?: string,
-    @Query('category') category?: string,
-    @Query('color') color?: string,
-    @Query('size') size?: string,
-  ) {
+    @Query() query: ProductQueryDto) {
+    const { gender, category, color, size, date , page = 1 , limit = 12 } = query;
+
     const filters: any = {};
 
-    if (gender) filters.gender = +gender; // convert to number
-    if (size) filters.size = +size;       // convert to number
+    if (gender) filters.gender = +gender;
+    if (size) filters.size = +size;
     if (category) filters.category = category;
     if (color) filters.color = color;
 
-    return this.productsService.findAll(filters);
+    return this.productsService.findAll(filters, { page, limit, date });
   }
 
   @Get(':slug')
