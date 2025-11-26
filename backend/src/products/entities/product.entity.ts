@@ -75,4 +75,22 @@ export class Product {
     nullable: true,
     })
     mainImage: string;
+
+    @Column({
+        type: 'int',
+        nullable: false,
+        default: 0,
+    })
+    priceAfterSale: number;
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    updatePriceAfterSale(){
+        if(this.sale && this.sale>0){
+            const discountAmount = (this.price * this.sale) / 100;
+            this.priceAfterSale = Math.round(this.price - discountAmount)
+        }else{
+            this.priceAfterSale = this.price
+        }
+    }
 }
