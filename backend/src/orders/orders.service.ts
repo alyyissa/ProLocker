@@ -150,14 +150,18 @@ export class OrdersService {
           break;
       }
     }
-    query.skip((page - 1) * limit).take(limit);
+    const total = await query.getCount();
+    const totalPages = Math.ceil(total / limit);
+    const currentPage = page > totalPages ? totalPages : page;
 
-    const [data, total] = await query.orderBy('order.createdAt', 'DESC').getManyAndCount();
+    query.skip((currentPage - 1) * limit).take(limit);
+
+    const [data] = await query.orderBy('order.createdAt', 'DESC').getManyAndCount();
 
     return {
       data,
       total,
-      page,
+      page: currentPage,
       limit,
       totalPages: Math.ceil(total / limit)
     };
@@ -183,15 +187,29 @@ export class OrdersService {
     return order;
   }
 
-  async findForUser(userId: number) {
+  async findForUser(
+    userId: number,
+    options : { page?: number; limit?: number } = {}
+  ) {
 
-    const orders = await this.orderRepository.find({
+    const { page = 1, limit = 5 } = options;
+
+    const [data, total] = await this.orderRepository.findAndCount({
       where: {user: {id: userId}},
       relations: ['orderItems', 'orderItems.productVarient'],
-      order: { createdAt: 'DESC' }
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
-    return orders;
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    };
   }
+
   async updateStatus(id: number, updateOrderDto: UpdateOrderDto) {
     const order = await this.orderRepository.findOne({where: {id}});
     if(!order) throw new NotFoundException('Order not found');

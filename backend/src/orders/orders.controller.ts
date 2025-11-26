@@ -26,7 +26,7 @@ export class OrdersController {
   
   @Get('my-orders/:userId')
   findForUser(@Param('userId') userId: string, @Query() paginationQueryDto: PaginationQueryDto) {
-    return this.ordersService.findForUser(+userId);
+    return this.ordersService.findForUser(+userId, paginationQueryDto);
   }
 
   @Patch(':id')

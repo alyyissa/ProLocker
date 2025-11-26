@@ -29,8 +29,30 @@ export class UserService {
     return newUser;
   }
 
-  public async findAll() {
-    return await this.userRepository.find();
+  public async findAll(
+    options: { page?: number; limit?: number } = {}
+  ) {
+    const page = options.page ?? 1;
+    const limit = options.limit ?? 10;
+
+    const total = await this.userRepository.count();
+    const totalPages = Math.ceil(total / limit);
+
+    const currentPage = page > totalPages ? totalPages : page;
+
+    const data = await this.userRepository.find({
+      skip: (currentPage - 1) * limit,
+      take: limit,
+      order: { CreatedAt: 'DESC' }
+    });
+
+    return {
+      data,
+      total,
+      page: currentPage,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   findOne(id: number) {

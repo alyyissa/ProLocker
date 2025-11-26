@@ -13,9 +13,9 @@ export class OrderFilterDto {
 
     @IsOptional()
     @IsPositive()
-    limit?: number = 10;
+    limit?: number;
 
     @IsOptional()
     @IsPositive()
-    page?: number = 1;
+    page?: number;
 }
