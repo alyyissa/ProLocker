@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,7 +11,7 @@ import { OrderStatus } from './enums/orders.status.enum';
 import { DataSource } from 'typeorm';
 import { ProductVarientService } from 'src/product-varient/product-varient.service';
 import { OrderFilterDto } from './dto/order-filter.dto';
-import { PaginationQueryDto } from 'src/common/pagination/dto/pagination.query.dto';
+import { ProductsService } from 'src/products/products.service';
 
 @Injectable()
 export class OrdersService {
@@ -19,14 +19,8 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
 
-    @InjectRepository(ProductVarient)
-    private readonly productVarientRepository: Repository<ProductVarient>,
-
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-
-    @InjectRepository(OrderItem)
-    private readonly orderItemRepository: Repository<OrderItem>,
+    @Inject(forwardRef(() => ProductsService))
+    private readonly productService: ProductsService,
 
     private readonly productVarientService: ProductVarientService,
 
@@ -44,7 +38,6 @@ export class OrdersService {
 
       const trackingNumber = this.generateTrackingNumber();
 
-      // Create Order
       const order = await manager.save(Order, {
         user,
         phoneNumber: createOrderDto.phoneNumber,
@@ -59,7 +52,6 @@ export class OrdersService {
         status: OrderStatus.PENDING,
       });
 
-      // Save Order Items
       for (const item of createOrderDto.items) {
         const productVarient = await manager.findOne(ProductVarient, {
           where: { id: item.productVarientId },
@@ -215,18 +207,25 @@ export class OrdersService {
   }
 
   async updateStatus(id: number, updateOrderDto: UpdateOrderDto) {
-    const order = await this.orderRepository.findOne({where: {id}});
+    const order = await this.orderRepository.findOne({where: {id}, relations:['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product']});
     if(!order) throw new NotFoundException('Order not found');
+    if(!updateOrderDto.status) throw new InternalServerErrorException('no status provided')
 
-    if(updateOrderDto.status)
+    return await this.datasource.transaction(async (manager) => {if(updateOrderDto.status === OrderStatus.DECLINED)
       {
-        order.status  = updateOrderDto.status;
-      }else
-      {
-        throw new InternalServerErrorException('No status provided for update');
+        for (const item of order.orderItems){
+          await this.productVarientService.restoreStock(
+            item.productVarient.id,
+            item.quantity,
+            manager
+          )
+        }
       }
-
-    return this.orderRepository.save(order);
+      if(updateOrderDto.status) {
+      order.status = updateOrderDto.status;
+      }
+      return this.orderRepository.save(order)
+    })
   }
 
   async remove(id: number) {
@@ -238,4 +237,5 @@ export class OrdersService {
 
     return 'Deleted successfully';
   }
+
 }

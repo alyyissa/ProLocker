@@ -7,7 +7,6 @@ import { EntityManager, Repository } from 'typeorm';
 import { CategoriesService } from 'src/categories/categories.service';
 import { ColorsService } from 'src/colors/colors.service';
 import { GenderService } from 'src/gender/gender.service';
-import { OrderStatus } from 'src/orders/enums/orders.status.enum';
 import { ProductStatus } from './enums/product-status.enum';
 
 @Injectable()
@@ -18,10 +17,10 @@ export class ProductsService {
     private readonly colorService: ColorsService,
     private readonly genderService: GenderService,
     @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>
+    private readonly productRepository: Repository<Product>,
   ){}
 
-  public async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto) {
     const category = await this.categoryService.findOne(createProductDto.categoryId);
     if (!category) throw new NotFoundException('Category not found');
 
@@ -181,6 +180,15 @@ export class ProductsService {
     else await this.productRepository.save(product);
   }
 
+  // async restoreStockFromOrder(orderId: number){
+  //   const order = await this.orderService.findOne(orderId)
+
+  //   for(const item of order.orderItems){
+  //     item.productVarient.quantity += item.quantity;
+  //     await this.productVarientRepository.save(item.productVarient)
+  //     await this.refreshProductData(item.productVarient.productId)
+  //   }
+  // }
 
   async getMostSoldProducts(){
     return await  this.productRepository

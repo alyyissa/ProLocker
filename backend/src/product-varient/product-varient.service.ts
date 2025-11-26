@@ -113,7 +113,19 @@ export class ProductVarientService {
     await this.productService.refreshProductData(variant.product.id, manager);
   }
 
-  async findBestSeller(){
-    return `This action returns best seller product varient`;
+  async restoreStock(productVarientId:number, quantity:number, manager: EntityManager){
+    const variant = await manager.findOne(ProductVarient,{
+      where: {id: productVarientId},
+      relations: ['product']
+    });
+
+    if(!variant) throw new NotFoundException('Product variant not found');
+
+    variant.quantity += quantity;
+
+    await manager.save(variant)
+
+    await this.productService.refreshProductData(variant.product.id, manager)
   }
+  
 }

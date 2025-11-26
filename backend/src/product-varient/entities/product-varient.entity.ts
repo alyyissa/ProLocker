@@ -14,6 +14,9 @@ export class ProductVarient {
     @ManyToOne(() => Size)
     size: Size;
 
+    @Column()
+    productId: number; 
+
     @OneToMany(() => OrderItem, (orderItem) => orderItem.productVarient)
     orderItems: OrderItem[];
 
