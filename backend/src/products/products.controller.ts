@@ -28,11 +28,6 @@ export class ProductsController {
     return this.productsService.findAll(filters, { page, limit, date });
   }
 
-  @Get(':slug')
-  findOne(@Param('slug') slug: string) {
-    return this.productsService.findOne(slug);
-  }
-
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(+id, updateProductDto);
@@ -41,5 +36,15 @@ export class ProductsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
+  }
+
+  @Get('most-sold')
+  getMostSold(){
+    return this.productsService.getMostSoldProducts();
+  }
+
+  @Get(':slug')
+  findOne(@Param('slug') slug: string) {
+    return this.productsService.findOne(slug);
   }
 }

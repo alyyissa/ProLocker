@@ -182,4 +182,22 @@ export class ProductsService {
   }
 
 
+  async getMostSoldProducts(){
+    return await  this.productRepository
+      .createQueryBuilder('product')
+      .leftJoin('product.varients', 'varient')
+      .leftJoin('varient.orderItems', 'orderItem')
+      .select('product.id', 'id')
+      .addSelect('product.mainImage', 'mainImage')
+      .addSelect('product.priceAfterSale', 'priceAfterSale')
+      .addSelect('product.sale', 'sale')
+      .addSelect('ANY_VALUE(product.name)', 'name')
+      .addSelect('ANY_VALUE(product.price)', 'price')
+      .addSelect('SUM(orderItem.quantity)', 'totalSold')
+      .where('product.deletedAt IS NULL')
+      .groupBy('product.id')
+      .orderBy('totalSold', 'DESC')
+      .limit(10)
+      .getRawMany();
+  }
 }
