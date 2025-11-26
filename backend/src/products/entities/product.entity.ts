@@ -61,19 +61,7 @@ export class Product {
     @ManyToOne(() => Gender, (gender) => gender.product, {eager: true})
     gender: Gender
 
-    @BeforeInsert()
-    @BeforeUpdate()
-    updateStatus() {
-        if (this.quantity === 0) {
-            this.status = 'Out of Stock';
-        } else if (this.quantity < 3) {
-            this.status = 'Few Left';
-        } else {
-            this.status = 'Available';
-        }
-    }
-
-    @OneToMany(() => ProductVarient, (varient) => varient.product, {cascade: true})
+    @OneToMany(() => ProductVarient, (varient) => varient.product, {eager: true, cascade: true})
     varients: ProductVarient[];
 
     @Column({

@@ -83,7 +83,6 @@ export class OrdersService {
           quantity: item.quantity,
           unitPrice: productVarient.product.price,
           totalPrice: productVarient.product.price * item.quantity,
-          // status: OrderStatus.PENDING,
         });
       }
 

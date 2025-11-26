@@ -3,10 +3,12 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { CategoriesService } from 'src/categories/categories.service';
 import { ColorsService } from 'src/colors/colors.service';
 import { GenderService } from 'src/gender/gender.service';
+import { OrderStatus } from 'src/orders/enums/orders.status.enum';
+import { ProductStatus } from './enums/product-status.enum';
 
 @Injectable()
 export class ProductsService {
@@ -160,6 +162,23 @@ export class ProductsService {
     if (!product) throw new NotFoundException(`Product with id ${id} not found`);
     
     return product;
+  }
+
+  async refreshProductData(productId: number, manager?: EntityManager) {
+    const product = manager 
+      ? await manager.findOne(Product, { where: { id: productId }, relations: ['varients'] })
+      : await this.productRepository.findOne({ where: { id: productId }, relations: ['varients'] });
+
+    if (!product) throw new NotFoundException('Product not found');
+
+    product.quantity = product.varients.reduce((sum, varient) => sum + (varient.quantity || 0), 0);
+
+    if(product.quantity === 0) product.status = ProductStatus.OutOfStock;
+    else if(product.quantity < 3) product.status = ProductStatus.FewLeft;
+    else product.status = ProductStatus.Available;
+
+    if (manager) await manager.save(product);
+    else await this.productRepository.save(product);
   }
 
 

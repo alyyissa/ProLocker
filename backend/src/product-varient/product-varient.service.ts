@@ -29,7 +29,8 @@ export class ProductVarientService {
       quantity: createDto.quantity,
     });
 
-    return this.variantRepository.save(variant);
+    await this.variantRepository.save(variant);
+    await this.productService.refreshProductData(product.id);
   }
 
   findAll() {
@@ -69,7 +70,9 @@ export class ProductVarientService {
       varient.quantity = updateProductVarientDto.quantity;
     }
 
-    this.variantRepository.save(varient);
+    await this.variantRepository.save(varient);
+
+    await this.productService.refreshProductData(varient.product.id);
 
     return { message: 'Updated successfully'};
   }
@@ -95,7 +98,7 @@ export class ProductVarientService {
   }
 
   async reduceStock(productVarientId: number, quantity: number, manager: EntityManager) {
-    const variant = await manager.findOne(ProductVarient, { where: { id: productVarientId } });
+    const variant = await manager.findOne(ProductVarient, { where: { id: productVarientId }, relations: ['product'] });
 
     if (!variant) {
       throw new NotFoundException('Product variant not found');
@@ -107,9 +110,10 @@ export class ProductVarientService {
 
     variant.quantity -= quantity;
     await manager.save(variant);
+    await this.productService.refreshProductData(variant.product.id, manager);
   }
 
-  async findBestSellr(){
+  async findBestSeller(){
     return `This action returns best seller product varient`;
   }
 }
