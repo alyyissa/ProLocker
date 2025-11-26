@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -229,11 +229,15 @@ export class OrdersService {
   }
 
   async remove(id: number) {
-    const result = await this.orderRepository.delete(id);
+    const order = await this.orderRepository.findOne({where: {id}});
 
-    if (result.affected === 0) {
-    throw new NotFoundException('Product not found');
+    if(!order) throw new NotFoundException('Order dont exist')
+
+    if(order.status !== OrderStatus.DECLINED){
+      throw new BadRequestException('Only declined orders can be deleted')
     }
+
+    await this.orderRepository.delete(id)
 
     return 'Deleted successfully';
   }
