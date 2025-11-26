@@ -192,19 +192,24 @@ export class OrdersService {
     options : { page?: number; limit?: number } = {}
   ) {
 
-    const { page = 1, limit = 5 } = options;
+    const { page = 1, limit = 3 } = options;
 
-    const [data, total] = await this.orderRepository.findAndCount({
+    const total = await this.orderRepository.count({ where: {user: {id: userId}} });
+
+    const totalPages = Math.ceil(total / limit);
+    const currentPage = page > totalPages ? totalPages : page;
+
+    const data = await this.orderRepository.findAndCount({
       where: {user: {id: userId}},
       relations: ['orderItems', 'orderItems.productVarient'],
       order: { createdAt: 'DESC' },
-      skip: (page - 1) * limit,
+      skip: (currentPage - 1) * limit,
       take: limit,
     });
     return {
       data,
       total,
-      page,
+      page: currentPage,
       limit,
       totalPages: Math.ceil(total / limit)
     };
