@@ -4,14 +4,19 @@ import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   providers: [AuthService],
   controllers: [AuthController],
   imports: [TypeOrmModule.forFeature([User]),
-            JwtModule.register({
-              secret: 'mySuperSecretKey123!',
-              signOptions: {expiresIn: '60m'}
+            JwtModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+              secret: config.get<string>('JWT_ACCESS_SECRET'),
+              signOptions: {expiresIn: config.get<string>('JWT_ACCESS_EXPIRES') as any}
+            })
             })
 ]
 })

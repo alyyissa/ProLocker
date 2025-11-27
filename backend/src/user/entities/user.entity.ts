@@ -36,6 +36,9 @@ export class User {
         length: 100
     })
     password: string;
+
+    @Column({nullable: true})
+    refreshToken: string
     
     @CreateDateColumn()
     CreatedAt: Date

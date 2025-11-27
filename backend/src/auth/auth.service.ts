@@ -33,6 +33,8 @@ export class AuthService {
 
         const tokens = await this.getToken(newUser.id, newUser.email)
 
+        await this.updateRefreshToken(newUser.id, tokens.refreshToken)
+
         return {user: {id: newUser.id, email: newUser.email}, ...tokens}
     }
 
@@ -45,15 +47,31 @@ export class AuthService {
 
         const tokens = await this.getToken(user.id, user.email)
 
+        await this.updateRefreshToken(user.id, tokens.refreshToken)
+
         return {user: {id: user.id, email: user.email}, ...tokens}
     }
 
     async getToken(userId:number, email:string){
         const payload = {sub: userId, email}
 
-        const accessToken = this.jwtService.sign(payload, {expiresIn: '60m'})
-        const refreshToken = this.jwtService.sign(payload, {expiresIn: '7d'})
+        const accessToken = this.jwtService.sign(payload, {
+            secret: process.env.JWT_ACCESS_SECRET,
+            expiresIn: process.env.JWT_ACCESS_EXPIRES as any
+        });
+        const refreshToken = this.jwtService.sign(payload, {
+            secret: process.env.JWT_REFRESH_SECRET,
+            expiresIn: process.env.JWT_REFRESH_EXPIRES as any
+        });
 
         return {accessToken, refreshToken}
+    }
+
+    async updateRefreshToken(userId: number, refreshToken:string){
+        const hashed = await bcrypt.hash(refreshToken,10)
+
+        await this.userRepo.update(userId, {
+            refreshToken: hashed
+        })
     }
 }
