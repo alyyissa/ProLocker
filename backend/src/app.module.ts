@@ -13,6 +13,7 @@ import { OrdersModule } from './orders/orders.module';
 import { OrderItemsModule } from './order-items/order-items.module';
 import { ProductVarientModule } from './product-varient/product-varient.module';
 import { PermissionModule } from './permission/permission.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { PermissionModule } from './permission/permission.module';
     OrderItemsModule,
     ProductVarientModule,
     PermissionModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

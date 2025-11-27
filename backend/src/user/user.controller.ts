@@ -8,11 +8,6 @@ import { PaginationQueryDto } from 'src/common/pagination/dto/pagination.query.d
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    this.userService.create(createUserDto)
-  }
-
   @Get()
   findAll(
     @Query() paginDto: PaginationQueryDto

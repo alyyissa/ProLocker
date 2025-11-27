@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
@@ -13,21 +13,6 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>
   ){}
-
-  public async create(createUserDto: CreateUserDto) {
-    const user = await this.userRepository.findOne({
-      where: { email: createUserDto.email}
-    })
-
-    if(user){
-      return 'The cardentials are wrong!';
-    }
-
-    let newUser = this.userRepository.create(createUserDto);
-    newUser = await this.userRepository.save(newUser);
-
-    return newUser;
-  }
 
   public async findAll(
     options: { page?: number; limit?: number } = {}
@@ -64,13 +49,11 @@ export class UserService {
   }
 
   public async remove(id: number) {
-    //Find the user
     let user = await this.userRepository.findOneBy({id});
+    if(!user) throw new NotFoundException('Userr not Found')
 
-    //Delete The User
     await this.userRepository.delete(id);
 
-    //Send The Response
     return {deleted: true}
   }
 }
