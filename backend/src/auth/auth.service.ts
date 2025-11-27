@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -73,5 +73,19 @@ export class AuthService {
         await this.userRepo.update(userId, {
             refreshToken: hashed
         })
+    }
+
+    async refresh(userId: number, refreshToken){
+        const user = await this.userRepo.findOne({where: {id: userId}})
+        if(!user || !user.refreshToken) throw new ForbiddenException("Acess Denied");
+
+        const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
+        if(!isValid) throw new ForbiddenException("Access Denied");
+
+        const tokens = await this.getToken(user.id, user.email);
+
+        await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+        return tokens;
     }
 }
