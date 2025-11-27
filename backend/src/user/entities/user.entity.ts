@@ -1,12 +1,12 @@
 import { Order } from "src/orders/entities/order.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
+import { Permission } from "src/permission/entity/permission.entity";
+import { BeforeInsert, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 
 @Entity()
 export class User {
 
     @PrimaryGeneratedColumn()
     id: number
-
 
     @Column({
         type: 'varchar',
@@ -48,4 +48,7 @@ export class User {
 
     @OneToMany(() => Order, (order) => order.user)
     orders: Order[]
+
+    @OneToMany(() => Permission, (perm) => perm.user)
+    permissions: Permission[]
 }

@@ -12,6 +12,7 @@ import { SizesModule } from './sizes/sizes.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderItemsModule } from './order-items/order-items.module';
 import { ProductVarientModule } from './product-varient/product-varient.module';
+import { PermissionModule } from './permission/permission.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ProductVarientModule } from './product-varient/product-varient.module';
     OrdersModule,
     OrderItemsModule,
     ProductVarientModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
