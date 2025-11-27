@@ -1,11 +1,11 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { PermissionService } from './permission.service';
 
 @Controller('permission')
 export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {}
 
-  @Post()
+  @Post(':userId')
   addAdmin(@Param('userId') userId: string){
     return this.permissionService.addAdmin(+userId)
   }
@@ -13,5 +13,10 @@ export class PermissionController {
   @Get(':userId')
   isAdmin(@Param('userId') userId: string) {
     return this.permissionService.isAdmin(+userId);
+  }
+  
+  @Delete(':userId')
+  deleteAdmin(@Param('userId') userId: string){
+    return this.permissionService.delete(+userId)
   }
 }

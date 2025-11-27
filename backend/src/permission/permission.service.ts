@@ -36,4 +36,14 @@ export class PermissionService {
         const count = await this.permRepo.count({where: {userId}});
         return count > 0;
     }
+
+    async delete(userId: number){
+        const exists = await this.permRepo.count({where: {userId}});
+
+        if(exists == 0 ) throw new ConflictException('User is not found');
+
+        await this.permRepo.delete({userId})
+
+        return {message: 'Admin removed'}
+    }
 }
