@@ -52,6 +52,12 @@ export class AuthService {
         return {user: {id: user.id, email: user.email}, ...tokens}
     }
 
+    async logout(userId: number){
+        await this.userRepo.update(userId, {refreshToken: null})
+
+        return { message: "Logged out"}
+    }
+
     async getToken(userId:number, email:string){
         const payload = {sub: userId, email}
 
