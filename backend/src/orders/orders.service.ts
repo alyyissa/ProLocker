@@ -3,7 +3,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { OrderItem } from 'src/order-items/entities/order-item.entity';
 import { ProductVarient } from 'src/product-varient/entities/product-varient.entity';
@@ -35,6 +35,23 @@ export class OrdersService {
       });
 
       if(!user) throw new NotFoundException('User not found');
+
+      const oneWeekAgo = new Date();
+
+      oneWeekAgo.setDate(oneWeekAgo.getDay() -7)
+
+      const recentOrderCount = await manager.count(Order,
+        {where: {
+          user: {id: user.id},
+          createdAt: MoreThanOrEqual(oneWeekAgo),
+        }},
+      )
+
+      if(recentOrderCount >= 3){
+        throw new BadRequestException(
+          'You cant order more than three times per week'
+        )
+      }
 
       const trackingNumber = this.generateTrackingNumber();
 

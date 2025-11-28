@@ -14,6 +14,7 @@ import { OrderItemsModule } from './order-items/order-items.module';
 import { ProductVarientModule } from './product-varient/product-varient.module';
 import { PermissionModule } from './permission/permission.module';
 import { AuthModule } from './auth/auth.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -28,6 +29,12 @@ import { AuthModule } from './auth/auth.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    ThrottlerModule.forRoot({
+      throttlers:[{
+        ttl: 3600,
+        limit: 5
+      },],
+    }), 
     UserModule,
     ProductsModule,
     CategoriesModule,

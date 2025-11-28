@@ -6,11 +6,17 @@ import { User } from 'src/user/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   providers: [
               AuthService,
-              JwtStrategy
+              JwtStrategy,
+              {
+                provide: APP_GUARD,
+                useClass: ThrottlerGuard
+              }
             ],
   controllers: [AuthController],
   imports: [TypeOrmModule.forFeature([User]),
