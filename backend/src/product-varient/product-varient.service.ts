@@ -127,5 +127,4 @@ export class ProductVarientService {
 
     await this.productService.refreshProductData(variant.product.id, manager)
   }
-  
 }

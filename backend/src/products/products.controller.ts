@@ -47,4 +47,12 @@ export class ProductsController {
   findOne(@Param('slug') slug: string) {
     return this.productsService.findOne(slug);
   }
+
+  @Post('active/:id')
+  toggleActive(
+    @Param('id') id: number,
+    @Body('isActive') isActive: boolean
+  ){
+    return this.productsService.toggleActive(id, isActive);
+  }
 }

@@ -211,7 +211,13 @@ export class OrdersService {
     if(!order) throw new NotFoundException('Order not found');
     if(!updateOrderDto.status) throw new InternalServerErrorException('no status provided')
 
-    return await this.datasource.transaction(async (manager) => {if(updateOrderDto.status === OrderStatus.DECLINED)
+    const oldStatus  = order.status
+
+    return await this.datasource.transaction(async (manager) => {
+      
+      if(updateOrderDto.status === OrderStatus.DECLINED &&
+        oldStatus !== OrderStatus.DECLINED
+      )
       {
         for (const item of order.orderItems){
           await this.productVarientService.restoreStock(
@@ -221,9 +227,22 @@ export class OrdersService {
           )
         }
       }
-      if(updateOrderDto.status) {
-      order.status = updateOrderDto.status;
+      
+      if(
+        updateOrderDto.status !== OrderStatus.DECLINED &&
+        oldStatus === OrderStatus.DECLINED
+      ){
+        for (const  itme of order.orderItems){
+        await this.productVarientService.reduceStock(
+          itme.productVarient.id,
+          itme.quantity,
+          manager
+        )
+        }
       }
+
+      order.status = updateOrderDto.status as any;
+
       return this.orderRepository.save(order)
     })
   }

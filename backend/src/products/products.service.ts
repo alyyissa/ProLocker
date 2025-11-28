@@ -37,6 +37,7 @@ export class ProductsService {
         price: createProductDto.price,
         quantity: createProductDto.quantity ?? 0,
         sale: createProductDto.sale ?? 0,
+        isActive: true,
         category,
         color,
         gender,
@@ -180,16 +181,6 @@ export class ProductsService {
     else await this.productRepository.save(product);
   }
 
-  // async restoreStockFromOrder(orderId: number){
-  //   const order = await this.orderService.findOne(orderId)
-
-  //   for(const item of order.orderItems){
-  //     item.productVarient.quantity += item.quantity;
-  //     await this.productVarientRepository.save(item.productVarient)
-  //     await this.refreshProductData(item.productVarient.productId)
-  //   }
-  // }
-
   async getMostSoldProducts(){
     return await  this.productRepository
       .createQueryBuilder('product')
@@ -207,5 +198,17 @@ export class ProductsService {
       .orderBy('totalSold', 'DESC')
       .limit(10)
       .getRawMany();
+  }
+
+  async toggleActive(productId: number, isActive: boolean){
+    const product = await this.productRepository.findOne({where: {id: productId}})
+    if(!product) throw new NotFoundException(`Product Not Found`);
+
+    product.isActive = isActive;
+    await this.productRepository.save(product);
+
+    return{
+      message: `${product.name} has been ${isActive ? 'activated': 'deactivated'}`
+    }
   }
 }

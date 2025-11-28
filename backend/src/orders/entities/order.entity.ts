@@ -51,7 +51,7 @@ export class Order {
     @Column()
     trackingNumber: string;
 
-    @ManyToOne(() => User, (user) => user.orders)
+    @ManyToOne(() => User, (user) => user.orders, {onDelete: 'CASCADE'})
     user: User
 
     @OneToMany(() => OrderItem, (orderItem) => orderItem.order, { cascade: true, onDelete: 'CASCADE' })

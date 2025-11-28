@@ -42,6 +42,9 @@ export class Product {
                 default: ProductStatus.Available
             })
     status: string;
+    
+    @Column({default: true})
+    isActive: boolean;
 
     @CreateDateColumn()
     createdAt: Date;
