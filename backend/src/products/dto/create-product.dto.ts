@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min, MinLength } from "class-validator";
+import { ArrayNotEmpty, ArrayUnique, IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, IsUrl, Max, Min, MinLength } from "class-validator";
 import { ProductStatus } from "../enums/product-status.enum";
 
 export class CreateProductDto {
@@ -19,6 +19,17 @@ export class CreateProductDto {
     @IsInt()
     @Min(0, {message: 'quantity must be at least 0'})
     quantity: number;
+
+    @IsOptional()
+    @IsUrl()
+    mainImage?: string
+
+    @IsOptional()
+    @IsArray()
+    @ArrayNotEmpty()
+    @ArrayUnique()
+    @IsUrl({}, { each: true })
+    galleryImages?: string[]; 
 
     @IsInt()
     @Min(0, {message: 'sale must be at least 0'})

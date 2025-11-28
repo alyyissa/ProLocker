@@ -1,8 +1,13 @@
-import { IsNotEmpty, IsString, Max, MaxLength } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, IsUrl, Max, MaxLength } from "class-validator";
 
 export class CreateCategoryDto {
     @IsString()
     @IsNotEmpty()
     @MaxLength(50)
     category: string
+
+    @IsNotEmpty()
+    @IsUrl()
+    mainImage?: string;
+
 }

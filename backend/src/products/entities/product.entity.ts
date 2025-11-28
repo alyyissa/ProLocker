@@ -1,7 +1,6 @@
 import { Category } from "src/categories/entities/category.entity";
 import { Color } from "src/colors/entities/color.entity";
 import { Gender } from "src/gender/entities/gender.entity";
-import { OrderItem } from "src/order-items/entities/order-item.entity";
 import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ProductStatus } from "../enums/product-status.enum";
 import { ProductVarient } from "src/product-varient/entities/product-varient.entity";
