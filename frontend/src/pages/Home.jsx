@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Preloader from '../components/preloader/Preloader'
+import Hero from '../components/home/Hero';
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -11,9 +12,7 @@ const Home = () => {
     <div className='h-full w-full'>
       <Preloader show={loading}/>
       {!loading && (
-        <div className="app-content">
-          <h1>My App is Loaded 🎉</h1>
-        </div>
+        <Hero />
       )}
     </div>
   )
