@@ -3,7 +3,6 @@ import './hero.css'
 const Hero = () => {
   return (
     <div className='h-screen bg-cocoprimary'>
-      asfasff
     </div>
   )
 }
