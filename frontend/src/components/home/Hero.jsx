@@ -64,13 +64,13 @@ const Hero = () => {
                 </motion.h1>
 
                 <motion.h2
-                  className="text-[40px] sm:text-[55px] md:text-[68px] font-bold uppercase text-background drop-shadow-md mt-4"
+                  className="text-[30px] sm:text-[45px] md:text-[68px] font-bold uppercase text-background drop-shadow-md"
                   initial="hidden"
                   animate="visible"
                   custom={0.5}
                   variants={captionVariants}
                 >
-                  2025 Collection
+                  Suitable for all tastes
                 </motion.h2>
 
                 <motion.div
@@ -80,11 +80,11 @@ const Hero = () => {
                   custom={1}
                   variants={captionVariants}
                 >
-                    <a href="/products"
-                      className="inline-flex items-center gap-3 px-6 py-3 bg-background text-cocoprimary font-semibold rounded-full shadow-lg hover:bg-white/80 transition duration-300">
-                      Shop Now
-                      <i className="fa-solid fa-arrow-right items-center pt-[3px] md:pt-[2px]"></i>
-                    </a>
+                  <a href="/products"
+                    className="inline-flex items-center gap-3 px-6 py-3 bg-background text-cocoprimary font-semibold rounded-full shadow-lg hover:bg-white/70 transition duration-300">
+                    Shop Now
+                    <i className="fa-solid fa-arrow-right items-center pt-[3px] md:pt-0.5"></i>
+                  </a>
                 </motion.div>
               </div>
             )}
@@ -99,7 +99,7 @@ const Hero = () => {
             className="w-full h-full object-cover md:hidden"
           />
           <img
-            src={assets.banner3}
+            src={assets.banner4}
             className="w-full h-full object-cover hidden md:block"
           />
 
@@ -126,7 +126,7 @@ const Hero = () => {
                 </motion.h1>
 
                 <motion.h2
-                  className="text-[40px] sm:text-[55px] md:text-[68px] font-bold uppercase text-cocoprimary md:text-background drop-shadow-md mt-4"
+                  className="text-[30px] sm:text-[45px] md:text-[68px] font-bold uppercase text-background drop-shadow-md"
                   initial="hidden"
                   animate="visible"
                   custom={0.5}
@@ -143,9 +143,9 @@ const Hero = () => {
                   variants={captionVariants}
                 >
                     <a href="/products"
-                      className="inline-flex items-center gap-3 px-6 py-3 bg-background text-cocoprimary font-semibold rounded-full shadow-lg hover:bg-white/80 transition duration-300">
+                      className="inline-flex items-center gap-3 px-6 py-3 bg-background text-cocoprimary font-semibold rounded-full shadow-lg hover:bg-white/70 transition duration-300">
                       Shop Now
-                      <i className="fa-solid fa-arrow-right items-center pt-[3px] md:pt-[2px]"></i>
+                      <i className="fa-solid fa-arrow-right items-center pt-[3px] md:pt-0.5"></i>
                     </a>
                 </motion.div>
               </div>
