@@ -19,7 +19,8 @@ const captionVariants = {
 const Hero = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   return (
-    <div className="w-full relative h-[600px] sm:h-[450px] md:h-[500px] lg:h-[600px]">
+
+    <div className="w-full relative h-screen z-10">
       <Swiper
         modules={[Autoplay, EffectFade]}
         effect="fade"
@@ -28,93 +29,133 @@ const Hero = () => {
         onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
         className="h-full w-full"
       >
+
         <SwiperSlide className="relative h-full">
+
           <img
-            src={assets.banner1}
-            alt="slide 1"
-            className="w-full h-full object-cover"
+            src={assets.mobileBanner2}
+            className="w-full h-full object-cover md:hidden"
+          />
+          <img
+            src={assets.banner3}
+            className="w-full h-full object-cover hidden md:block"
           />
 
-          {activeIndex === 0 && (
-            <div className="py-18 relative">
-              <motion.h1
-                className="text-[60px] sm:text-[75px] md:text-[95px] italic font-manustrial text-primary drop-shadow-md"
-                initial="hidden"
-                animate="visible"
-                custom={0.2}
-                variants={captionVariants}
-              >
-                Summer
-              </motion.h1>
+          <div
+            className="
+              absolute inset-0
+              flex
+              items-end md:items-center   /* bottom on mobile, center on desktop */
+              justify-center md:justify-start   /* center on mobile, left on desktop */
+              px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16
+              pb-10 md:pb-0     /* bottom spacing on mobile, none on desktop */
+            "
+          >
+            {activeIndex === 0 && (
+              <div>
+                <motion.h1
+                  className="text-[55px] sm:text-[75px] md:text-[95px] italic font-manustrial text-primary drop-shadow-md text-center md:text-start font-bold"
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.2}
+                  variants={captionVariants}
+                >
+                  PROLOCKER
+                </motion.h1>
 
-              <motion.h2
-                className="text-[68px] font-bold uppercase text-[#232323] drop-shadow-md mt-4"
-                initial="hidden"
-                animate="visible"
-                custom={0.5}
-                variants={captionVariants}
-              >
-                20015 collection
-              </motion.h2>
+                <motion.h2
+                  className="text-[40px] sm:text-[55px] md:text-[68px] font-bold uppercase text-background drop-shadow-md mt-4"
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.5}
+                  variants={captionVariants}
+                >
+                  2025 Collection
+                </motion.h2>
 
-              <motion.p
-                className="mt-4 text-[17px] font-bold uppercase text-[#232323]"
-                initial="hidden"
-                animate="visible"
-                custom={1}
-                variants={captionVariants}
-              >
-                get upto 50% offer for order over $499!
-              </motion.p>
-            </div>
-          )}
-        </SwiperSlide>
+                <motion.div
+                  className="mt-6 text-center md:text-start"
+                  initial="hidden"
+                  animate="visible"
+                  custom={1}
+                  variants={captionVariants}
+                >
+                    <a href="/products"
+                      className="inline-flex items-center gap-3 px-6 py-3 bg-background text-cocoprimary font-semibold rounded-full shadow-lg hover:bg-white/80 transition duration-300">
+                      Shop Now
+                      <i className="fa-solid fa-arrow-right items-center pt-[3px] md:pt-[2px]"></i>
+                    </a>
+                </motion.div>
+              </div>
+            )}
+          </div>
+      </SwiperSlide>
 
-        {/* Slide 2 */}
+
         <SwiperSlide className="relative h-full">
+
           <img
-            src={assets.banner2}
-            alt="slide 2"
-            className="w-full h-full object-cover"
+            src={assets.mobileBanner3}
+            className="w-full h-full object-cover md:hidden"
+          />
+          <img
+            src={assets.banner3}
+            className="w-full h-full object-cover hidden md:block"
           />
 
-          {activeIndex === 1 && (
-            <div className="absolute top-36 left-28">
-              <motion.h1
-                className="text-[95px] italic font-manustrial text-[#ff6766] drop-shadow-md"
-                initial="hidden"
-                animate="visible"
-                custom={0.2}
-                variants={captionVariants}
-              >
-                Summer
-              </motion.h1>
+          <div
+            className="
+              absolute inset-0
+              flex
+              items-end md:items-center
+              justify-center md:justify-start
+              px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16
+              pb-10 md:pb-0
+            "
+          >
+            {activeIndex === 1 && (
+              <div>
+                <motion.h1
+                  className="text-[55px] sm:text-[75px] md:text-[95px] italic font-manustrial text-primary drop-shadow-md text-center md:text-start font-bold"
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.2}
+                  variants={captionVariants}
+                >
+                  WINTER
+                </motion.h1>
 
-              <motion.h2
-                className="text-[68px] font-bold uppercase text-[#232323] drop-shadow-md mt-4"
-                initial="hidden"
-                animate="visible"
-                custom={0.5}
-                variants={captionVariants}
-              >
-                20015 collection
-              </motion.h2>
+                <motion.h2
+                  className="text-[40px] sm:text-[55px] md:text-[68px] font-bold uppercase text-cocoprimary md:text-background drop-shadow-md mt-4"
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.5}
+                  variants={captionVariants}
+                >
+                  2025 Collection
+                </motion.h2>
 
-              <motion.p
-                className="mt-4 text-[17px] font-bold uppercase text-[#232323]"
-                initial="hidden"
-                animate="visible"
-                custom={1}
-                variants={captionVariants}
-              >
-                get upto 50% offer for order over $499!
-              </motion.p>
-            </div>
-          )}
-        </SwiperSlide>
+                <motion.div
+                  className="mt-6 text-center md:text-start"
+                  initial="hidden"
+                  animate="visible"
+                  custom={1}
+                  variants={captionVariants}
+                >
+                    <a href="/products"
+                      className="inline-flex items-center gap-3 px-6 py-3 bg-background text-cocoprimary font-semibold rounded-full shadow-lg hover:bg-white/80 transition duration-300">
+                      Shop Now
+                      <i className="fa-solid fa-arrow-right items-center pt-[3px] md:pt-[2px]"></i>
+                    </a>
+                </motion.div>
+              </div>
+            )}
+          </div>
+      </SwiperSlide>
+
       </Swiper>
     </div>
-  )
+)
 }
 
 export default Hero
