@@ -1,14 +1,14 @@
 import React from 'react'
+import { assets } from '../assets/assets'
 
 const Footer = () => {
   return (
-    <footer className="bg-copriamry">
-        <div className="mx-auto w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 py-5">
+    <footer className="bg-cocoprimary">
+        <div className="mx-auto w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 py-5 text-background">
           <div className="md:flex md:justify-between">
             <div className="mb-6 md:mb-0">
                 <a href="https://flowbite.com/" className="flex items-center">
-                    <img src="https://flowbite.com/docs/images/logo.svg" className="h-7 me-3" alt="FlowBite Logo" />
-                    <span className="text-heading self-center text-2xl font-semibold whitespace-nowrap">Flowbite</span>
+                    <img src={assets.logo} className='w-60'/>
                 </a>
             </div>
             <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">

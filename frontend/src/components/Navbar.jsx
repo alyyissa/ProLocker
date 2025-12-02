@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {Link } from "react-router-dom"
+import { assets } from '../assets/assets';
 
 const placeholderTexts = [
   "What are you looking for?",
@@ -57,8 +58,8 @@ const Navbar = () => {
 
   return (
     <>
-      <div className={`w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 hover:bg-background fixed top-0 py-5 md:py-8 z-60 transition-colors duration-300
-        ${scrolled || open ? "bg-white" : "bg-transparent"}`}>
+      <div className={`w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 hover:bg-cocoprimary fixed top-0 py-5 md:py-8 z-60 transition-colors duration-300
+        ${scrolled || open ? "bg-cocoprimary" : "bg-transparent"}`}>
           <div className='flex flex-row items-center justify-between'>
             {/** open index */}
             <button onClick={() => setOpen(!open)} aria-label="Close menu" className='md:hidden'>
@@ -83,7 +84,7 @@ const Navbar = () => {
                 <li><Link to="/latest" onClick={() => setOpen(false)}>Latest Products</Link></li>
               </ul>
             </aside>
-            <img src="" alt="" />
+            <img src={assets.logo} className='w-60'/>
             <div className="relative text-gray-600 md:block hidden ">
               <input type="search" name="serch" placeholder={placeholder} className={`
                 pl-7 h-[45px] w-[400px] py-5 rounded-full text-md
@@ -103,13 +104,11 @@ const Navbar = () => {
             </div>
 
             <div className='flex flex-row items-center gap-5'>
-              <Link className="md:block hidden"><i className={`fa-solid fa-user fa-lg transition-colors duration-300  ${scrolled || open ? "text-cocoprimary" : "text-background"}`}></i></Link>
+              <Link className="md:block hidden"><i className={`fa-solid fa-user fa-lg transition-colors duration-300 text-background`}></i></Link>
               <Link>
-                <i className={`fa-solid fa-cart-shopping fa-lg transition-colors duration-300 
-                  ${scrolled || open ? "text-cocoprimary" : "text-background"}`}></i>
+                <i className={`fa-solid fa-cart-shopping fa-lg transition-colors duration-300 text-background`}></i>
                 
-                <span className={`relative font-semibold text-[0.7rem] -left-0.5 -bottom-[3px] transition-colors duration-300
-                  ${scrolled || open ? "text-cocoprimary" : "text-background"}`}>
+                <span className={`relative font-semibold text-[0.7rem] -left-0.5 -bottom-[3px] transition-colors duration-300 text-background`}>
                   0
                 </span>
               </Link>
@@ -119,7 +118,7 @@ const Navbar = () => {
 
           </div>
       </div>
-      <div className='w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 bg-transparent fixed top-0 pt-18 z-50 block md:hidden'>
+      <div className='w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 bg-transparent fixed top-0 pt-20 z-50 block md:hidden'>
           <input type="search" name="search" placeholder={placeholder} className="
             pl-7 h-[45px] w-full py-5 rounded-full text-md
             focus:outline-none
