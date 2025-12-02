@@ -64,7 +64,7 @@ const Hero = () => {
                 </motion.h1>
 
                 <motion.h2
-                  className="text-[30px] sm:text-[45px] md:text-[68px] font-bold uppercase text-background drop-shadow-md"
+                  className="text-[25px] sm:text-[45px] md:text-[68px] font-bold uppercase text-background drop-shadow-md"
                   initial="hidden"
                   animate="visible"
                   custom={0.5}
@@ -126,7 +126,7 @@ const Hero = () => {
                 </motion.h1>
 
                 <motion.h2
-                  className="text-[30px] sm:text-[45px] md:text-[68px] font-bold uppercase text-background drop-shadow-md"
+                  className="text-[25px] sm:text-[45px] md:text-[68px] font-bold uppercase text-background drop-shadow-md"
                   initial="hidden"
                   animate="visible"
                   custom={0.5}
