@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import {Link, useLocation } from "react-router-dom"
+import {Link, useLocation, useNavigate } from "react-router-dom"
 import { assets } from '../assets/assets';
+import { useAuth } from '../context/AuthContext';
 
 const placeholderTexts = [
   "What are you looking for?",
@@ -19,7 +20,18 @@ const Navbar = () => {
   const location = useLocation();
   const isHome = location.pathname === "/";
 
+  const {isLoggedIn} = useAuth();
+  const navigate = useNavigate()
 
+  const handleUserClick = () => {
+    if (isLoggedIn) {
+      navigate("/profile");
+      console.log("daddd")
+    } else {
+      navigate("/signup");
+      console.log("logout")
+    }
+  };
 
   // for the search bar loop
   useEffect(() => {
@@ -113,7 +125,11 @@ const Navbar = () => {
             </div>
 
             <div className='flex flex-row items-center gap-5'>
-              <Link className="md:block hidden"><i className={`fa-solid fa-user fa-lg transition-colors duration-300 text-background`}></i></Link>
+              <Link className="md:block hidden" to="#"
+  onClick={(e) => {
+    e.preventDefault(); // prevent Link from overriding navigate
+    handleUserClick();
+  }}><i className={`fa-solid fa-user fa-lg transition-colors duration-300 text-background`}></i></Link>
               <Link>
                 <i className={`fa-solid fa-cart-shopping fa-lg transition-colors duration-300 text-background`}></i>
                 

@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { signup } from "../../services/auth/authService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {toast} from 'react-toastify'
+import { useAuth } from "../../context/AuthContext";
 
 const Signup = () => {
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -10,6 +13,8 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -73,57 +78,67 @@ const Signup = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Validate form
-    const validationErrors = validateForm();
+  // Validate form
+  const validationErrors = validateForm();
+  
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    const firstErrorField = Object.keys(validationErrors)[0];
+    const element = document.getElementsByName(firstErrorField)[0];
+    if (element) element.focus();
+    return;
+  }
+
+  setLoading(true);
+
+  const {loginUser} = useAuth();
+  try {
+    const res = await signup({
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+      email: formData.email.trim(),
+      password: formData.password,
+    });
+
+    loginUser(res.user, res.accessToken, res.refreshToken)
+
+    toast.success(`Welcome, ${formData.firstName.trim()}! Your account has been created.`,{
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    })
+
+    // Redirect to home page
+    navigate("/");
+
+    // Reset form (optional)
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+    setErrors({});
+
+  } catch (err) {
+    console.error(err);
     
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      
-      // Focus on the first error field
-      const firstErrorField = Object.keys(validationErrors)[0];
-      const element = document.getElementsByName(firstErrorField)[0];
-      if (element) element.focus();
-      
-      return;
+    if (err.response?.data?.message?.toLowerCase().includes("email")) {
+      setErrors({ email: err.response.data.message });
+    } else {
+      alert(err.response?.data?.message || "Signup failed. Please try again.");
     }
+  } finally {
+    setLoading(false);
+  }
+};
 
-    setLoading(true);
-
-    try {
-      const res = await signup({
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        email: formData.email.trim(),
-        password: formData.password,
-      });
-      
-      alert("Signup successful! You can now log in.");
-
-      // Reset form
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
-      setErrors({});
-
-    } catch (err) {
-      console.error(err);
-      
-      // Handle specific API errors
-      if (err.response?.data?.message?.toLowerCase().includes("email")) {
-        setErrors({ email: err.response.data.message });
-      } else {
-        alert(err.response?.data?.message || "Signup failed. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Helper function to determine input class
   const getInputClass = (fieldName) => {
@@ -134,7 +149,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="h-[95dvh] flex items-center justify-center flex-col px-4">
+    <div className="h-screen flex items-center justify-center flex-col px-4 pt-28 ">
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full max-w-md">
         <div className="items-start">
           <h1 className="text-2xl mb-4 font-semibold ultra-regular">Signup</h1>

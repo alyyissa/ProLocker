@@ -13,7 +13,14 @@ async function bootstrap() {
       })
   )
   app.enableCors({
-    origin: 'http://localhost:5174',
+    origin: (origin, callback) => {
+      const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   })
   await app.listen(process.env.PORT ?? 3000);
