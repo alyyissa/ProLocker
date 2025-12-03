@@ -18,7 +18,7 @@ export class AuthService {
     async signup(signupDto: SignupDto){
         const exists = await this.userRepo.findOne({where: {email: signupDto.email}});
 
-        if(exists) throw new ConflictException('Wrong Cardentails');
+        if(exists) throw new ConflictException('Provide a correct email');
 
         const hashed = await bcrypt.hash(signupDto.password, 10);
 
@@ -40,16 +40,16 @@ export class AuthService {
 
     async login(loginDto: LoginDto){
         const user = await this.userRepo.findOne({where: {email: loginDto.email}})
-        if(!user) throw new NotFoundException('Wrong Cardintails')
+        if(!user) throw new NotFoundException('Email or Password is wrong')
 
         const valid = await bcrypt.compare(loginDto.password, user.password)
-        if(!valid) throw new NotFoundException('Wrong Cardintails')
+        if(!valid) throw new NotFoundException('Email or Password is wrong')
 
         const tokens = await this.getToken(user.id, user.email)
 
         await this.updateRefreshToken(user.id, tokens.refreshToken)
 
-        return {user: {id: user.id, email: user.email}, ...tokens}
+        return {user: {id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName}, ...tokens}
     }
 
     async logout(userId: number){
