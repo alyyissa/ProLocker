@@ -16,6 +16,9 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  const [isHome, setIsHome] = useState(true);
+
+  
 
   // for the search bar loop
   useEffect(() => {

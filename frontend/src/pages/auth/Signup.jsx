@@ -21,7 +21,6 @@ const Signup = () => {
 
     try {
       const res = await signup({ firstName, lastName, email, password });
-      console.log("Signup response:", res);
       alert("Signup successful! You can now log in.");
 
       setFirstName("");
@@ -39,17 +38,17 @@ const Signup = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center flex-col">
-      <h1 className="text-2xl mb-4">Signup</h1>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-80">
-
+    <div className="h-[80dvh] flex items-center justify-center flex-col px-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full max-w-md">
+        <div className="items-start">
+          <h1 className="text-2xl mb-4 font-semibold">Signup</h1>
+        </div>
         <input
           type="text"
           placeholder="First Name"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          className="border px-2 py-1 rounded"
+          className="field-input"
           required
         />
 
@@ -58,7 +57,7 @@ const Signup = () => {
           placeholder="Last Name"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          className="border px-2 py-1 rounded"
+          className="field-input"
           required
         />
 
@@ -67,7 +66,7 @@ const Signup = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border px-2 py-1 rounded"
+          className="field-input"
           required
         />
 
@@ -76,7 +75,7 @@ const Signup = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border px-2 py-1 rounded"
+          className="field-input"
           required
         />
 
@@ -85,13 +84,13 @@ const Signup = () => {
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="border px-2 py-1 rounded"
+          className="field-input"
           required
         />
 
         <button
           type="submit"
-          className="bg-primary text-white py-2 rounded mt-2"
+          className="bg-black text-white py-2 rounded mt-2 hover:bg-gray-900 transition"
           disabled={loading}
         >
           {loading ? "Signing up..." : "Signup"}

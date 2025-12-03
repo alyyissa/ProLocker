@@ -45,10 +45,10 @@ const Hero = () => {
             className="
               absolute inset-0
               flex
-              items-end md:items-center   /* bottom on mobile, center on desktop */
-              justify-center md:justify-start   /* center on mobile, left on desktop */
+              items-end md:items-center
+              justify-center md:justify-start
               px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16
-              pb-10 md:pb-0     /* bottom spacing on mobile, none on desktop */
+              pb-10 md:pb-0
             "
           >
             {activeIndex === 0 && (

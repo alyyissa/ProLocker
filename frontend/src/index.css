@@ -7,3 +7,26 @@
     --color-coprimary: #000000;
     --color-cocoprimary:#343436;
 }
+
+.field-input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #111;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  background-color: #fff;
+}
+
+.field-input:focus {
+  border-color: #000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
+.ultra-regular {
+  font-family: "Ultra", serif;
+  font-weight: 400;
+  font-style: normal;
+}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { login } from '../../services/auth/authService'
+import { assets } from '../../assets/assets'
 
 const Login = () => {
     const [email, setEmail] = useState("")
@@ -21,31 +22,34 @@ const Login = () => {
         }
     }
     return (
-        <div className='h-screen py-50 flex items-center justify-center flex-col'>
-            <p>Here you can logIn</p>
-            <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-                <input
-                    type="email"
-                    placeholder='Email'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className='border px-2 py-1'
-                />
-                <input
-                    type="password"
-                    placeholder='Password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className='border px-2 py-1'
-                />
-                <button
-                type="submit"
-                className='bg-primary text-cocoprimary py-2 rounded'
-                >
-                    Login
-                </button>
-            </form>
-        </div>
+        <>
+            <div className='py-50 flex items-center justify-center flex-col'>
+                
+                <p>Here you can logIn</p>
+                <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+                    <input
+                        type="email"
+                        placeholder='Email'
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className='border px-2 py-1'
+                    />
+                    <input
+                        type="password"
+                        placeholder='Password'
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className='border px-2 py-1'
+                    />
+                    <button
+                    type="submit"
+                    className='bg-primary text-cocoprimary py-2 rounded'
+                    >
+                        Login
+                    </button>
+                </form>
+            </div>
+        </>
     )
 }
 
