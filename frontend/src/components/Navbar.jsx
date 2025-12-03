@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {Link } from "react-router-dom"
+import {Link, useLocation } from "react-router-dom"
 import { assets } from '../assets/assets';
 
 const placeholderTexts = [
@@ -16,9 +16,10 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const [isHome, setIsHome] = useState(true);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
-  
+
 
   // for the search bar loop
   useEffect(() => {
@@ -62,7 +63,7 @@ const Navbar = () => {
   return (
     <>
       <div className={`w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 hover:bg-cocoprimary fixed top-0 py-5 md:py-8 z-60 transition-colors duration-300
-        ${scrolled || open ? "bg-cocoprimary" : "bg-transparent"}`}>
+        ${!isHome || scrolled || open ? "bg-cocoprimary" : "bg-transparent"}`}>
           <div className='flex flex-row items-center justify-between'>
             <button onClick={() => setOpen(!open)} aria-label="Close menu" className='md:hidden'>
                   <i className="fa-solid fa-bars text-xl cursor-pointer text-background"></i>
@@ -126,16 +127,22 @@ const Navbar = () => {
 
           </div>
       </div>
-      <div className='w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 bg-transparent fixed top-0 pt-20 z-50 block md:hidden'>
-          <input type="search" name="search" placeholder={placeholder} className="
-            pl-7 h-[45px] w-full py-5 rounded-full text-md
-            focus:outline-none
-            bg-transparent backdrop-blur-md
-            text-background
-            placeholder-gray-300
-            border border-gray-300"
+      {isHome && (
+        <div className='w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 bg-transparent fixed top-0 pt-20 z-50 block md:hidden'>
+          <input
+            type="search"
+            name="search"
+            placeholder={placeholder}
+            className="
+              pl-7 h-[45px] w-full py-5 rounded-full text-md
+              focus:outline-none
+              bg-transparent backdrop-blur-md
+              text-background
+              placeholder-gray-300
+              border border-gray-300"
           />
-      </div>
+        </div>
+      )}
     </>
   )
 }
