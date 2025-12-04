@@ -23,17 +23,16 @@ const MainLayout = () => {
   }, [pathname]);
 
   return (
-    <>
-      {loading && <Preloader show={true} />}
+      
 
       <>
+        {loading && <Preloader show={true} />}
         <Navbar />
         <main key={pathname}>
           <Outlet />
         </main>
         <Footer />
       </>
-    </>
   );
 };
 

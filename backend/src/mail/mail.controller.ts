@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { MailService } from './mail.service'; // adjust the path
 
 @Controller('mail')
@@ -11,4 +11,5 @@ export class MailController {
     await this.mailService.sendVerificationEmail('alyy.issa01@gmail.com', code); // replace with your email
     return { message: 'Email sent', code };
   }
+
 }

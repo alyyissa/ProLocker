@@ -28,4 +28,6 @@ export class MailService {
 
     return await this.transporter.sendMail(mailOptions);
   }
+
+  
 }

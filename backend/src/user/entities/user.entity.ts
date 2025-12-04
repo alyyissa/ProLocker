@@ -37,6 +37,13 @@ export class User {
     })
     password: string;
 
+    
+    @Column({ default: 0 })
+    resendCount: number;
+
+    @Column({ type: 'datetime', nullable: true })
+    lastResendAt: Date | null;
+
     @Column({type: 'varchar', length:200 ,nullable: true})
     refreshToken: string | null
     
@@ -60,4 +67,7 @@ export class User {
 
     @Column({ type: 'varchar', length: 6, nullable: true })
     verificationCode: string | null;
+
+    @Column({ nullable: true, type: 'datetime' })
+    codeGeneratedAt: Date | null;
 }

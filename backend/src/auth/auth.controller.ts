@@ -35,4 +35,14 @@ export class AuthController {
         return this.authService.logout(req.user.sub)
     }
 
+    @Post('resend-code')
+    async resendCode(@Body('email') email: string) {
+        return this.authService.resendVerificationCode(email);
+    }
+
+    @Post('verify-email')
+    async verifyEmail(@Body() body: { email: string; code: string }) {
+    return this.authService.verifyEmail(body.email, body.code);
+    }
+
 }
