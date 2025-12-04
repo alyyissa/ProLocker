@@ -6,6 +6,10 @@ import { toast } from 'react-toastify'
 
 const Login = () => {
   const { loginUser } = useAuth()
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -135,11 +139,11 @@ const Login = () => {
             ? `Wait ${Math.floor(throttleTime / 60)}:${throttleTime % 60 < 10 ? '0' : ''}${throttleTime % 60} min`
             : "Login"}
           </button>
+          <Link to="/signup" className="block w-full h-full">
           <button className="w-full bg-background text-primary border border-primary py-2 rounded mt-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:shadow-md hover:bg-primary/5 ">
-            <Link to="/signup" className="block w-full h-full">
-              Signup
-            </Link>
+            Signup
           </button>
+          </Link>
         </div>
       </form>
     </div>

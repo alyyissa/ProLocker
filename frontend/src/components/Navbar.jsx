@@ -105,7 +105,9 @@ const Navbar = () => {
               className="fixed inset-0 bg-black/50 z-50 md:hidden"
               ></div>
             )}
-            <img src={assets.logo} className='w-60'/>
+            <Link to={"/"}>
+              <img src={assets.logo} className='w-60'/>
+            </Link>
             <div className="relative text-gray-600 md:block hidden ">
               <input type="search" name="serch" placeholder={placeholder} className={`
                 pl-7 h-[45px] w-[400px] py-5 rounded-full text-md

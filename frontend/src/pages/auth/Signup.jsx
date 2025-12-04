@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { signup } from "../../services/auth/authService";
 import { Link, useNavigate } from "react-router-dom";
 import {toast} from 'react-toastify'
@@ -6,7 +6,12 @@ import { useAuth } from "../../context/AuthContext";
 
 const Signup = () => {
   const {loginUser} = useAuth();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -247,11 +252,11 @@ const Signup = () => {
           {loading ? "Signing up..." : "Signup"}
           </button>
         
-          <button className="w-full bg-background text-primary border border-primary py-2 rounded mt-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:shadow-md hover:bg-primary/5 ">
-            <Link to="/login" className="block w-full h-full">
+          <Link to="/login" className="block w-full h-full">
+            <button className="w-full bg-background text-primary border border-primary py-2 rounded mt-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:shadow-md hover:bg-primary/5 ">
               Login
-            </Link>
-          </button>
+            </button>
+          </Link>
         </div>
       </form>
     </div>

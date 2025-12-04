@@ -4,7 +4,11 @@ import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
   const { logoutUser } = useAuth();
-
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const handleLogout = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");

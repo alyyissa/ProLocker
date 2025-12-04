@@ -1,30 +1,38 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Preloader from "../Preloader/Preloader";
 
 const MainLayout = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const { pathname } = useLocation();
+
+  const loaderRoutes = ["/",]; 
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000); // loader duration
-    return () => clearTimeout(timer);
-  }, []);
+    if (loaderRoutes.includes(pathname)) {
+      setLoading(true);
+      window.scrollTo(0, 0);
+
+      const timer = setTimeout(() => setLoading(false), 1200);
+      return () => clearTimeout(timer);
+    } else {
+      setLoading(false);
+    }
+  }, [pathname]);
 
   return (
     <>
-      <Preloader show={loading} />
+      {loading && <Preloader show={true} />}
 
-      {!loading && (
-        <>
-          <Navbar />
-          <main>
-            <Outlet />
-          </main>
-          <Footer />
-        </>
-      )}
+      <>
+        <Navbar />
+        <main key={pathname}>
+          <Outlet />
+        </main>
+        <Footer />
+      </>
     </>
   );
 };
