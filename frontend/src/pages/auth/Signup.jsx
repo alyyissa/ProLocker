@@ -5,7 +5,8 @@ import {toast} from 'react-toastify'
 import { useAuth } from "../../context/AuthContext";
 
 const Signup = () => {
-
+  const {loginUser} = useAuth();
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -93,7 +94,7 @@ const Signup = () => {
 
   setLoading(true);
 
-  const {loginUser} = useAuth();
+  
   try {
     const res = await signup({
       firstName: formData.firstName.trim(),

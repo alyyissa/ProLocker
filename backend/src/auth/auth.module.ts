@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   providers: [
@@ -27,7 +28,8 @@ import { ThrottlerGuard } from '@nestjs/throttler';
               secret: config.get<string>('JWT_ACCESS_SECRET'),
               signOptions: {expiresIn: config.get<string>('JWT_ACCESS_EXPIRES') as any}
             })
-            })
-]
+            }),
+            MailModule
+            ]
 })
 export class AuthModule {}

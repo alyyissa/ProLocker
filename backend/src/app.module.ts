@@ -15,6 +15,7 @@ import { ProductVarientModule } from './product-varient/product-varient.module';
 import { PermissionModule } from './permission/permission.module';
 import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     ProductVarientModule,
     PermissionModule,
     AuthModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

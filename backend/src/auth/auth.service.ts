@@ -6,36 +6,39 @@ import { Repository } from 'typeorm';
 import { SignupDto } from './dto/signup.dto';
 import * as bcrypt from 'bcryptjs'
 import { LoginDto } from './dto/login.dto';
+import { generateVerificationCode } from './utils';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
-        private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private readonly mailService: MailService
     ){}
 
     async signup(signupDto: SignupDto){
         const exists = await this.userRepo.findOne({where: {email: signupDto.email}});
-
-        if(exists) throw new ConflictException('Provide a correct email');
+        if(exists) throw new ConflictException('Email already exists');
 
         const hashed = await bcrypt.hash(signupDto.password, 10);
+        const code = generateVerificationCode();
 
         const newUser = this.userRepo.create({
             firstName: signupDto.firstName,
             lastName: signupDto.lastName,
             email: signupDto.email,
-            password: hashed
-        })
+            password: hashed,
+            verificationCode: code,
+            isVerified: false
+        });
 
-        await this.userRepo.save(newUser)
+        await this.userRepo.save(newUser);
 
-        const tokens = await this.getToken(newUser.id, newUser.email)
+        await this.mailService.sendVerificationEmail(newUser.email, code);
 
-        await this.updateRefreshToken(newUser.id, tokens.refreshToken)
-
-        return {user: {id: newUser.id, email: newUser.email}, ...tokens}
+        return { message: "Signup successful. Check your email for verification code." };
     }
 
     async login(loginDto: LoginDto){
@@ -93,5 +96,22 @@ export class AuthService {
         await this.updateRefreshToken(user.id, tokens.refreshToken);
 
         return tokens;
+    }
+
+    async verifyEmail(email: string, code: string){
+        const user = await this.userRepo.findOne({where: {email}});
+        if(!user) throw new NotFoundException("User not found");
+        if(user.isVerified) return { message: "Already verified" };
+        if(user.verificationCode !== code) throw new ForbiddenException("Invalid code");
+
+        user.isVerified = true;
+        user.verificationCode = null;
+        await this.userRepo.save(user);
+
+        // generate tokens
+        const tokens = await this.getToken(user.id, user.email);
+        await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+        return { user: {id: user.id, email: user.email}, ...tokens };
     }
 }

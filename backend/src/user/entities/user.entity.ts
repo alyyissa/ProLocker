@@ -54,4 +54,10 @@ export class User {
 
     @OneToMany(() => Permission, (perm) => perm.user)
     permissions: Permission[]
+
+    @Column({ default: false })
+    isVerified: boolean;
+
+    @Column({ type: 'varchar', length: 6, nullable: true })
+    verificationCode: string | null;
 }

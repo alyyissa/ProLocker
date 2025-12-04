@@ -5,13 +5,14 @@ import { useAuth } from '../../context/AuthContext'
 import { toast } from 'react-toastify'
 
 const Login = () => {
+  const { loginUser } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
 
   const navigate = useNavigate()
-  const { loginUser } = useAuth()
+  
 
   const [throttleTime, setThrottleTime] = useState(0);
   useEffect(() => {
