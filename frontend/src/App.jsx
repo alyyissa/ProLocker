@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Profile from './pages/auth/Profile'
 import AOS from 'aos'
+import GuestOnly from './pages/auth/GuestOnly'
 
 function App() {
   useEffect(() =>{
@@ -24,8 +25,16 @@ function App() {
     <Routes>
       <Route element={<MainLayout/>}>
         <Route path='/' element={<Home/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/signup' element={<Signup />}/>
+        <Route path='/login' element={
+          <GuestOnly>
+            <Login/>
+          </GuestOnly>
+          }/>
+        <Route path='/signup' element={
+          <GuestOnly>
+            <Signup/>
+          </GuestOnly>
+        }/>
         <Route path='/profile' element={<Profile />}/>
       </Route>
 

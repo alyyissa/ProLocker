@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext';
 
 
 const Profile = () => {
   const { logoutUser } = useAuth();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

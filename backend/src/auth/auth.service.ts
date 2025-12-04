@@ -107,34 +107,45 @@ export class AuthService {
     }
 
     async verifyEmail(email: string, code: string) {
-        const user = await this.userRepo.findOne({ where: { email } });
-        if (!user) throw new NotFoundException('User not found');
+    const user = await this.userRepo.findOne({ where: { email } });
 
-        if (!user.verificationCode || !user.codeGeneratedAt)
-            throw new BadRequestException('No verification code found, request a new one');
-
-        const now = new Date();
-        const codeAgeMs = now.getTime() - user.codeGeneratedAt.getTime();
-        const EXPIRATION_MS = 5 * 60 * 1000;
-
-        if (codeAgeMs > EXPIRATION_MS) {
-            throw new BadRequestException('Verification code expired, try again');
-        }
-
-        if (user.verificationCode !== code) {
-            throw new BadRequestException('Incorrect verification code');
-        }
-
-        user.isVerified = true;
-        user.verificationCode = null;
-        user.codeGeneratedAt = null;
-        user.resendCount = 0;
-        user.lastResendAt = null;
-
-        await this.userRepo.save(user);
-
-        return { message: 'Email verified successfully' };
+    if (!user || user.verificationCode !== code) {
+        throw new BadRequestException("Invalid verification code");
     }
+
+    const now = new Date();
+    if (!user.codeGeneratedAt) {
+    throw new BadRequestException("No verification code found");
+}
+    const expiryTime = new Date(user.codeGeneratedAt);
+    expiryTime.setMinutes(expiryTime.getMinutes() + 10);
+
+    if (now > expiryTime) {
+        throw new BadRequestException("Code expired, try again");
+    }
+
+    // mark user as verified
+    user.isVerified = true;
+    user.verificationCode = null;
+    user.codeGeneratedAt = null;
+    await this.userRepo.save(user);
+
+    // generate tokens
+    const tokens = await this.getToken(user.id, user.email);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    return {
+        message: "Account verified successfully",
+        user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        },
+        ...tokens
+    };
+}
+
 
 
 
