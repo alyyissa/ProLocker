@@ -8,13 +8,12 @@ export class MailService {
 
   constructor(private configService: ConfigService) {
     this.transporter = nodemailer.createTransport({
-        service: 'hotmail',
-      host: 'smtp-mail.outlook.com', // Hotmail/Outlook SMTP
-      port: 587,                  // TLS
-      secure: false,              // must be false for port 587
+      service: 'gmail',
+      port: 587,
+      secure: false,
       auth: {
         user: this.configService.get<string>('EMAIL_USER'),
-        pass: this.configService.get<string>('EMAIL_PASS'), // app password
+        pass: this.configService.get<string>('EMAIL_PASS'),
       },
     });
   }
