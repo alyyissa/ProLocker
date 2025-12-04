@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Home from './pages/Home'
 import { Route, Routes } from 'react-router-dom'
 import MainLayout from './components/layouts/MainLayout'
@@ -8,9 +8,17 @@ import Signup from './pages/auth/Signup'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Profile from './pages/auth/Profile'
+import AOS from 'aos'
 
 function App() {
-
+  useEffect(() =>{
+    AOS.init({
+      duration: 800,
+      easing: 'ease-out',
+      once: false,
+      mirror: false,
+    })
+  }, [])
   return (
     <>
     <Routes>

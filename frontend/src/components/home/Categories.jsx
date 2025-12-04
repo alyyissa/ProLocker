@@ -32,6 +32,8 @@ const Categories = () => {
                 <div
                 key={cat.id}
                 className="border border-primary rounded-xl p-4 text-center shadow-md hover:scale-105 transition"
+                data-aos ="fade-up"
+                data-aos-delay='300'
                 >
                     {/* <img
                     src={cat.imageUrl}
