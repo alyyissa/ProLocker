@@ -8,7 +8,7 @@ const MainLayout = () => {
   const [loading, setLoading] = useState(false);
   const { pathname } = useLocation();
 
-  const loaderRoutes = ["/",]; 
+  const loaderRoutes = ["/", "/products"]; 
 
   useEffect(() => {
     if (loaderRoutes.includes(pathname)) {
@@ -23,15 +23,13 @@ const MainLayout = () => {
   }, [pathname]);
 
   return (
-      
-
       <>
         {loading && <Preloader show={true} />}
-        <Navbar />
         <main key={pathname}>
+        <Navbar />
           <Outlet />
-        </main>
         <Footer />
+        </main>
       </>
   );
 };

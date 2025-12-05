@@ -10,6 +10,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import Profile from './pages/auth/Profile'
 import AOS from 'aos'
 import GuestOnly from './pages/auth/GuestOnly'
+import ProductsLayout from './components/layouts/ProductsLayout'
+import Products from './components/Products'
 
 function App() {
   useEffect(() =>{
@@ -36,6 +38,9 @@ function App() {
           </GuestOnly>
         }/>
         <Route path='/profile' element={<Profile />}/>
+          <Route element={<ProductsLayout/>}>
+            <Route path='/products' element={<Products />}/>
+          </Route>
       </Route>
 
     </Routes>
