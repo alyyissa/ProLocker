@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {Link, useLocation, useNavigate } from "react-router-dom"
 import { assets } from '../assets/assets';
 import { useAuth } from '../context/AuthContext';
+import SideCart from './cart/SideCart';
 
 const placeholderTexts = [
   "What are you looking for?",
@@ -13,6 +14,7 @@ const Navbar = () => {
   const [placeholder, setPlaceholder] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
+  const [openCart, setOpenCart] = useState(false)
 
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -32,6 +34,10 @@ const Navbar = () => {
       console.log("logout")
     }
   };
+
+  const handleCart = () => {
+    setOpenCart(!openCart)
+  }
 
   // for the search bar loop
   useEffect(() => {
@@ -128,39 +134,37 @@ const Navbar = () => {
 
             <div className='flex flex-row items-center gap-5'>
               <Link className="md:block hidden" to="#"
-  onClick={(e) => {
-    e.preventDefault(); // prevent Link from overriding navigate
-    handleUserClick();
-  }}><i className={`fa-solid fa-user fa-lg transition-colors duration-300 text-background`}></i></Link>
-              <Link>
-                <i className={`fa-solid fa-cart-shopping fa-lg transition-colors duration-300 text-background`}></i>
-                
-                <span className={`relative font-semibold text-[0.7rem] -left-0.5 -bottom-[3px] transition-colors duration-300 text-background`}>
-                  0
-                </span>
-              </Link>
-            </div>
+              onClick={(e) => {
+                e.preventDefault(); // prevent Link from overriding navigate
+                handleUserClick();
+              }}><i className={`fa-solid fa-user fa-lg transition-colors duration-300 text-background`}></i></Link>
+                      <Link onClick={(e) => {e.preventDefault(); handleCart()}}>
+                        <i className={`fa-solid fa-cart-shopping fa-lg transition-colors duration-300 text-background`}></i>
+                        
+                        <span className={`relative font-semibold text-[0.7rem] -left-0.5 -bottom-[3px] transition-colors duration-300 text-background`}>
+                          0
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+              </div>
+        {isHome && (
+          <div className='w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 bg-transparent fixed top-0 pt-20 z-50 block md:hidden'>
+            <input
+              type="search"
+              name="search"
+              placeholder={placeholder}
+              className="
+                pl-7 h-[45px] w-full py-5 rounded-full text-md
+                focus:outline-none
+                bg-transparent backdrop-blur-md
+                text-background
+                placeholder-gray-300
+                border border-gray-300"
+            />
           </div>
-          <div>
-
-          </div>
-      </div>
-      {isHome && (
-        <div className='w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 bg-transparent fixed top-0 pt-20 z-50 block md:hidden'>
-          <input
-            type="search"
-            name="search"
-            placeholder={placeholder}
-            className="
-              pl-7 h-[45px] w-full py-5 rounded-full text-md
-              focus:outline-none
-              bg-transparent backdrop-blur-md
-              text-background
-              placeholder-gray-300
-              border border-gray-300"
-          />
-        </div>
-      )}
+        )}
+        {openCart && <SideCart show={openCart} onClose= {() => setOpenCart(false)}/>}
     </>
   )
 }
