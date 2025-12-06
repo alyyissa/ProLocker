@@ -68,7 +68,7 @@ export class ProductsService {
     }
 
     if (filters?.gender) query.andWhere('gender.id = :gender', { gender: filters.gender });
-    if (filters?.category) query.andWhere('category.name = :category', { category: filters.category });
+    if (filters?.category) query.andWhere('category.category = :category', { category: filters.category });
     if (filters?.color) query.andWhere('color.color = :color', { color: filters.color });
 
     query.skip((page - 1) * limit).take(limit);

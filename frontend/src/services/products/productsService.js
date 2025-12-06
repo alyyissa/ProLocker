@@ -1,8 +1,9 @@
 import api from '../api'
 
-export const getProducts = async (page = 1, limit = 12) =>{
+export const getProducts = async (filters= {} ,page = 1, limit = 12) =>{
+    const params = {...filters, page, limit}
     const response = await api.get("/products", {
-        params: {page, limit}
+        params
     })
     return response.data
 }

@@ -28,7 +28,7 @@ export class SizesService {
   }
 
   findAll() {
-    return `This action returns all sizes`;
+    return this.sizeRepository.find()
   }
 
   async findOne(id: number): Promise<Size>{

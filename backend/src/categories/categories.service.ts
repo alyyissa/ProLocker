@@ -4,13 +4,18 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm';
+import { Product } from 'src/products/entities/product.entity';
+import { ProductsService } from 'src/products/products.service';
 
 @Injectable()
 export class CategoriesService {
 
   constructor(
     @InjectRepository(Category)
-    private categoryRepository: Repository<Category>
+    private categoryRepository: Repository<Category>,
+
+    @InjectRepository(Product)
+    private  productRepository: Repository<Product>
   ){}
 
   public async create(createCategoryDto: CreateCategoryDto) {
@@ -39,8 +44,24 @@ export class CategoriesService {
   }
 
   async findAll() {
-    return await this.categoryRepository.find();
-  }
+  const categories = await this.categoryRepository.find();
+
+  // Count products for each category without loading product data
+  const categoriesWithQuantity = await Promise.all(
+    categories.map(async (cat) => {
+      const count = await this.productRepository.count({
+        where: { category: { id: cat.id } },
+      });
+
+      return {
+        ...cat,
+        quantity: count
+      };
+    })
+  );
+
+  return categoriesWithQuantity;
+}
 
   async findOne(id: number): Promise<Category> {
     const category = await this.categoryRepository.findOne({ where: {id} });
