@@ -9,7 +9,7 @@ const FilterPanel = ({ title, children, defaultOpen = true }) => {
   return (
     <div className="border border-gray-200 rounded mb-4 overflow-hidden">
       <div
-        className="bg-gray-100 px-4 py-2 cursor-pointer flex justify-between items-center"
+        className="bg-gray-200 px-4 py-2 cursor-pointer flex justify-between items-center"
         onClick={() => setOpen(!open)}
       >
         <h4 className="font-semibold text-sm">{title}</h4>

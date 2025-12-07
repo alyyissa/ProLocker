@@ -55,16 +55,24 @@ const Products = () => {
         </div>
         <div className="flex-1">
           {/* Mobile Filters Button */}
-          <button
-            className="lg:hidden w-full bg-cocoprimary text-white py-3 rounded-md font-medium mb-4"
-            onClick={() => setShowFilters(true)}
-          >
-            Filters
-          </button>
+          <div className="w-full flex items-center justify-between mb-4 lg:hidden">
+            <button
+              className=" bg-cocoprimary text-white py-2 px-4 rounded-md font-medium"
+              onClick={() => setShowFilters(true)}
+            >
+              Filters
+            </button>
+            <p className="text-gray-700 text-sm">
+              Showing {dummyProducts.length} products
+            </p>
+
+            {/* <div className="hidden md:flex gap-2">
+            </div> */}
+          </div>
           {/* Overlay */}
           <div
             className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300
-        ${showFilters ? "opacity-100 visible" : "opacity-0 invisible"}`}
+            ${showFilters ? "opacity-100 visible" : "opacity-0 invisible"}`}
             onClick={() => setShowFilters(false)}
           ></div>
           {/* Slide Filters */}
