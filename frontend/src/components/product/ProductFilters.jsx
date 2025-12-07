@@ -13,7 +13,7 @@ const FilterPanel = ({ title, children, defaultOpen = true }) => {
         onClick={() => setOpen(!open)}
       >
         <h4 className="font-semibold text-sm">{title}</h4>
-        <span className=' text-background font-bold bg-primary'>{open ? "−" : "+"}</span>
+        <span className=' text-cocoprimary'>{open ? "−" : "+"}</span>
       </div>
       {open && <div className="p-4">{children}</div>}
     </div>
@@ -38,7 +38,7 @@ const ProductFilters = ({filters, setFilters}) => {
         setFilters (prev => ({...prev, [key]: value}))
     }
    return (
-    <aside className="w-60 hidden md:block">
+    <aside className="w-full">
       {/* Categories */}
       <FilterPanel title="Categories" defaultOpen={true}>
         <ul>
