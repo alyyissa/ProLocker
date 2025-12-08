@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const SideCart = ({ show, onClose }) => {
   const [cartProducts, setCartProducts] = useState([
@@ -137,9 +138,11 @@ const SideCart = ({ show, onClose }) => {
             <p className="text-background font-medium mb-2">
               Subtotal: ${subtotal}
             </p>
-            <button className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 cursor-pointer">
-              Checkout
-            </button>
+            <Link to={'/cart'}>
+              <button className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 cursor-pointer">
+                Checkout
+              </button>
+            </Link>
             <button
               onClick={onClose}
               className="w-full bg-gray-300 text-gray-800 py-2 rounded-md hover:bg-gray-400 cursor-pointer"

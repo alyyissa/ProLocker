@@ -56,16 +56,7 @@ useEffect(() => {
       dummyItems.forEach(item => addToCart(item, item.qty));
     }
   }, []);
-
-  const handleIncrement = (item) => {
-    addToCart(item, 1);
-  };
-
-  const handleDecrement = (item) => {
-    decrementQty(item.id);
-  };
-
-
+  
   if (cart.length === 0)
     return (
       <section className="bg-white flex justify-center items-center md:py-16 h-auto w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16">

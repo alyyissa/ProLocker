@@ -11,15 +11,6 @@ export class CreateProductDto {
     @IsInt()
     price: number;
 
-    @IsNotEmpty({message: 'price after sale should not be empty'})
-    @IsInt()
-    priceAfterSale: number;
-
-    @IsNotEmpty({message: 'quantity should not be empty'})
-    @IsInt()
-    @Min(0, {message: 'quantity must be at least 0'})
-    quantity: number;
-
     @IsOptional()
     @IsUrl()
     mainImage?: string

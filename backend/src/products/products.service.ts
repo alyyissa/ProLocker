@@ -30,12 +30,23 @@ export class ProductsService {
     const gender = await this.genderService.findOne(createProductDto.genderId);
     if (!gender) throw new NotFoundException('Gender not found');
 
-    const slug = createProductDto.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+    let baseSlug = createProductDto.name
+      .toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/[^\w-]+/g, '');
+
+    let slug = baseSlug;
+    let count = 1;
+
+    while (await this.productRepository.findOne({ where: { slug } })) {
+      slug = `${baseSlug}-${count}`;
+      count++;
+    }
 
     const product = this.productRepository.create({
         name: createProductDto.name,
         price: createProductDto.price,
-        quantity: createProductDto.quantity ?? 0,
+        quantity: 0,
         sale: createProductDto.sale ?? 0,
         isActive: true,
         category,
@@ -127,7 +138,6 @@ export class ProductsService {
     if (updateProductDto.name !== undefined) product.name = updateProductDto.name;
     if (updateProductDto.price !== undefined) product.price = updateProductDto.price;
     if (updateProductDto.status !== undefined) product.status = updateProductDto.status;
-    if (updateProductDto.quantity !== undefined) product.quantity = updateProductDto.quantity;
     if (updateProductDto.sale !== undefined) product.sale = updateProductDto.sale;
     
     await this.productRepository.save(product);

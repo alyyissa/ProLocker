@@ -6,7 +6,7 @@ const Title = ({title, subtitle}) => {
     useEffect(() => {
         AOS.init({
             duration: 1000,
-            once: false, // animate every time element enters the viewport
+            once: false,
         });
         }, []);
 return (
