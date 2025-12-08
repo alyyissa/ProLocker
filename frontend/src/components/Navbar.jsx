@@ -3,6 +3,7 @@ import {Link, useLocation, useNavigate } from "react-router-dom"
 import { assets } from '../assets/assets';
 import { useAuth } from '../context/AuthContext';
 import SideCart from './cart/SideCart';
+import { useCart } from '../context/CartContext';
 
 const placeholderTexts = [
   "What are you looking for?",
@@ -34,6 +35,8 @@ const Navbar = () => {
       console.log("logout")
     }
   };
+
+  const {cart} = useCart();
 
   const handleCart = () => {
     setOpenCart(!openCart)
@@ -135,14 +138,14 @@ const Navbar = () => {
             <div className='flex flex-row items-center gap-5'>
               <Link className="md:block hidden" to="#"
               onClick={(e) => {
-                e.preventDefault(); // prevent Link from overriding navigate
+                e.preventDefault();
                 handleUserClick();
               }}><i className={`fa-solid fa-user fa-lg transition-colors duration-300 text-background`}></i></Link>
                       <Link onClick={(e) => {e.preventDefault(); handleCart()}}>
                         <i className={`fa-solid fa-cart-shopping fa-lg transition-colors duration-300 text-background`}></i>
                         
                         <span className={`relative font-semibold text-[0.7rem] -left-0.5 -bottom-[3px] transition-colors duration-300 text-background`}>
-                          0
+                          {cart.length}
                         </span>
                       </Link>
                     </div>
