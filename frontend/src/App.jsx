@@ -11,6 +11,7 @@ import Profile from './pages/auth/Profile'
 import AOS from 'aos'
 import GuestOnly from './pages/auth/GuestOnly'
 import Product from './pages/Product'
+import Cart from './pages/Cart'
 
 function App() {
   useEffect(() =>{
@@ -38,6 +39,7 @@ function App() {
         }/>
         <Route path='/profile' element={<Profile />}/>
         <Route path='/products' element={<Product />}/>
+        <Route path='/cart' element={<Cart />}/>
       </Route>
 
     </Routes>
