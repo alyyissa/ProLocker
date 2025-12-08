@@ -23,7 +23,7 @@ const SideCart = ({ show, onClose }) => {
         onClick={onClose}
       />
       <div
-        className={`fixed top-0 right-0 h-full w-80 p -6 bg-cocoprimary shadow-2xl z-99
+        className={`fixed top-0 right-0 h-full w-90 py-6 bg-cocoprimary shadow-2xl z-99
         transform transition-transform duration-300
         ${show ? "translate-x-0" : "translate-x-full"}`}
       >
@@ -49,13 +49,22 @@ const SideCart = ({ show, onClose }) => {
                   <div className="ml-4 flex flex-1 flex-col">
                     <div className="flex justify-between font-medium text-background">
                       <h3>{product.name}</h3>
-                      <p>${product.price}</p>
+                      {product.priceAfterSale && product.priceAfterSale < product.price ? (
+                        <div className="flex flex-col items-end">
+                          <span className="text-sm line-through opacity-70">${product.price}</span>
+                          <span className="text-base font-bold">
+                            ${product.priceAfterSale}
+                          </span>
+                        </div>
+                      ) : (
+                        <span>${product.price}</span>
+                      )}
                     </div>
 
                     <p className="text-sm text-background/80">Qty {product.qty}</p>
 
                     <button
-                      className="text-primary text-sm hover:underline self-start"
+                      className="text-primary text-sm hover:underline self-start mt-3 cursor-pointer"
                       onClick={() => removeFromCart(product.id)}
                     >
                       Remove
@@ -74,14 +83,14 @@ const SideCart = ({ show, onClose }) => {
             </p>
 
             <Link to="/cart">
-              <button className="w-full bg-indigo-600 text-white py-2 rounded-md">
+              <button className="w-full bg-indigo-600 text-white py-2 rounded-md  cursor-pointer">
                 Checkout
               </button>
             </Link>
 
             <button
               onClick={onClose}
-              className="w-full bg-gray-300 text-gray-800 py-2 rounded-md mt-2"
+              className="w-full bg-gray-300 text-gray-800 py-2 rounded-md mt-2  cursor-pointer"
             >
               Continue Shopping
             </button>

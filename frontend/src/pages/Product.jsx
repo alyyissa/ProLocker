@@ -71,7 +71,7 @@ const Products = () => {
               Filters
             </button>
             <p className="text-gray-700 text-sm">
-              Showing {Products.length} products
+              Showing {products.length} products
             </p>
 
             {/* <div className="hidden md:flex gap-2">

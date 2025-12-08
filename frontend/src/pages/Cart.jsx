@@ -8,7 +8,12 @@ const Cart = () => {
   const { cart, addToCart, decrementQty, removeFromCart } = useCart();
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price * item.qty, 0);
+    return cart.reduce((total, item) => {
+      const finalPrice = item.priceAfterSale && item.priceAfterSale < item.price
+        ? item.priceAfterSale
+        : item.price;
+      return total + finalPrice * item.qty;
+    }, 0);
   };
 
   if (cart.length === 0)
@@ -102,10 +107,11 @@ const Cart = () => {
               <button className="w-full bg-background text-primary py-2 mt-2 rounded-md font-semibold shadow hover:bg-gray-200 cursor-pointer">
                 Proceed to checkout
               </button>
-
-              <p className="text-background/80 text-center text-sm cursor-pointer hover:underline">
-                Continue shopping
-              </p>
+              <Link to={"/products"}>
+                <p className="text-background/80 text-center text-sm cursor-pointer hover:underline">
+                  Continue shopping
+                </p>
+              </Link>
             </div>
           </div>
         </div>
