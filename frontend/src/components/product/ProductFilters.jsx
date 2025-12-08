@@ -42,11 +42,15 @@ const ProductFilters = ({ filters, setFilters }) => {
   }, []);
 
   const updateFilter = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({
+      ...prev,
+      [key]: prev[key] === value ? null : value, // deselect if already selected
+    }));
   };
 
   return (
     <aside className="w-full">
+      {/* Categories */}
       <FilterPanel title="Categories" defaultOpen={true}>
         <ul>
           {categories.map((cat) => (
@@ -66,12 +70,13 @@ const ProductFilters = ({ filters, setFilters }) => {
         </ul>
       </FilterPanel>
 
+      {/* Colors */}
       <FilterPanel title="Colors">
         <ul className="flex flex-wrap gap-2">
           {colors.map((color) => (
             <li key={color.id}>
               <button
-                onClick={() => updateFilter("color", color.color)}
+                onClick={() => updateFilter("color", color.id)}
                 style={{ backgroundColor: color.color.toLowerCase() }}
                 className={`w-6 h-6 rounded-full border-2 ${
                   filters.color === color.id
