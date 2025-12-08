@@ -122,17 +122,17 @@ const Hero = () => {
                   custom={0.2}
                   variants={captionVariants}
                 >
-                  WINTER
+                  Fresh Every Day
                 </motion.h1>
 
                 <motion.h2
-                  className="text-[25px] sm:text-[45px] md:text-[68px] font-bold uppercase text-background drop-shadow-md"
+                  className="text-[25px] sm:text-[45px] md:text-[68px] font-bold uppercase text-background drop-shadow-md md:text-start text-center"
                   initial="hidden"
                   animate="visible"
                   custom={0.5}
                   variants={captionVariants}
                 >
-                  2025 Collection
+                  {new Date().getFullYear()} Collection
                 </motion.h2>
 
                 <motion.div
