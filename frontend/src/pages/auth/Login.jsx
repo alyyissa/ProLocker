@@ -47,7 +47,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
   e.preventDefault()
-  if (throttleTime > 0) return; // prevent submitting while throttled
+  if (throttleTime > 0) return;
 
   setLoading(true)
   setErrors({})
@@ -97,9 +97,9 @@ const Login = () => {
   }
 
   return (
-    <div className="h-screen flex items-center justify-center flex-col px-4 pt-28">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full max-w-md">
-        <h1 className="text-2xl mb-4 font-semibold ultra-regular">Login</h1>
+    <div className="h-[92dvh] flex items-center justify-center flex-col px-4 pt-28">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-md">
+        <h1 className="text-2xl mb-4 font-semibold ultra-regular text-primary">Login</h1>
 
         {/* Email */}
         <div className="flex flex-col">
@@ -109,7 +109,7 @@ const Login = () => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={getInputClass("email")}
+            className={`border border-black! rounded px-3 py-3 text-sm focus:ring-1 hover:ring-[1px] hover:ring-black/90 focus:ring-black/90 focus:outline-none transition-all`}
             required
           />
         </div>
@@ -120,7 +120,7 @@ const Login = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={getInputClass("password")}
+            className={`border border-black! rounded px-3 py-3 text-sm focus:ring-1 hover:ring-[1px] hover:ring-black/90 focus:ring-black/90 focus:outline-none transition-all`}
             required
           />
         </div>

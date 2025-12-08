@@ -100,10 +100,10 @@ const Signup = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center flex-col px-4 pt-28 relative">
+    <div className="h-[93dvh] flex items-center justify-center flex-col px-4 pt-28 relative">
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full max-w-md">
         <div className="items-start">
-          <h1 className="text-2xl mb-4 font-semibold ultra-regular">Signup</h1>
+          <h1 className="text-2xl mb-4 font-bold ultra-regular text-primary">Signup</h1>
         </div>
 
         {/* First Name */}
@@ -114,7 +114,7 @@ const Signup = () => {
             placeholder="First Name"
             value={formData.firstName}
             onChange={handleChange}
-            className={getInputClass("firstName")}
+            className="border border-black! rounded px-3 py-3 text-sm focus:ring-1 hover:ring-[1px] hover:ring-black/90 focus:ring-black/90 focus:outline-none transition-all"
             required
           />
           {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
@@ -128,7 +128,7 @@ const Signup = () => {
             placeholder="Last Name"
             value={formData.lastName}
             onChange={handleChange}
-            className={getInputClass("lastName")}
+            className="border border-black! rounded px-3 py-3 text-sm focus:ring-1 hover:ring-[1px] hover:ring-black/90 focus:ring-black/90 focus:outline-none transition-all"
             required
           />
           {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
@@ -142,7 +142,7 @@ const Signup = () => {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className={getInputClass("email")}
+            className="border border-black! rounded px-3 py-3 text-sm focus:ring-1 hover:ring-[1px] hover:ring-black/90 focus:ring-black/90 focus:outline-none transition-all"
             required
           />
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
@@ -156,7 +156,7 @@ const Signup = () => {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className={getInputClass("password")}
+            className="border border-black! rounded px-3 py-3 text-sm focus:ring-1 hover:ring-[1px] hover:ring-black/90 focus:ring-black/90 focus:outline-none transition-all"
             required
           />
           {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
@@ -171,7 +171,7 @@ const Signup = () => {
             placeholder="Confirm Password"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className={getInputClass("confirmPassword")}
+            className={`border border-black! rounded px-3 py-3 text-sm focus:ring-1 hover:ring-[1px] hover:ring-black/90 focus:ring-black/90 focus:outline-none transition-all`}
             required
           />
           {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
@@ -187,7 +187,7 @@ const Signup = () => {
           </button>
 
           <Link to="/login" className="block w-full h-full">
-            <button className="w-full bg-background text-primary border border-primary py-2 rounded mt-2 transition-all duration-200 hover:shadow-md hover:bg-primary/5">
+            <button className="w-full bg-background text-primary border border-primary py-2 rounded mt-2 transition-all duration-200 hover:shadow-md hover:bg-primary/5 cursor-pointer">
               Login
             </button>
           </Link>

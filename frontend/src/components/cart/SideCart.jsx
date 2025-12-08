@@ -117,7 +117,7 @@ const SideCart = ({ show, onClose }) => {
                       <div className="flex">
                         <button
                           type="button"
-                          className="font-medium text-indigo-400 hover:text-indigo-300"
+                          className="font-medium text-primary cursor-pointer hover:underline"
                           onClick={() => handleRemove(product.id)}
                         >
                           Remove
@@ -137,12 +137,12 @@ const SideCart = ({ show, onClose }) => {
             <p className="text-background font-medium mb-2">
               Subtotal: ${subtotal}
             </p>
-            <button className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">
+            <button className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 cursor-pointer">
               Checkout
             </button>
             <button
               onClick={onClose}
-              className="w-full bg-gray-300 text-gray-800 py-2 rounded-md hover:bg-gray-400"
+              className="w-full bg-gray-300 text-gray-800 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
             >
               Continue Shopping
             </button>
