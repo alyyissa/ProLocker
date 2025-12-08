@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useCart } from "../context/CartContext";
+import CartCard from "../components/cart/CartCard";
 
 const Cart = () => {
   const { cart, addToCart, decrementQty, removeFromCart, clearCart } = useCart();
@@ -86,65 +87,13 @@ useEffect(() => {
             <div className="mt-6 space-y-6 md:gap-6 lg:flex lg:items-start xl:gap-8">
             <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl space-y-6">
                 {cart.map((item) => (
-                <div
+                    <CartCard 
                     key={item.id}
-                    className="rounded-lg  border-gray-200 bg-cocoprimary p-4 shadow-sm md:p-6"
-                >
-                    <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                    <a href="#" className="shrink-0 md:order-1">
-                        <img
-                        className="h-20 w-20 dark:hidden"
-                        src={item.image}
-                        alt={item.name}
-                        />
-                        <img
-                        className="hidden h-20 w-20 dark:block"
-                        src={item.image}
-                        alt={item.name}
-                        />
-                    </a>
-
-                    <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                        <p className="text-base font-medium text-gray-900 dark:text-white">
-                        {item.name}
-                        </p>
-                    </div>
-
-                    <div className="flex items-center justify-between md:order-3 md:justify-end">
-                        <div className="flex items-center">
-                        <button
-                            onClick={() => decrementQty(item.id)}
-                            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-300 cursor-pointer"
-                        >
-                            -
-                        </button>
-                        <input
-                            type="text"
-                            className="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none dark:text-white "
-                            value={item.qty}
-                            readOnly
-                        />
-                        <button
-                            onClick={() => addToCart(item, 1)}
-                            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-300 cursor-pointer"
-                        >
-                            +
-                        </button>
-                        </div>
-                        <div className="text-end md:order-4 md:w-32">
-                        <p className="text-base font-bold text-gray-900 dark:text-white">
-                            ${item.price * item.qty}
-                        </p>
-                        <button
-                            onClick={() => removeFromCart(item.id)}
-                            className="text-sm font-medium text-red-600 hover:underline dark:text-red-500 cursor-pointer"
-                        >
-                            Remove
-                        </button>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+                    item={item}
+                    addToCart={addToCart}
+                    decrementQty={decrementQty}
+                    removeFromCart={removeFromCart}
+                    />
                 ))}
             </div>
 
