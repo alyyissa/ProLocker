@@ -64,7 +64,7 @@ const Cart = () => {
     );
 
   return (
-    <>
+    <div className="min-h-screen pt-[69px] md:pt-[109px]">
       <div
         className="w-full h-[228px] bg-center flex items-center justify-center"
         style={{ backgroundImage: `url(${assets.bgProducts})` }}
@@ -103,12 +103,13 @@ const Cart = () => {
                 <span>Total</span>
                 <span className="font-medium">${getTotalPrice()}</span>
               </div>
-
-              <button className="w-full bg-background text-primary py-2 mt-2 rounded-md font-semibold shadow hover:bg-gray-200 cursor-pointer">
-                Proceed to checkout
-              </button>
+              <Link to={'/checkout'}>
+                <button className="w-full bg-background text-primary py-2 mt-2 rounded-md font-semibold shadow hover:bg-gray-200 cursor-pointer">
+                  Proceed to checkout
+                </button>
+              </Link>
               <Link to={"/products"}>
-                <p className="text-background/80 text-center text-sm cursor-pointer hover:underline">
+                <p className=" mt-2 text-background/80 text-center text-sm cursor-pointer hover:underline">
                   Continue shopping
                 </p>
               </Link>
@@ -116,7 +117,7 @@ const Cart = () => {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

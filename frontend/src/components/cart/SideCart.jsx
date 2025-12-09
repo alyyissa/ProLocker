@@ -23,7 +23,7 @@ const SideCart = ({ show, onClose }) => {
         onClick={onClose}
       />
       <div
-        className={`fixed top-0 right-0 h-full w-90 py-6 bg-cocoprimary shadow-2xl z-99
+        className={`fixed top-0 right-0 h-full w-70 md:w-90 py-6 bg-cocoprimary shadow-2xl z-99
         transform transition-transform duration-300
         ${show ? "translate-x-0" : "translate-x-full"}`}
       >
