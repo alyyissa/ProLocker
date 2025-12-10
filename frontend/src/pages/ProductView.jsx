@@ -51,7 +51,7 @@ const ProductView = () => {
                 <img
                   src={selectedImage}
                   alt={product.name}
-                  className="w-full aspect-[548/712] object-cover"
+                  className="w-full aspect-548/712 object-cover"
                 />
               </div>
               <div className="flex flex-col gap-3 w-16 max-sm:w-14 shrink-0">
@@ -60,7 +60,7 @@ const ProductView = () => {
                     key={index}
                     src={img}
                     alt={`${product.name}-${index}`}
-                    className={`aspect-[64/85] object-cover object-top w-full cursor-pointer border-b-2 ${
+                    className={`aspect-64/85 object-cover object-top w-full cursor-pointer border-b-2 ${
                       selectedImage === img ? "border-black" : "border-transparent"
                     }`}
                     onClick={() => setSelectedImage(img)}

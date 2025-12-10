@@ -14,7 +14,7 @@ const FilterPanel = ({ title, children, defaultOpen = true }) => {
       >
         <h4 className="text-slate-900 text-base font-semibold">{title}</h4>
         <svg
-          className={`w-[14px] h-[14px] fill-slate-800 transition-transform duration-300 ${
+          className={`w-3.5 h-3.5 fill-slate-800 transition-transform duration-300 ${
             open ? "rotate-90" : "-rotate-90"
           }`}
           viewBox="0 0 492.004 492.004"
