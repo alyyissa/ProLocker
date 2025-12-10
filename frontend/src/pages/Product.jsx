@@ -86,8 +86,8 @@ const Products = () => {
             {/* Slide Filters */}
             <div
               className={`fixed right-0 top-0 w-64 h-full bg-white shadow-lg p-5 z-50
-          transition-transform duration-300 transform pt-20 md:pt-30
-          ${showFilters ? "translate-x-0" : "translate-x-full"}`}
+            transition-transform duration-300 transform pt-20 md:pt-30
+            ${showFilters ? "translate-x-0" : "translate-x-full"}`}
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-bold">Filters</h2>

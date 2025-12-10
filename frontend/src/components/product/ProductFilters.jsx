@@ -7,18 +7,24 @@ const FilterPanel = ({ title, children, defaultOpen = true }) => {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-gray-200 rounded mb-4 overflow-hidden">
+    <div className="border-b border-gray-300 pb-2 mb-4">
       <div
-        className="bg-gray-200 px-4 py-2 cursor-pointer flex justify-between items-center"
+        className="flex items-center justify-between cursor-pointer"
         onClick={() => setOpen(!open)}
       >
-        <h4 className="font-semibold text-sm">{title}</h4>
-        <span className="text-cocoprimary select-none">{open ? "−" : "+"}</span>
+        <h4 className="text-slate-900 text-base font-semibold">{title}</h4>
+        <svg
+          className={`w-[14px] h-[14px] fill-slate-800 transition-transform duration-300 ${
+            open ? "rotate-90" : "-rotate-90"
+          }`}
+          viewBox="0 0 492.004 492.004"
+        >
+          <path d="M382.678 226.804 163.73 7.86C158.666 2.792 151.906 0 144.698 0s-13.968 2.792-19.032 7.86l-16.124 16.12c-10.492 10.504-10.492 27.576 0 38.064L293.398 245.9l-184.06 184.06c-5.064 5.068-7.86 11.824-7.86 19.028 0 7.212 2.796 13.968 7.86 19.04l16.124 16.116c5.068 5.068 11.824 7.86 19.032 7.86s13.968-2.792 19.032-7.86L382.678 265c5.076-5.084 7.864-11.872 7.848-19.088.016-7.244-2.772-14.028-7.848-19.108z"/>
+        </svg>
       </div>
-
       <div
-        className={`transition-all duration-300 ease-in-out ${
-          open ? "max-h-[1000px] opacity-100 p-4" : "max-h-0 opacity-0 p-0"
+        className={`transition-all duration-300 overflow-hidden ${
+          open ? "max-h-[1000px] opacity-100 mt-2" : "max-h-0 opacity-0"
         }`}
       >
         {children}
@@ -44,71 +50,83 @@ const ProductFilters = ({ filters, setFilters }) => {
   const updateFilter = (key, value) => {
     setFilters((prev) => ({
       ...prev,
-      [key]: prev[key] === value ? null : value, // deselect if already selected
+      [key]: prev[key] === value ? null : value,
     }));
   };
 
-  return (
-    <aside className="w-full">
-      {/* Categories */}
-      <FilterPanel title="Categories" defaultOpen={true}>
-        <ul>
-          {categories.map((cat) => (
-            <li key={cat.id}>
-              <button
-                onClick={() => updateFilter("category", cat.slug)}
-                className={`block w-full text-left px-2 py-1 rounded-md ${
-                  filters.category === cat.slug
-                    ? "bg-cocoprimary text-white"
-                    : "hover:bg-gray-200"
-                }`}
-              >
-                {cat.category} ({cat.quantity || 0})
-              </button>
-            </li>
-          ))}
-        </ul>
-      </FilterPanel>
+  const clearAll = () => {
+    setFilters({ category: null, color: null, size: null });
+  };
 
-      {/* Colors */}
-      <FilterPanel title="Colors">
-        <ul className="flex flex-wrap gap-2">
-          {colors.map((color) => (
-            <li key={color.id}>
-              <button
-                onClick={() => updateFilter("color", color.id)}
-                style={{ backgroundColor: color.color.toLowerCase() }}
-                className={`w-6 h-6 rounded-full border-2 ${
-                  filters.color === color.id
-                    ? "border-cocoprimary"
-                    : "border-gray-300"
-                }`}
-              />
-            </li>
+  return (
+    <div className="bg-white w-full border-gray-300 p-4">
+      {/* Header with Clear all */}
+      <div className="flex items-center border-b border-gray-300 pb-2 mb-4">
+        <h3 className="text-slate-900 text-lg font-semibold">Filter</h3>
+        <button
+          onClick={clearAll}
+          className="text-sm text-red-500 font-semibold ml-auto cursor-pointer"
+        >
+          Clear all
+        </button>
+      </div>
+
+      {/* Brand */}
+      <FilterPanel title="Brand" defaultOpen={true}>
+        <div className="flex flex-col gap-2 mt-2">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => updateFilter("category", cat.slug)}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-sm text-sm font-medium ${
+                filters.category === cat.slug
+                  ? "bg-cocoprimary text-white border-cocoprimary"
+                  : "bg-gray-50 text-slate-600 border-gray-300 hover:bg-white"
+              }`}
+            >
+              {cat.category} ({cat.quantity || 0})
+            </button>
           ))}
-        </ul>
+        </div>
       </FilterPanel>
 
       {/* Sizes */}
-      <FilterPanel title="Sizes">
-        <ul className="flex flex-wrap gap-2">
+      <FilterPanel title="Size">
+        <div className="flex flex-wrap gap-2 mt-2">
           {sizes.map((size) => (
-            <li key={size.id}>
-              <button
-                onClick={() => updateFilter("size", size.id)}
-                className={`px-2 py-1 border rounded ${
-                  filters.size === size.id
-                    ? "bg-cocoprimary text-white"
-                    : "hover:bg-gray-200"
-                }`}
-              >
-                {size.symbol}
-              </button>
-            </li>
+            <button
+              key={size.id}
+              onClick={() => updateFilter("size", size.id)}
+              className={`px-2 py-1 border rounded text-sm font-medium ${
+                filters.size === size.id
+                  ? "bg-cocoprimary text-white border-cocoprimary"
+                  : "border-gray-300 text-slate-600 hover:border-blue-600"
+              }`}
+            >
+              {size.symbol}
+            </button>
           ))}
-        </ul>
+        </div>
       </FilterPanel>
-    </aside>
+
+      {/* Colors */}
+      <FilterPanel title="Color">
+        <div className="flex flex-wrap gap-2 mt-2">
+          {colors.map((color) => (
+            <button
+              key={color.id}
+              onClick={() => updateFilter("color", color.id)}
+              style={{ backgroundColor: color.color.toLowerCase() }}
+              className={`w-8 h-8 rounded-full border-2 ${
+                filters.color === color.id
+                  ? "border-cocoprimary"
+                  : "border-gray-300"
+              } hover:scale-105 transition-transform`}
+            />
+          ))}
+        </div>
+      </FilterPanel>
+    </div>
   );
 };
 

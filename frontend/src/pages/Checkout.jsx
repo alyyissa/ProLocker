@@ -8,7 +8,7 @@ const Checkout = () => {
   const {cart} = useCart()
   if (cart.length === 0)
     return (
-    <div className="min-h-screen pt-[69px] md:pt-[109px]">
+    <div className="min-h-[90dvh] pt-[69px] md:pt-[109px]">
       <div
       >
         <h1 className="ultra-regular text-4xl md:text-5xl text-background ultra-regular">

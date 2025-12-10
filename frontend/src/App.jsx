@@ -11,7 +11,6 @@ import Profile from './pages/auth/Profile'
 import AOS from 'aos'
 import GuestOnly from './pages/auth/GuestOnly'
 import Product from './pages/Product'
-import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 
 function App() {
@@ -40,7 +39,6 @@ function App() {
         }/>
         <Route path='/profile' element={<Profile />}/>
         <Route path='/products' element={<Product />}/>
-        <Route path='/cart' element={<Cart />}/>
         <Route path='/checkout' element={<Checkout />}/>
       </Route>
 

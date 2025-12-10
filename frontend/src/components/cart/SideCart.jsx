@@ -27,7 +27,7 @@ const SideCart = ({ show, onClose }) => {
         transform transition-transform duration-300
         ${show ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="p-6 mt-16 h-[calc(100%-200px)] overflow-y-auto">
+        <div className="p-6 h-[calc(100%-200px)] overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-bold text-background">Your Cart</h2>
 
