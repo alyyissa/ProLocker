@@ -43,7 +43,7 @@ const ProductCard = ({ product }) => {
 
           {/* View Product Button */}
           <Link
-            to={`/product/${product.id}`}
+            to={`/products/${product.slug}`}
             className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:scale-110 transition"
           >
             <i className="fa-solid fa-eye text-cocoprimary"></i>

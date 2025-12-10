@@ -7,3 +7,12 @@ export const getProducts = async (filters= {} ,page = 1, limit = 12) =>{
     })
     return response.data
 }
+
+export const getProductBySlug = async (slug) => {
+    try {
+        const response = await api.get(`/products/${slug}`)
+        return response.data
+    } catch (error) {
+        throw error
+    }
+}
