@@ -107,30 +107,63 @@ export class AuthService {
     }
 
     async verifyEmail(email: string, code: string) {
-    const user = await this.userRepo.findOne({ where: { email } });
+    console.log("=== verifyEmail called ===");
+    console.log("Input email:", email);
+    console.log("Input code:", code);
 
-    if (!user || user.verificationCode !== code) {
+    // Fetch user
+    const user = await this.userRepo.findOne({ where: { email } });
+    if (!user) {
+        console.log("User not found for email:", email);
+        throw new BadRequestException("Invalid verification code");
+    }
+    console.log("User found:", {
+        email: user.email,
+        verificationCode: user.verificationCode,
+        codeGeneratedAt: user.codeGeneratedAt,
+        isVerified: user.isVerified,
+    });
+
+    // Check if already verified
+    if (user.isVerified) {
+        console.log("User already verified:", email);
+        throw new BadRequestException("User already verified");
+    }
+
+    // Normalize and compare codes
+    const dbCode = user.verificationCode?.toString().trim();
+    const inputCode = code?.toString().trim();
+    console.log("Comparing codes: DB =", dbCode, "Input =", inputCode);
+
+    if (dbCode !== inputCode) {
+        console.log("Verification codes do not match");
         throw new BadRequestException("Invalid verification code");
     }
 
-    const now = new Date();
+    // Check if code is expired
     if (!user.codeGeneratedAt) {
-    throw new BadRequestException("No verification code found");
-}
-    const expiryTime = new Date(user.codeGeneratedAt);
-    expiryTime.setMinutes(expiryTime.getMinutes() + 10);
+        console.log("No codeGeneratedAt found for user:", email);
+        throw new BadRequestException("No verification code found");
+    }
+
+    const now = new Date();
+    const expiryTime = new Date(new Date(user.codeGeneratedAt).getTime() + 10 * 60000); // 10 minutes
+    console.log("Current time:", now);
+    console.log("Code expiry time:", expiryTime);
 
     if (now > expiryTime) {
+        console.log("Verification code expired for user:", email);
         throw new BadRequestException("Code expired, try again");
     }
 
-    // mark user as verified
+    // Mark user as verified
     user.isVerified = true;
     user.verificationCode = null;
     user.codeGeneratedAt = null;
     await this.userRepo.save(user);
+    console.log("User verified successfully:", email);
 
-    // generate tokens
+    // Generate tokens
     const tokens = await this.getToken(user.id, user.email);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
 
@@ -142,12 +175,9 @@ export class AuthService {
             firstName: user.firstName,
             lastName: user.lastName,
         },
-        ...tokens
+        ...tokens,
     };
 }
-
-
-
 
 
     async resendVerificationCode(email: string) {

@@ -44,10 +44,7 @@ export class Order {
 
     @Column({ type: 'varchar', length: 100, nullable: true })
     email?: string;
-
-    @Column({ type: 'varchar', length: 20, default: 'Lebanon' })
-    country: string;
-
+    
     @Column()
     trackingNumber: string;
 

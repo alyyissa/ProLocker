@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { verifyEmail, resendCode } from "../services/auth/authService";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
+import {useNavigate } from 'react-router-dom'
 
 const VerifyPopup = ({ email, onClose }) => {
+  const navigate = useNavigate()
   const { loginUser } = useAuth();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
@@ -37,23 +39,24 @@ const VerifyPopup = ({ email, onClose }) => {
   };
 
   const handleVerify = async () => {
-    try {
-        setLoading(true);
+  try {
+    setLoading(true);
 
-        const res = await verifyEmail(email, code);
+    const code = otp.join("");
+    const res = await verifyEmail(email, code);
 
-        loginUser(res.user, res.accessToken, res.refreshToken);
+    loginUser(res.user, res.accessToken, res.refreshToken);
 
-        toast.success("Account verified successfully! Redirecting...");
+    toast.success("Account verified successfully! Redirecting...");
 
-        navigate("/");
+    navigate('/')
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Verification failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
-    } catch (err) {
-        toast.error(err.response?.data?.message || "Verification failed");
-    } finally {
-        setLoading(false);
-    }
-    };
 
 
     const handleResend = async () => {

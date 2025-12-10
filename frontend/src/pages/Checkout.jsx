@@ -1,34 +1,61 @@
-import React, { useState } from "react";
+import React from "react";
 import CheckoutLeft from "../components/checkout/CheckoutLeft";
 import CheckoutRight from "../components/checkout/CheckoutRight";
 import { useCart } from "../context/CartContext";
-
+import { Link } from "react-router-dom";
 
 const Checkout = () => {
-  const { cart } = useCart();
-  const [contactInfo, setContactInfo] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    address: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    phone: "",
-  });
-
-  return (
-    <div className="min-h-screen bg-gray-100 pt-30 md:pt-45 px-3 md:px-10 pb-10 md:pb-20">
-      <h1 className="text-3xl font-bold mb-6 text-center ultra-regular">Checkout</h1>
-
-      {cart.length === 0 ? (
-        <p className="text-center text-xl ultra-regular">Your cart is empty.</p>
-      ) : (
-        <div className="grid md:grid-cols-2 gap-2">
-          <CheckoutLeft contactInfo={contactInfo} setContactInfo={setContactInfo} />
-          <CheckoutRight />
+  const {cart} = useCart()
+  if (cart.length === 0)
+    return (
+    <div className="min-h-screen pt-[69px] md:pt-[109px]">
+      <div
+      >
+        <h1 className="ultra-regular text-4xl md:text-5xl text-background ultra-regular">
+          YOUR CART
+        </h1>
+      </div>
+      <section className="min-h-[calc(100vh-228px-69px)] md:min-h-[calc(100vh-228px-109px)] flex justify-center items-center w-full bg-white px-4">
+        <div className="mx-auto text-center flex flex-col items-center">
+          <h2 className="text-2xl font-semibold text-cocoprimary ultra-regular">
+            Your cart is empty
+          </h2>
+          <Link to={'/products'}>
+            <button className="mt-5 py-2 px-10 bg-cocoprimary rounded-2xl cursor-pointer text-background text-center
+                  hover:bg-gray-800 flex items-center gap-4 group transition-all duration-200">
+                  Start Shopping
+                  <svg
+                    width="24"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="text-background transform transition-transform duration-200 group-hover:scale-125"
+                  >
+                    <path d="M19.1788 13.5L5 13.5V15.5L19.1788 15.5L16.0615 18.6L17.4693 20L23 14.5L17.5698 9L16.162 10.4L19.1788 13.5Z" fill="currentColor"/>
+                  </svg>
+                </button>
+          </Link>
+          <div  className="mt-10">
+            <p className=" font-semibold">
+              Have an account ?
+            </p>
+            <p>
+                <Link to={'/login'}>
+                <span className="underline">Login</span> 
+                </Link> to place an order
+            </p>
+          </div>
         </div>
-      )}
+      </section>
+    </div>
+    );
+  return (
+    <div className="min-h-screen bg-gray-100 py-20 md:py-40 w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16">
+      <div className="flex flex-col md:flex-row  gap-10 justify-center w-full">
+        <CheckoutLeft />
+        <CheckoutRight />
+      </div>
     </div>
   );
 };

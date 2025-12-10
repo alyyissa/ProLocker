@@ -82,7 +82,7 @@ const SideCart = ({ show, onClose }) => {
               Subtotal: ${subtotal}
             </p>
 
-            <Link to="/cart">
+            <Link to="/checkout">
               <button className="w-full bg-indigo-600 text-white py-2 rounded-md  cursor-pointer">
                 Checkout
               </button>
