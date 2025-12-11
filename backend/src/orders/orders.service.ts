@@ -205,6 +205,16 @@ export class OrdersService {
       where: { user: { id: userId } },
     });
 
+    if (total === 0) {
+    return {
+      orders: [],
+      total: 0,
+      page: 1,
+      limit,
+      totalPages: 1
+    };
+  }
+
     const totalPages = Math.ceil(total / limit);
     const currentPage = page > totalPages ? totalPages : page;
 

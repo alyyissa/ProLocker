@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { createOrder } from "../../services/orders/orderServies";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 
 export default function CheckoutRight() {
+  const {user} = useAuth()
   const { cart, clearCart } = useCart();
   const [form, setForm] = useState({
     firstName: "",
@@ -32,6 +34,7 @@ export default function CheckoutRight() {
 
     try {
       const orderPayload = {
+        userId: Number(user.id),
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,
@@ -42,7 +45,7 @@ export default function CheckoutRight() {
         zip: form.zip,
         country: "Lebanon",
         items: cart.map((item) => ({
-          productVarientId: item.productVarientId || item.id,
+          productVarientId: item.productVarientId,
           quantity: item.qty,
         })),
       };
@@ -92,14 +95,15 @@ export default function CheckoutRight() {
           <li className="flex justify-between font-semibold text-slate-900">Total <span>${total.toFixed(2)}</span></li>
         </ul>
         <div className="flex flex-row gap-4">
+          <button type="submit" disabled={loading} className="w-full px-4 py-2.5 text-sm font-semibold text-white bg-cocoprimary rounded-md cursor-pointer">
+            {loading ? "Processing..." : "Place Order"}
+          </button>
           <Link to={'/products'} className="w-full">
             <button className="w-full px-4 py-2.5 text-sm font-semibold text-cocoprimary bg-gray-300 hover:bg-gray-400 rounded-md cursor-pointer transform transition-all duration-300">
               Continue Shopping
             </button>
           </Link>
-          <button type="submit" disabled={loading} className="w-full px-4 py-2.5 text-sm font-semibold text-white bg-cocoprimary rounded-md cursor-pointer">
-            {loading ? "Processing..." : "Place Order"}
-          </button>
+          
         </div>
       </form>
     </div>

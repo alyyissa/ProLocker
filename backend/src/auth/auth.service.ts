@@ -1,4 +1,11 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { 
+  BadRequestException, 
+  ConflictException, 
+  ForbiddenException, 
+  Injectable, 
+  NotFoundException, 
+  UnauthorizedException 
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -8,6 +15,7 @@ import * as bcrypt from 'bcryptjs'
 import { LoginDto } from './dto/login.dto';
 import { generateVerificationCode } from './utils';
 import { MailService } from 'src/mail/mail.service';
+import * as jwt from 'jsonwebtoken'; // ADD THIS IMPORT
 
 @Injectable()
 export class AuthService {
@@ -18,32 +26,32 @@ export class AuthService {
         private readonly mailService: MailService
     ){}
 
+    // KEEP ALL YOUR EXISTING METHODS EXACTLY AS THEY ARE
     async signup(signupDto: SignupDto) {
-    const exists = await this.userRepo.findOne({ where: { email: signupDto.email } });
-    if (exists) throw new ConflictException('Email already exists');
+        const exists = await this.userRepo.findOne({ where: { email: signupDto.email } });
+        if (exists) throw new ConflictException('Email already exists');
 
-    const hashed = await bcrypt.hash(signupDto.password, 10);
-    const code = generateVerificationCode();
+        const hashed = await bcrypt.hash(signupDto.password, 10);
+        const code = generateVerificationCode();
 
-    const newUser = this.userRepo.create({
-        firstName: signupDto.firstName,
-        lastName: signupDto.lastName,
-        email: signupDto.email,
-        password: hashed,
-        verificationCode: code,
-        isVerified: false,
-        resendCount: 0,
-        lastResendAt: null,
-        codeGeneratedAt: new Date()
-    });
+        const newUser = this.userRepo.create({
+            firstName: signupDto.firstName,
+            lastName: signupDto.lastName,
+            email: signupDto.email,
+            password: hashed,
+            verificationCode: code,
+            isVerified: false,
+            resendCount: 0,
+            lastResendAt: null,
+            codeGeneratedAt: new Date()
+        });
 
-    await this.userRepo.save(newUser);
+        await this.userRepo.save(newUser);
 
-    await this.mailService.sendVerificationEmail(newUser.email, code);
+        await this.mailService.sendVerificationEmail(newUser.email, code);
 
-    return { message: "Signup successful. Check your email for verification code." };
+        return { message: "Signup successful. Check your email for verification code." };
     }
-
 
     async login(loginDto: LoginDto){
         const user = await this.userRepo.findOne({where: {email: loginDto.email}})
@@ -60,7 +68,15 @@ export class AuthService {
 
         await this.updateRefreshToken(user.id, tokens.refreshToken)
 
-        return {user: {id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName}, ...tokens}
+        return {
+          user: {
+            id: user.id, 
+            email: user.email, 
+            firstName: user.firstName, 
+            lastName: user.lastName
+          }, 
+          ...tokens
+        }
     }
 
     async logout(userId: number){
@@ -92,93 +108,132 @@ export class AuthService {
         })
     }
 
-    async refresh(userId: number, refreshToken){
-        const user = await this.userRepo.findOne({where: {id: userId}})
-        if(!user || !user.refreshToken) throw new ForbiddenException("Acess Denied");
+    // UPDATE THIS METHOD ONLY - it's the main change
+    async refresh(refreshToken: string) {
+    try {
+        // Get the refresh secret directly from process.env
+        const refreshSecret = process.env.JWT_REFRESH_SECRET;
+        if (!refreshSecret) {
+            throw new Error('JWT_REFRESH_SECRET is not configured');
+        }
 
+        // Verify the refresh token
+        const decoded = jwt.verify(refreshToken, refreshSecret) as any;
+        
+        // Check if decoded has sub property
+        if (!decoded || !decoded.sub) {
+            throw new ForbiddenException("Invalid refresh token");
+        }
+        
+        const userId = parseInt(decoded.sub);
+        
+        // Find user by ID
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user || !user.refreshToken) {
+            throw new ForbiddenException("Access Denied");
+        }
+
+        // Compare the refresh token with hashed version in DB
         const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
-        if(!isValid) throw new ForbiddenException("Access Denied");
+        if (!isValid) {
+            throw new ForbiddenException("Access Denied");
+        }
 
+        // Generate new tokens
         const tokens = await this.getToken(user.id, user.email);
 
+        // Update refresh token in DB
         await this.updateRefreshToken(user.id, tokens.refreshToken);
 
-        return tokens;
+        // Return the same format as login
+        return {
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+            }
+        };
+    } catch (error) {
+        if (error instanceof jwt.TokenExpiredError) {
+            throw new ForbiddenException('Refresh token expired');
+        }
+        if (error instanceof jwt.JsonWebTokenError) {
+            throw new ForbiddenException('Invalid refresh token');
+        }
+        throw error;
     }
-
-    async verifyEmail(email: string, code: string) {
-    console.log("=== verifyEmail called ===");
-    console.log("Input email:", email);
-    console.log("Input code:", code);
-
-    // Fetch user
-    const user = await this.userRepo.findOne({ where: { email } });
-    if (!user) {
-        console.log("User not found for email:", email);
-        throw new BadRequestException("Invalid verification code");
-    }
-    console.log("User found:", {
-        email: user.email,
-        verificationCode: user.verificationCode,
-        codeGeneratedAt: user.codeGeneratedAt,
-        isVerified: user.isVerified,
-    });
-
-    // Check if already verified
-    if (user.isVerified) {
-        console.log("User already verified:", email);
-        throw new BadRequestException("User already verified");
-    }
-
-    // Normalize and compare codes
-    const dbCode = user.verificationCode?.toString().trim();
-    const inputCode = code?.toString().trim();
-    console.log("Comparing codes: DB =", dbCode, "Input =", inputCode);
-
-    if (dbCode !== inputCode) {
-        console.log("Verification codes do not match");
-        throw new BadRequestException("Invalid verification code");
-    }
-
-    // Check if code is expired
-    if (!user.codeGeneratedAt) {
-        console.log("No codeGeneratedAt found for user:", email);
-        throw new BadRequestException("No verification code found");
-    }
-
-    const now = new Date();
-    const expiryTime = new Date(new Date(user.codeGeneratedAt).getTime() + 10 * 60000); // 10 minutes
-    console.log("Current time:", now);
-    console.log("Code expiry time:", expiryTime);
-
-    if (now > expiryTime) {
-        console.log("Verification code expired for user:", email);
-        throw new BadRequestException("Code expired, try again");
-    }
-
-    // Mark user as verified
-    user.isVerified = true;
-    user.verificationCode = null;
-    user.codeGeneratedAt = null;
-    await this.userRepo.save(user);
-    console.log("User verified successfully:", email);
-
-    // Generate tokens
-    const tokens = await this.getToken(user.id, user.email);
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
-
-    return {
-        message: "Account verified successfully",
-        user: {
-            id: user.id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-        },
-        ...tokens,
-    };
 }
 
+    // KEEP ALL YOUR OTHER METHODS EXACTLY AS THEY ARE
+    async verifyEmail(email: string, code: string) {
+        console.log("=== verifyEmail called ===");
+        console.log("Input email:", email);
+        console.log("Input code:", code);
+
+        const user = await this.userRepo.findOne({ where: { email } });
+        if (!user) {
+            console.log("User not found for email:", email);
+            throw new BadRequestException("Invalid verification code");
+        }
+        console.log("User found:", {
+            email: user.email,
+            verificationCode: user.verificationCode,
+            codeGeneratedAt: user.codeGeneratedAt,
+            isVerified: user.isVerified,
+        });
+
+        if (user.isVerified) {
+            console.log("User already verified:", email);
+            throw new BadRequestException("User already verified");
+        }
+
+        const dbCode = user.verificationCode?.toString().trim();
+        const inputCode = code?.toString().trim();
+        console.log("Comparing codes: DB =", dbCode, "Input =", inputCode);
+
+        if (dbCode !== inputCode) {
+            console.log("Verification codes do not match");
+            throw new BadRequestException("Invalid verification code");
+        }
+
+        if (!user.codeGeneratedAt) {
+            console.log("No codeGeneratedAt found for user:", email);
+            throw new BadRequestException("No verification code found");
+        }
+
+        const now = new Date();
+        const expiryTime = new Date(new Date(user.codeGeneratedAt).getTime() + 10 * 60000);
+        console.log("Current time:", now);
+        console.log("Code expiry time:", expiryTime);
+
+        if (now > expiryTime) {
+            console.log("Verification code expired for user:", email);
+            throw new BadRequestException("Code expired, try again");
+        }
+
+        user.isVerified = true;
+        user.verificationCode = null;
+        user.codeGeneratedAt = null;
+        await this.userRepo.save(user);
+        console.log("User verified successfully:", email);
+
+        const tokens = await this.getToken(user.id, user.email);
+        await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+        return {
+            message: "Account verified successfully",
+            user: {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+            },
+            ...tokens,
+        };
+    }
 
     async resendVerificationCode(email: string) {
         const user = await this.userRepo.findOne({ where: { email } });
@@ -187,12 +242,10 @@ export class AuthService {
 
         const now = new Date();
 
-        // Check resend limit
         if (user.resendCount >= 2) {
             throw new ForbiddenException("Resend limit reached. Contact support.");
         }
 
-        // Check 1-minute cooldown
         if (user.lastResendAt) {
             const diffMs = now.getTime() - user.lastResendAt.getTime();
             const diffMinutes = diffMs / 1000 / 60;
@@ -205,7 +258,6 @@ export class AuthService {
             }
         }
 
-        // Generate new code
         const newCode = generateVerificationCode();
         user.verificationCode = newCode;
         user.resendCount += 1;
@@ -217,5 +269,4 @@ export class AuthService {
 
         return { message: "New verification code sent to your email" };
     }
-
 }

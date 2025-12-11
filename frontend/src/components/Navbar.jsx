@@ -31,7 +31,7 @@ const Navbar = () => {
       navigate("/profile");
       console.log("daddd")
     } else {
-      navigate("/signup");
+      navigate("/login");
       console.log("logout")
     }
   };
