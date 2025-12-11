@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { getProductBySlug } from "../services/products/productsService";
+import SizeSelector from "../components/product/SizeSelection";
 
 const ProductView = () => {
   const { slug } = useParams();
@@ -9,6 +10,7 @@ const ProductView = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
   const { addToCart } = useCart();
+  const [selectedSize, setSelectedSize] = useState(null);
 
   const dummyGallery = [
     "https://readymadeui.com/images/dark-green-tshirt-1.webp",
@@ -38,10 +40,22 @@ const ProductView = () => {
 
   const increment = () => setQuantity(q => q + 1);
   const decrement = () => setQuantity(q => (q > 1 ? q - 1 : 1));
-  const handleAddToCart = () => addToCart(product, quantity);
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert("Please select a size!");
+      return;
+    }
+
+    const variant = product.varients.find(
+      (v) => v.size.id === selectedSize.id
+    );
+
+    addToCart(product, variant, quantity);
+  };
 
   return (
-    <div className="pt-[69px] md:pt-[109px] px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16">
+    <div className="pt-[69px] md:pt-[109px] px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
       <div className="lg:max-w-6xl max-w-xl mx-auto py-10">
         <div className="grid items-start grid-cols-1 lg:grid-cols-2 gap-12 max-sm:gap-8">
           {/* Images */}
@@ -104,12 +118,12 @@ const ProductView = () => {
                 +
               </button>
             </div>
+            
+
+            <SizeSelector product={product} selectedSize={selectedSize} setSelectedSize={setSelectedSize}/>
 
             {/* Actions */}
             <div className="mt-6 flex flex-wrap gap-4">
-              <button className="px-4 py-3 w-[45%] border border-gray-300 bg-gray-100 hover:bg-gray-200 text-slate-900 text-sm font-medium cursor-pointer">
-                Add to wishlist
-              </button>
               <button
                 onClick={handleAddToCart}
                 className="px-4 py-3 w-[45%] border border-blue-600 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium cursor-pointer"

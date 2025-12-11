@@ -13,8 +13,6 @@ export class Color {
     })
     color: string
     
-    
-
     @Column({
         unique: true,
         nullable: false

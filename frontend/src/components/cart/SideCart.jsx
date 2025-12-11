@@ -10,8 +10,11 @@ const SideCart = ({ show, onClose }) => {
     return () => (document.body.style.overflow = "");
   }, [show]);
 
+  // Calculate subtotal using the variant prices
   const subtotal = cart.reduce(
-    (total, item) => total + item.price * item.qty,
+    (total, item) =>
+      total +
+      (item.product.priceAfterSale || item.product.price) * item.qty,
     0
   );
 
@@ -40,32 +43,46 @@ const SideCart = ({ show, onClose }) => {
             <p className="text-background">Your cart is empty.</p>
           ) : (
             <ul role="list" className="-my-6 divide-y divide-gray-200">
-              {cart.map((product) => (
-                <li key={product.id} className="flex py-6">
+              {cart.map((item) => (
+                <li
+                  key={`${item.product.id}-${item.variant.id}`}
+                  className="flex py-6"
+                >
                   <div className="w-24 h-24 rounded-md overflow-hidden shrink-0 border">
-                    <img src={product.imageSrc} alt="" className="object-cover w-full h-full" />
+                    <img
+                      src={item.product.mainImage || item.product.galleryImages?.[0]}
+                      alt={item.product.name}
+                      className="object-cover w-full h-full"
+                    />
                   </div>
 
                   <div className="ml-4 flex flex-1 flex-col">
                     <div className="flex justify-between font-medium text-background">
-                      <h3>{product.name}</h3>
-                      {product.priceAfterSale && product.priceAfterSale < product.price ? (
+                      <h3>{item.product.name}</h3>
+                      {item.product.priceAfterSale &&
+                      item.product.priceAfterSale < item.product.price ? (
                         <div className="flex flex-col items-end">
-                          <span className="text-sm line-through opacity-70">${product.price}</span>
+                          <span className="text-sm line-through opacity-70">
+                            ${item.product.price}
+                          </span>
                           <span className="text-base font-bold">
-                            ${product.priceAfterSale}
+                            ${item.product.priceAfterSale}
                           </span>
                         </div>
                       ) : (
-                        <span>${product.price}</span>
+                        <span>${item.product.price}</span>
                       )}
                     </div>
 
-                    <p className="text-sm text-background/80">Qty {product.qty}</p>
+                    <p className="text-sm text-background/80">
+                      Size: {item.variant.size.symbol} | Qty {item.qty}
+                    </p>
 
                     <button
                       className="text-primary text-sm hover:underline self-start mt-3 cursor-pointer"
-                      onClick={() => removeFromCart(product.id)}
+                      onClick={() =>
+                        removeFromCart(item.product.id, item.variant.id)
+                      }
                     >
                       Remove
                     </button>
@@ -83,14 +100,14 @@ const SideCart = ({ show, onClose }) => {
             </p>
 
             <Link to="/checkout">
-              <button className="w-full bg-indigo-600 text-white py-2 rounded-md  cursor-pointer">
+              <button className="w-full bg-indigo-600 text-white py-2 rounded-md cursor-pointer">
                 Checkout
               </button>
             </Link>
 
             <button
               onClick={onClose}
-              className="w-full bg-gray-300 text-gray-800 py-2 rounded-md mt-2  cursor-pointer"
+              className="w-full bg-gray-300 text-gray-800 py-2 rounded-md mt-2 cursor-pointer"
             >
               Continue Shopping
             </button>

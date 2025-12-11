@@ -102,7 +102,7 @@ export class ProductsService {
   async findOne(slug: string): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { slug },
-      relations: ['color', 'category', 'gender']
+      relations: ['color', 'category', 'gender', 'varients', 'varients.size']
     });
 
     if (!product) throw new NotFoundException(`${slug} not found`);

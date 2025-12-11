@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext();
 
@@ -7,37 +7,48 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
-    if (storedCart) {
-      setCart(JSON.parse(storedCart));
-    }
+    if (storedCart) setCart(JSON.parse(storedCart));
   }, []);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (item, qty = 1) => {
+  const addToCart = (product, variant, qty = 1) => {
+    if (!variant) return;
+
     setCart((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
+      const existing = prev.find(
+        (i) => i.product.id === product.id && i.variant.id === variant.id
+      );
+
       if (existing) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, qty: i.qty + qty } : i
+          i.product.id === product.id && i.variant.id === variant.id
+            ? { ...i, qty: i.qty + qty }
+            : i
         );
       }
-      return [...prev, { ...item, qty }];
+
+      return [...prev, { product, variant, qty }];
     });
   };
 
-  const removeFromCart = (id) => {
-    setCart((prev) => prev.filter((i) => i.id !== id));
+  const removeFromCart = (productId, variantId) => {
+    setCart((prev) =>
+      prev.filter(
+        (i) => !(i.product.id === productId && i.variant.id === variantId)
+      )
+    );
   };
 
-  const decrementQty = (id) => {
+  const decrementQty = (productId, variantId) => {
     setCart((prev) =>
-      prev
-        .map((i) =>
-          i.id === id ? { ...i, qty: i.qty > 1 ? i.qty - 1 : 1 } : i
-        )
+      prev.map((i) =>
+        i.product.id === productId && i.variant.id === variantId
+          ? { ...i, qty: i.qty > 1 ? i.qty - 1 : 1 }
+          : i
+      )
     );
   };
 
