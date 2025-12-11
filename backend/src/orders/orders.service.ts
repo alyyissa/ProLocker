@@ -28,85 +28,78 @@ export class OrdersService {
 ) {}
 
   async create(createOrderDto: CreateOrderDto) {
-    return await this.datasource.transaction(async manager => {
-    try {
-      const user = await manager.findOne(User, {
-        where: { id: createOrderDto.userId },
-      });
+  return await this.datasource.transaction(async manager => {
+    const user = await manager.findOne(User, {
+      where: { id: createOrderDto.userId },
+    });
 
-      if(!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('User not found');
 
-      const oneWeekAgo = new Date();
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-      oneWeekAgo.setDate(oneWeekAgo.getDay() -7)
+    const recentOrderCount = await manager.count(Order, {
+      where: {
+        user: { id: user.id },
+        createdAt: MoreThanOrEqual(oneWeekAgo),
+      },
+    });
 
-      const recentOrderCount = await manager.count(Order,
-        {where: {
-          user: {id: user.id},
-          createdAt: MoreThanOrEqual(oneWeekAgo),
-        }},
-      )
-
-      if(recentOrderCount >= 3){
-        throw new BadRequestException(
-          'You cant order more than three times per week'
-        )
-      }
-
-      const trackingNumber = this.generateTrackingNumber();
-
-      const order = await manager.save(Order, {
-        user,
-        phoneNumber: createOrderDto.phoneNumber,
-        address: createOrderDto.address,
-        firstName: createOrderDto.firstName,
-        lastName: createOrderDto.lastName,
-        apartment: createOrderDto.apartment,
-        city: createOrderDto.city,
-        email: createOrderDto.email,
-        country: createOrderDto.country ?? 'Lebanon',
-        trackingNumber,
-        status: OrderStatus.PENDING,
-      });
-
-      for (const item of createOrderDto.items) {
-        const productVarient = await manager.findOne(ProductVarient, {
-          where: { id: item.productVarientId },
-          relations: ['product'],
-        });
-
-        if (!productVarient)
-          throw new NotFoundException(
-            `Product ${item.productVarientId} not found`,
-          );
-
-        await this.productVarientService.reduceStock(
-          item.productVarientId,
-          item.quantity,
-          manager
-        );
-
-        await manager.save( OrderItem, {
-          order,
-          productVarient,
-          quantity: item.quantity,
-          unitPrice: productVarient.product.price,
-          totalPrice: productVarient.product.price * item.quantity,
-        });
-      }
-
-      return {
-        message: 'Order created successfully',
-        trackingNumber,
-        orderId: order.id,
-      };
-
-    } catch (error) {
-      console.error('Order Creation Error:', error);
-      throw error;
+    if (recentOrderCount >= 3) {
+      throw new BadRequestException('You cant order more than three times per week');
     }
+
+    const trackingNumber = this.generateTrackingNumber();
+
+    const order = await manager.save(Order, {
+      user,
+      phoneNumber: createOrderDto.phoneNumber,
+      address: createOrderDto.address,
+      firstName: createOrderDto.firstName,
+      lastName: createOrderDto.lastName,
+      apartment: createOrderDto.apartment,
+      city: createOrderDto.city,
+      email: createOrderDto.email,
+      country: createOrderDto.country ?? 'Lebanon',
+      trackingNumber,
+      status: OrderStatus.PENDING,
+      totalPrice: 0,
+    });
+
+    let totalPrice = 0;
+
+    for (const item of createOrderDto.items) {
+      const productVarient = await manager.findOne(ProductVarient, {
+        where: { id: item.productVarientId },
+        relations: ['product'],
+      });
+
+      if (!productVarient) throw new NotFoundException(`Product ${item.productVarientId} not found`);
+
+      await this.productVarientService.reduceStock(item.productVarientId, item.quantity, manager);
+
+      const orderItem = await manager.save(OrderItem, {
+        order,
+        productVarient,
+        quantity: item.quantity,
+        unitPrice: productVarient.product.price,
+        totalPrice: productVarient.product.price * item.quantity,
+      });
+
+      totalPrice += orderItem.totalPrice;
+    }
+
+    order.totalPrice = totalPrice;
+    await manager.save(order);
+
+    return {
+      message: 'Order created successfully',
+      trackingNumber,
+      orderId: order.id,
+    };
   });
-  }
+}
+
 
   async findAll(filters: OrderFilterDto) {
     const {status, date, page = 1, limit= 1} = filters;
@@ -220,7 +213,7 @@ export class OrdersService {
 
     const [orders] = await this.orderRepository.findAndCount({
       where: { user: { id: userId } },
-      relations: ['orderItems', 'orderItems.productVarient'],
+      relations: ['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product'],
       order: { createdAt: 'DESC' },
       skip: (currentPage - 1) * limit,
       take: limit,

@@ -22,7 +22,6 @@ export class OrdersController {
     return this.ordersService.findAll(filterDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('my-orders/:userId')
   async findForUser(@Param('userId') userId: string, @Query() paginationQueryDto: PaginationQueryDto) {
     return this.ordersService.findForUser(+userId, paginationQueryDto);

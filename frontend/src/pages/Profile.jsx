@@ -78,14 +78,14 @@ const Profile = () => {
             <div className="space-y-6 mt-6">
             {orders.map((order) => (
                 <div
-                key={order._id}
+                key={order.id}
                 className="bg-white rounded-xl border border-gray-300 overflow-hidden p-6"
                 >
                 <div className="flex flex-wrap justify-between gap-6">
                     <div className="max-w-96">
                     <div className="flex items-center gap-4">
                         <span className="text-[15px] font-semibold text-slate-600">
-                        Order #{order.orderNumber}
+                        Order: <span className="font-bold">#{order.trackingNumber}</span>
                         </span>
 
                         <span
@@ -102,16 +102,22 @@ const Profile = () => {
                     </div>
 
                     <p className="text-slate-600 text-sm mt-3">
-                        Placed on {new Date(order.createdAt).toLocaleString()}
+                        Placed on {new Date(order.createdAt).toLocaleString(undefined, {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            })}
                     </p>
                     </div>
 
                     <div className="text-right">
                     <p className="text-lg font-semibold text-slate-900">
-                        ${order.totalPrice.toFixed(2)}
+                        ${Number(order.totalPrice).toFixed(2)}
                     </p>
                     <p className="text-slate-600 text-sm mt-2">
-                        {order.items.length} items
+                        {order.orderItems.length} items
                     </p>
                     </div>
                 </div>
@@ -119,18 +125,18 @@ const Profile = () => {
                 <hr className="border-gray-300 my-6" />
 
                 <div className="flex flex-wrap items-center gap-8">
-                    {order.items.map((item) => (
-                    <div key={item._id} className="flex items-center gap-4">
+                    {order.orderItems.map((item) => (
+                    <div key={item.id} className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-gray-100 p-1 rounded-md overflow-hidden">
                         <img
-                            src={item.product.images[0]}
-                            alt={item.product.name}
+                            src={item.productVarient.product.mainImage || 'https://pearlbrandsonline.com/wp-content/uploads/2025/06/710932304522.jpg'}
+                            alt={item.productVarient.product.name}
                             className="w-full h-full object-contain"
                         />
                         </div>
                         <div>
                         <p className="text-[15px] font-medium text-slate-900">
-                            {item.product.name}
+                            {item.productVarient.product.name}
                         </p>
                         <p className="text-xs text-slate-600 mt-1">
                             Qty: {item.quantity}

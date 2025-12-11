@@ -47,6 +47,9 @@ export class Order {
     
     @Column()
     trackingNumber: string;
+    
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    totalPrice: number;
 
     @ManyToOne(() => User, (user) => user.orders, {onDelete: 'CASCADE'})
     user: User
