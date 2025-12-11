@@ -12,3 +12,5 @@ export const signup = async(data) =>{
 export const resendCode = (email) => api.post("/auth/resend-code", { email });
 
 export const verifyEmail = (email, code) =>  api.post("/auth/verify-email", { email, code });
+
+export const logoutUser = () => api.post("/auth/logout");

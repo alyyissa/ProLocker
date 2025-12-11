@@ -22,15 +22,15 @@ export class OrdersController {
     return this.ordersService.findAll(filterDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('my-orders/:userId')
+  async findForUser(@Param('userId') userId: string, @Query() paginationQueryDto: PaginationQueryDto) {
+    return this.ordersService.findForUser(+userId, paginationQueryDto);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ordersService.findOne(+id);
-  }
-  
-  @UseGuards(JwtAuthGuard)
-  @Get('my-orders/:userId')
-  findForUser(@Param('userId') userId: string, @Query() paginationQueryDto: PaginationQueryDto) {
-    return this.ordersService.findForUser(+userId, paginationQueryDto);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)

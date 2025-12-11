@@ -198,28 +198,30 @@ export class OrdersService {
   async findForUser(
     userId: number,
     options : { page?: number; limit?: number } = {}
-  ) {
-
+    ) {
     const { page = 1, limit = 3 } = options;
 
-    const total = await this.orderRepository.count({ where: {user: {id: userId}} });
+    const total = await this.orderRepository.count({
+      where: { user: { id: userId } },
+    });
 
     const totalPages = Math.ceil(total / limit);
     const currentPage = page > totalPages ? totalPages : page;
 
-    const data = await this.orderRepository.findAndCount({
-      where: {user: {id: userId}},
+    const [orders] = await this.orderRepository.findAndCount({
+      where: { user: { id: userId } },
       relations: ['orderItems', 'orderItems.productVarient'],
       order: { createdAt: 'DESC' },
       skip: (currentPage - 1) * limit,
       take: limit,
     });
+
     return {
-      data,
+      orders,
       total,
       page: currentPage,
       limit,
-      totalPages: Math.ceil(total / limit)
+      totalPages
     };
   }
 

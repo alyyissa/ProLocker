@@ -7,12 +7,12 @@ import Login from './pages/auth/Login'
 import Signup from './pages/auth/Signup'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import Profile from './pages/auth/Profile'
 import AOS from 'aos'
 import GuestOnly from './pages/auth/GuestOnly'
 import Product from './pages/Product'
 import Checkout from './pages/Checkout'
 import ProductView from './pages/ProductView'
+import Profile from './pages/Profile'
 
 function App() {
   useEffect(() =>{
