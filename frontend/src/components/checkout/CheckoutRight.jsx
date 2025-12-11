@@ -3,10 +3,10 @@ import { useCart } from "../../context/CartContext";
 import { createOrder } from "../../services/orders/orderServies";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-
+import { toast } from "react-toastify";
 
 export default function CheckoutRight() {
-  const {user} = useAuth()
+  const { user } = useAuth();
   const { cart, clearCart } = useCart();
   const [form, setForm] = useState({
     firstName: "",
@@ -19,7 +19,10 @@ export default function CheckoutRight() {
   });
   const [loading, setLoading] = useState(false);
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const subtotal = cart.reduce(
+    (sum, item) => sum + (item.product.priceAfterSale || item.product.price) * item.qty,
+    0
+  );
   const deliveryFee = 3;
   const total = subtotal + deliveryFee;
 
@@ -41,11 +44,9 @@ export default function CheckoutRight() {
         phoneNumber: form.phoneNumber,
         address: form.address,
         city: form.city,
-        state: form.state,
-        zip: form.zip,
         country: "Lebanon",
         items: cart.map((item) => ({
-          productVarientId: item.productVarientId,
+          productVarientId: item.variant.id,
           quantity: item.qty,
         })),
       };
@@ -62,13 +63,15 @@ export default function CheckoutRight() {
   };
 
   return (
-    <div className="w-full">
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="w-full bg-white p-6 rounded-md shadow-md">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <h2 className="text-xl font-semibold text-slate-900">Delivery Details</h2>
         <div className="grid lg:grid-cols-2 gap-4">
           {["firstName","lastName","email","phoneNumber","city","address","apartment"].map((field) => (
             <div key={field}>
-              <label className="text-sm font-medium text-slate-900 block mb-2">{field.charAt(0).toUpperCase()+field.slice(1)}</label>
+              <label className="text-sm font-medium text-slate-900 block mb-2">
+                {field.charAt(0).toUpperCase()+field.slice(1)}
+              </label>
               <input
                 type={field === "email" ? "email" : "text"}
                 name={field}
@@ -89,21 +92,27 @@ export default function CheckoutRight() {
         </div>
 
         <ul className="text-slate-500 font-medium space-y-2 mb-4">
-          <li className="flex justify-between text-sm">Subtotal <span className="text-slate-900 font-semibold">${subtotal.toFixed(2)}</span></li>
-          <li className="flex justify-between text-sm">Delivery <span className="text-slate-900 font-semibold">${deliveryFee.toFixed(2)}</span></li>
+          <li className="flex justify-between text-sm">
+            Subtotal <span className="text-slate-900 font-semibold">${subtotal.toFixed(2)}</span>
+          </li>
+          <li className="flex justify-between text-sm">
+            Delivery <span className="text-slate-900 font-semibold">${deliveryFee.toFixed(2)}</span>
+          </li>
           <hr className="border-slate-300" />
-          <li className="flex justify-between font-semibold text-slate-900">Total <span>${total.toFixed(2)}</span></li>
+          <li className="flex justify-between font-semibold text-slate-900">
+            Total <span>${total.toFixed(2)}</span>
+          </li>
         </ul>
+
         <div className="flex flex-row gap-4">
           <button type="submit" disabled={loading} className="w-full px-4 py-2.5 text-sm font-semibold text-white bg-cocoprimary rounded-md cursor-pointer">
             {loading ? "Processing..." : "Place Order"}
           </button>
-          <Link to={'/products'} className="w-full">
-            <button className="w-full px-4 py-2.5 text-sm font-semibold text-cocoprimary bg-gray-300 hover:bg-gray-400 rounded-md cursor-pointer transform transition-all duration-300">
+          <Link to="/products" className="w-full">
+            <button className="w-full px-4 py-2.5 text-sm font-semibold text-cocoprimary bg-gray-300 hover:bg-gray-400 rounded-md cursor-pointer">
               Continue Shopping
             </button>
           </Link>
-          
         </div>
       </form>
     </div>
