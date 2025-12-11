@@ -1,15 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
+import { Link, useNavigate } from "react-router-dom";
+
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useCart();
   const isOnSale = product.priceAfterSale && product.priceAfterSale < product.price;
+  const navigate = useNavigate();
 
   return (
     <div className="group relative cursor-pointer">
       <div className="relative">
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/products/${product.slug}`}>
           {isOnSale && (
             <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
               SALE
@@ -27,7 +27,7 @@ const ProductCard = ({ product }) => {
 
       <div className="mt-3 space-y-1">
         <h3 className="text-sm font-semibold text-gray-900">
-          <Link to={`/product/${product.id}`}>{product.name}</Link>
+          {product.name}
         </h3>
 
         {isOnSale ? (
