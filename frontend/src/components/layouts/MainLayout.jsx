@@ -5,33 +5,39 @@ import { Outlet, useLocation } from "react-router-dom";
 import Preloader from "../Preloader/Preloader";
 
 const MainLayout = () => {
-  const [loading, setLoading] = useState(false);
   const { pathname } = useLocation();
-
-  const loaderRoutes = ["/", "/products"]; 
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (loaderRoutes.includes(pathname)) {
-      setLoading(true);
-      window.scrollTo(0, 0);
+    // Show loader on every route change
+    setIsLoading(true);
+    window.scrollTo(0, 0);
 
-      const timer = setTimeout(() => setLoading(false), 1200);
-      return () => clearTimeout(timer);
-    } else {
-      setLoading(false);
-    }
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   return (
-      <>
-        <main key={pathname}>
+    <>
+      <Preloader show={isLoading} />
+      
+      <main 
+        style={{ 
+          opacity: isLoading ? 0 : 1,
+          transition: 'opacity 0.3s ease-in',
+          visibility: isLoading ? 'hidden' : 'visible'
+        }}
+      >
         <Navbar />
-          <Outlet />
-          <a
+        <Outlet />
+        <a
           href="https://wa.me/96170915687"
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed bottom-6 right-6 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+          className="fixed bottom-6 right-6 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform z-99"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -43,8 +49,8 @@ const MainLayout = () => {
           </svg>
         </a>
         <Footer />
-        </main>
-      </>
+      </main>
+    </>
   );
 };
 

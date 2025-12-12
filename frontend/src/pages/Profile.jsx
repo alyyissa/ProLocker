@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import OrderPopup from "../components/order/OrderPopup";
 
 const Profile = () => {
-    const { user, logoutUser } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -44,18 +44,6 @@ const Profile = () => {
         console.error("Failed to load orders:", error);
         } finally {
         setLoading(false);
-        }
-    };
-
-    const handleLogout = async () => {
-        try {
-            await logoutApi();
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            logoutUser();
-            navigate('/')
-        } catch (error) {
-            throw error
         }
     };
 
