@@ -65,6 +65,13 @@ const Profile = () => {
     </div>
     );
     }
+
+    const statusStyles = {
+        PENDING: "bg-yellow-100 text-yellow-900",
+        CONFIRMED: "bg-blue-100 text-blue-900",
+        DELIVERED: "bg-green-100 text-green-900",
+        DECLINED: "bg-red-100 text-red-900",
+        };
   return (
     <div className="pt-[69px] md:pt-[109px] px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
         <div className="max-w-7xl mx-auto py-20">
@@ -90,11 +97,7 @@ const Profile = () => {
 
                             <span
                             className={`px-3 py-1.5 text-xs font-medium rounded-md ${
-                                order.status === "Delivered"
-                                ? "bg-green-100 text-green-900"
-                                : order.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-900"
-                                : "bg-blue-100 text-blue-900"
+                                statusStyles[order.status] ?? "bg-gray-100 text-gray-800"
                             }`}
                             >
                             {order.status}
@@ -162,7 +165,7 @@ const Profile = () => {
                         </button>
                         {
                             showPopup && (
-                                <OrderPopup order={selectedOrder} onClose={closePopup}/>
+                                <OrderPopup isOpen={showPopup} order={selectedOrder} onClose={closePopup}/>
                             )
                         }
                     </div>

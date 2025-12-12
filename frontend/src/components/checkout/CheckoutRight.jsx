@@ -79,7 +79,7 @@ export default function CheckoutRight() {
                 value={form[field]}
                 onChange={handleChange}
                 placeholder={`Enter ${field.charAt(0).toUpperCase()+field.slice(1)}`}
-                className="px-4 py-2.5 w-full text-sm text-slate-900 bg-white border border-gray-400 rounded-md focus:outline-blue-600"
+                className="px-4 py-2.5 w-full text-sm text-slate-900 bg-white border border-gray-400 rounded-md focus:outline-black"
                 required={field !== "apartment" && field !== "email"}
               />
             </div>
@@ -89,7 +89,7 @@ export default function CheckoutRight() {
         <h2 className="text-xl font-semibold text-slate-900 mt-6 mb-2">Payment</h2>
         <div className="flex items-center gap-4 mb-4">
           <input type="radio" name="paymentMethod" value="cod" checked readOnly className="w-5 h-5 cursor-pointer" />
-          <label className="text-slate-900 font-medium cursor-pointer">Cash on Delivery (COD)</label>
+          <label className="text-slate-900 font-semibold cursor-pointer">Cash on Delivery (COD) <span className="font-normal text-slate-500"> Delivey in 2-7 working days</span></label>
         </div>
 
         <ul className="text-slate-500 font-medium space-y-2 mb-4">

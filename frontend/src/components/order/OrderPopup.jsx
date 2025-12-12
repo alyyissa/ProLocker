@@ -1,7 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const OrderPopup = ({isOpen, onClose, order}) => {
-  return (
+    useEffect(() => {
+    if (isOpen) {
+        document.body.style.overflow = "hidden";
+    } else {
+        document.body.style.overflow = "auto";
+    }
+    return () => {
+        document.body.style.overflow = "auto";
+    };
+}, [isOpen]);
+return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-99 p-4">
         <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto relative">
             <button
@@ -72,7 +82,7 @@ const OrderPopup = ({isOpen, onClose, order}) => {
                 <div>
                     <p className="text-slate-500 text-sm font-semibold">Shipping Method</p>
                     <p className="text-slate-900 text-sm font-medium mt-2">
-                    Standard Delivery
+                    Delivery
                     </p>
                 </div>
 

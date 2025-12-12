@@ -45,6 +45,10 @@ const Navbar = () => {
   const handleCart = () => {
     setOpenCart(!openCart)
   }
+  
+  useEffect(() => {
+    setOpenCart(false);
+  }, [location.pathname]);
 
   // for the search bar loop
   useEffect(() => {
