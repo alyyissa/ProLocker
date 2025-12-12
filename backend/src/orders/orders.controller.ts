@@ -32,7 +32,6 @@ export class OrdersController {
     return this.ordersService.findOne(+id, req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard, AdminGuard)
   @Patch(':id')
   updateStatus(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.ordersService.updateStatus(+id, updateOrderDto);

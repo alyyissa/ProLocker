@@ -29,10 +29,6 @@ const Navbar = () => {
   const { isLoggedIn, logout } = useAuth();
   const navigate = useNavigate()
 
-  const handleUserClick = () => {
-    setUserDropdown(!userDropdown);
-  };
-
   const handleLogout = () => {
     logout();
     setUserDropdown(false);
@@ -44,16 +40,6 @@ const Navbar = () => {
     setOpenCart(!openCart)
   }
 
-  // close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setUserDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   // for the search bar loop
   useEffect(() => {
@@ -92,6 +78,21 @@ const Navbar = () => {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   },[])
+
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    const isProfileButton = event.target.closest('[data-profile-button="true"]');
+    
+    if (dropdownRef.current && 
+        !dropdownRef.current.contains(event.target) &&
+        !isProfileButton) {
+      setUserDropdown(false);
+    }
+  };
+  
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
 
   return (
     <>
@@ -149,9 +150,9 @@ const Navbar = () => {
 
             <div className='flex flex-row items-center gap-5 relative'>
               {/* Profile Icon */}
-              <Link className="md:block hidden cursor-pointer" to="#" onClick={(e) => {e.preventDefault();setUserDropdown(!userDropdown);}}>
+              <button className="md:block hidden cursor-pointer" to="#" onClick={(e) =>{e.preventDefault(); setUserDropdown(!userDropdown)}} data-profile-button="true">
                 <i className={`fa-solid fa-user fa-lg transition-colors duration-300 text-background`}></i>
-              </Link>
+              </button>
 
               {/* User Dropdown */}
               {userDropdown && (
