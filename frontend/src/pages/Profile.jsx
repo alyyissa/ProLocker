@@ -152,7 +152,7 @@ const Profile = () => {
                                 {item.productVarient.product.name}
                             </p>
                             <p className="text-xs text-slate-600 mt-1">
-                                Qty: {item.quantity}
+                                Qty: {item.quantity},  Size: {item.productVarient.size}
                             </p>
                             </div>
                         </div>

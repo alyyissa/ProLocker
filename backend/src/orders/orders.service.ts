@@ -32,7 +32,6 @@ export class OrdersService {
     const user = await manager.findOne(User, {
       where: { id: createOrderDto.userId },
     });
-
     if (!user) throw new NotFoundException('User not found');
 
     const oneWeekAgo = new Date();
@@ -46,25 +45,25 @@ export class OrdersService {
     });
 
     if (recentOrderCount >= 3) {
-      throw new BadRequestException('You cant order more than three times per week');
+      throw new BadRequestException('You can\'t order more than three times per week');
     }
 
     const trackingNumber = this.generateTrackingNumber();
 
-    const order = await manager.save(Order, {
-      user,
-      phoneNumber: createOrderDto.phoneNumber,
-      address: createOrderDto.address,
-      firstName: createOrderDto.firstName,
-      lastName: createOrderDto.lastName,
-      apartment: createOrderDto.apartment,
-      city: createOrderDto.city,
-      email: createOrderDto.email,
-      country: createOrderDto.country ?? 'Lebanon',
-      trackingNumber,
-      status: OrderStatus.PENDING,
-      totalPrice: 0,
-    });
+    const order = new Order();
+    order.user = user;
+    order.phoneNumber = createOrderDto.phoneNumber;
+    order.address = createOrderDto.address;
+    order.firstName = createOrderDto.firstName;
+    order.lastName = createOrderDto.lastName;
+    order.apartment = createOrderDto.apartment;
+    order.city = createOrderDto.city;
+    order.email = createOrderDto.email;
+    order.trackingNumber = trackingNumber;
+    order.status = OrderStatus.PENDING;
+    order.totalPrice = 0;
+
+    await manager.save(order);
 
     let totalPrice = 0;
 
@@ -78,13 +77,18 @@ export class OrdersService {
 
       await this.productVarientService.reduceStock(item.productVarientId, item.quantity, manager);
 
-      const orderItem = await manager.save(OrderItem, {
-        order,
-        productVarient,
-        quantity: item.quantity,
-        unitPrice: productVarient.product.price,
-        totalPrice: productVarient.product.price * item.quantity,
-      });
+      const actualPrice = productVarient.product.sale > 0
+        ? productVarient.product.price - (productVarient.product.price * productVarient.product.sale) / 100
+        : productVarient.product.price;
+
+      const orderItem = new OrderItem();
+      orderItem.order = order;
+      orderItem.productVarient = productVarient;
+      orderItem.quantity = item.quantity;
+      orderItem.unitPrice = actualPrice;
+      orderItem.totalPrice = actualPrice * item.quantity;
+
+      await manager.save(orderItem);
 
       totalPrice += orderItem.totalPrice;
     }
@@ -99,6 +103,7 @@ export class OrdersService {
     };
   });
 }
+
 
 
   async findAll(filters: OrderFilterDto) {
@@ -192,44 +197,74 @@ export class OrdersService {
   }
 
   async findForUser(
-    userId: number,
-    options : { page?: number; limit?: number } = {}
-    ) {
-    const { page = 1, limit = 3 } = options;
+  userId: number,
+  options: { page?: number; limit?: number } = {}
+) {
+  const { page = 1, limit = 3 } = options;
 
-    const total = await this.orderRepository.count({
-      where: { user: { id: userId } },
-    });
+  const total = await this.orderRepository.count({
+    where: { user: { id: userId } },
+  });
 
-    if (total === 0) {
+  if (total === 0) {
     return {
       orders: [],
       total: 0,
       page: 1,
       limit,
-      totalPages: 1
+      totalPages: 1,
     };
   }
 
-    const totalPages = Math.ceil(total / limit);
-    const currentPage = page > totalPages ? totalPages : page;
+  const totalPages = Math.ceil(total / limit);
+  const currentPage = page > totalPages ? totalPages : page;
 
-    const [orders] = await this.orderRepository.findAndCount({
-      where: { user: { id: userId } },
-      relations: ['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product'],
-      order: { createdAt: 'DESC' },
-      skip: (currentPage - 1) * limit,
-      take: limit,
-    });
+  const [orders] = await this.orderRepository.findAndCount({
+    where: { user: { id: userId } },
+    relations: ['orderItems', 'orderItems.productVarient.size', 'orderItems.productVarient.product'],
+    order: { createdAt: 'DESC' },
+    skip: (currentPage - 1) * limit,
+    take: limit,
+  });
 
-    return {
-      orders,
-      total,
-      page: currentPage,
-      limit,
-      totalPages
-    };
-  }
+  // Map to only return what you need
+  const formattedOrders = orders.map(order => ({
+    id: order.id,
+    trackingNumber: order.trackingNumber,
+    status: order.status,
+    firstName: order.firstName,
+    lastName: order.lastName,
+    phoneNumber: order.phoneNumber,
+    address: order.address,
+    city: order.city,
+    totalPrice: order.totalPrice,
+    createdAt: order.createdAt,
+    orderItems: order.orderItems.map(item => ({
+      id: item.id,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      totalPrice: item.totalPrice,
+      productVarient: {
+        id: item.productVarient.id,
+        size: item.productVarient.size?.symbol,
+        product: {
+          id: item.productVarient.product.id,
+          name: item.productVarient.product.name,
+          mainImage: item.productVarient.product.mainImage, // optional
+        }
+      }
+    }))
+  }));
+
+  return {
+    orders: formattedOrders,
+    total,
+    page: currentPage,
+    limit,
+    totalPages,
+  };
+}
+
 
   async updateStatus(id: number, updateOrderDto: UpdateOrderDto) {
     const order = await this.orderRepository.findOne({where: {id}, relations:['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product']});

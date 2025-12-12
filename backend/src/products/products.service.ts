@@ -99,6 +99,13 @@ export class ProductsService {
     };
   }
 
+  async findForAdmin(){
+    const data = this.productRepository.find({
+      relations: ['color', 'category', 'gender', 'varients', 'varients.size']
+    })
+    return data
+  }
+
   async findOne(slug: string): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { slug },

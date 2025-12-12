@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { createOrder } from "../../services/orders/orderServies";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
@@ -18,7 +18,7 @@ export default function CheckoutRight() {
     apartment: "",
   });
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate()
   const subtotal = cart.reduce(
     (sum, item) => sum + (item.product.priceAfterSale || item.product.price) * item.qty,
     0
@@ -60,6 +60,7 @@ export default function CheckoutRight() {
     } finally {
       setLoading(false);
     }
+    navigate('/profile')
   };
 
   return (
