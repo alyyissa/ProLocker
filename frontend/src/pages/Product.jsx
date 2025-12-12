@@ -3,6 +3,7 @@ import ProductFilters from "../components/product/ProductFilters";
 import ProductCard from "../components/product/ProductCard";
 import { assets } from "../assets/assets";
 import { getProducts } from "../services/products/productsService";
+import Preloader from "../components/Preloader/Preloader";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -43,7 +44,8 @@ const Products = () => {
   useEffect(()=> {
     fetchProducts();
   }, [filters, page])
-
+  {loading && <Preloader show={true} />}
+  {loading && <Preloader show={true} />}
   return (
     <div className="pt-[69px] md:pt-[109px] h-auto">
       <div
@@ -74,8 +76,8 @@ const Products = () => {
               Showing {products.length} products
             </p>
 
-            {/* <div className="hidden md:flex gap-2">
-            </div> */}
+            <div className="hidden md:flex gap-2"></div>
+
             </div>
             {/* Overlay */}
             <div
@@ -124,7 +126,7 @@ const Products = () => {
                     <button
                       disabled={page === 1}
                       onClick={() => setPage(page - 1)}
-                      className="px-3 py-1 border rounded disabled:opacity-50"
+                      className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
                     >
                       Prev
                     </button>
@@ -133,7 +135,7 @@ const Products = () => {
                       <button
                         key={i + 1}
                         onClick={() => setPage(i + 1)}
-                        className={`px-3 py-1 border rounded ${page === i + 1 ? 'bg-cocoprimary text-white' : ''}`}
+                        className={`px-3 py-1 border rounded cursor-pointer ${page === i + 1 ? 'bg-cocoprimary text-white' : ''}`}
                       >
                         {i + 1}
                       </button>
@@ -142,7 +144,7 @@ const Products = () => {
                     <button
                       disabled={page === totalPages}
                       onClick={() => setPage(page + 1)}
-                      className="px-3 py-1 border rounded disabled:opacity-50"
+                      className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
                     >
                       Next
                     </button>

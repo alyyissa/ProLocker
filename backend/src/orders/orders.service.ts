@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -178,13 +178,16 @@ export class OrdersService {
     return `ORD-${y}${m}${d}-${random}`;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, userId:number) {
     const order = await this.orderRepository.findOne({
       where: {id},
       relations: ['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product']
     });
     if(!order) throw new NotFoundException('Order not found');
 
+    if (order.user.id !== userId) {
+    throw new ForbiddenException('You are not allowed to access this order');
+    }
     return order;
   }
 

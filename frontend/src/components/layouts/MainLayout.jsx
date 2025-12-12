@@ -24,7 +24,6 @@ const MainLayout = () => {
 
   return (
       <>
-        {loading && <Preloader show={true} />}
         <main key={pathname}>
         <Navbar />
           <Outlet />
