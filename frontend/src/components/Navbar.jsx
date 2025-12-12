@@ -21,17 +21,23 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
 
-  const dropdownRef = useRef(null); // ref for dropdown
+  const dropdownRef = useRef(null);
 
   const location = useLocation();
   const isHome = location.pathname === "/";
 
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logoutUser } = useAuth();
+
   const navigate = useNavigate()
 
-  const handleLogout = () => {
-    logout();
-    setUserDropdown(false);
+  const handleLogout = async () => {
+    try {
+      await logoutUser()
+      setUserDropdown(false)
+      navigate('/')
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const {cart} = useCart();
@@ -39,7 +45,6 @@ const Navbar = () => {
   const handleCart = () => {
     setOpenCart(!openCart)
   }
-
 
   // for the search bar loop
   useEffect(() => {
@@ -165,7 +170,7 @@ const Navbar = () => {
                         </Link>
                       </li>
                       <li>
-                        <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
                           Logout
                         </button>
                       </li>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getMyOrders } from "../services/orders/orderServies";
 import { useAuth } from "../context/AuthContext";
-import { logoutUser as logoutApi } from "../services/auth/authService";
 import { useNavigate } from "react-router-dom";
 import OrderPopup from "../components/order/OrderPopup";
 
