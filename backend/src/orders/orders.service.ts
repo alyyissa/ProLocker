@@ -12,6 +12,7 @@ import { DataSource } from 'typeorm';
 import { ProductVarientService } from 'src/product-varient/product-varient.service';
 import { OrderFilterDto } from './dto/order-filter.dto';
 import { ProductsService } from 'src/products/products.service';
+import { DeliveryService } from 'src/delivery/delivery.service';
 
 @Injectable()
 export class OrdersService {
@@ -24,6 +25,7 @@ export class OrdersService {
 
     private readonly productVarientService: ProductVarientService,
     private readonly datasource: DataSource,
+    private readonly deliveryService: DeliveryService
 ) {}
 
   async create(createOrderDto: CreateOrderDto) {
@@ -92,7 +94,9 @@ export class OrdersService {
 
       totalPrice += orderItem.totalPrice;
     }
+    const delivery = await this.deliveryService.getOne(1);
 
+    totalPrice += Number(delivery.price)
     order.totalPrice = totalPrice;
     await manager.save(order);
 
