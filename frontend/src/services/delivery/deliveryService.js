@@ -2,10 +2,12 @@ import api from "../api";
 
 export const getDeliveryFee = async () => {
   try {
-    const res = await api.get('/setting/delivery-price');
-    return res.data.deliveryPrice || 3;
+    const res = await api.get("/delivery");
+    const delivery = res.data?.[0];
+    if (!delivery) return 0;
+    return Number(delivery.price);
   } catch (err) {
-    console.error('Failed to fetch delivery fee:', err);
+    console.error("Failed to fetch delivery fee:", err);
     return 0;
   }
 };

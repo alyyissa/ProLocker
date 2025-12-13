@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { getMyOrders } from "../services/orders/orderServies";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import OrderPopup from "../components/order/OrderPopup";
+import { getDeliveryFee } from "../services/delivery/deliveryService";
 
 const Profile = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
 
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
+    const [deliveryFee, setDeliveryFee] = useState(0);
+
+    useEffect(() => {
+    const fetchDeliveryFee = async () => {
+        const fee = await getDeliveryFee();
+        setDeliveryFee(fee);
+    };
+    fetchDeliveryFee();
+    }, []);
 
     const openPopup = (order) => {
     setSelectedOrder(order);
@@ -117,7 +125,7 @@ const Profile = () => {
 
                         <div className="text-right">
                         <p className="text-lg font-semibold text-slate-900">
-                            ${Number(order.totalPrice).toFixed(2)}
+                            ${(Number(order.totalPrice) + deliveryFee).toFixed(2)}
                         </p>
                         <p className="text-slate-600 text-sm mt-2">
                             {order.orderItems.length} items

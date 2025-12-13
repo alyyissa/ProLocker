@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useCart } from "../../context/CartContext";
+import { getDeliveryFee } from "../../services/delivery/deliveryService";
+
 
 export default function CheckoutLeft() {
   const { cart, removeFromCart, addToCart, decrementQty } = useCart();
@@ -8,7 +10,15 @@ export default function CheckoutLeft() {
     (sum, item) => sum + (item.product.priceAfterSale || item.product.price) * item.qty,
     0
   );
-  const deliveryFee = 3;
+  const [deliveryFee, setDeliveryFee] = useState(0)
+  useEffect(() => {
+  const fetchDelivery = async () => {
+    const fee = await getDeliveryFee();
+    setDeliveryFee(fee);
+  };
+  fetchDelivery();
+  }, []);
+
   const total = subtotal + deliveryFee;
 
   return (

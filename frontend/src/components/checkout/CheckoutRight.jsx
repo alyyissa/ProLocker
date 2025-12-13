@@ -18,23 +18,22 @@ export default function CheckoutRight() {
     address: "",
     apartment: "",
   });
-  const [loading, setLoading] = useState(false);
   const [deliveryFee, setDeliveryFee] = useState(0);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const subtotal = cart.reduce(
     (sum, item) => sum + (item.product.priceAfterSale || item.product.price) * item.qty,
     0
   );
-
   const total = subtotal + deliveryFee;
 
   useEffect(() => {
-    const fetchDeliveryFee = async () => {
-      const fee = await getDeliveryFee();
-      setDeliveryFee(fee);
-    };
-    fetchDeliveryFee();
+  const fetchDelivery = async () => {
+    const fee = await getDeliveryFee();
+    setDeliveryFee(fee);
+  };
+  fetchDelivery();
   }, []);
 
   const handleChange = (e) => {
@@ -65,13 +64,13 @@ export default function CheckoutRight() {
       const res = await createOrder(orderPayload);
       toast.success("Order placed successfully! Tracking: " + res.trackingNumber);
       clearCart();
+      navigate("/profile");
     } catch (err) {
       console.error(err);
       toast.error(err.message || "Failed to place order");
     } finally {
       setLoading(false);
     }
-    navigate('/profile');
   };
 
   return (
@@ -82,14 +81,14 @@ export default function CheckoutRight() {
           {["firstName","lastName","email","phoneNumber","city","address","apartment"].map((field) => (
             <div key={field}>
               <label className="text-sm font-medium text-slate-900 block mb-2">
-                {field.charAt(0).toUpperCase()+field.slice(1)}
+                {field.charAt(0).toUpperCase() + field.slice(1)}
               </label>
               <input
                 type={field === "email" ? "email" : "text"}
                 name={field}
                 value={form[field]}
                 onChange={handleChange}
-                placeholder={`Enter ${field.charAt(0).toUpperCase()+field.slice(1)}`}
+                placeholder={`Enter ${field.charAt(0).toUpperCase() + field.slice(1)}`}
                 className="px-4 py-2.5 w-full text-sm text-slate-900 bg-white border border-gray-400 rounded-md focus:outline-black"
                 required={field !== "apartment" && field !== "email"}
               />

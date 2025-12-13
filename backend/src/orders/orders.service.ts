@@ -25,7 +25,6 @@ export class OrdersService {
 
     private readonly productVarientService: ProductVarientService,
     private readonly datasource: DataSource,
-    private readonly deliveryService: DeliveryService
 ) {}
 
   async create(createOrderDto: CreateOrderDto) {
@@ -94,9 +93,7 @@ export class OrdersService {
 
       totalPrice += orderItem.totalPrice;
     }
-    const delivery = await this.deliveryService.getOne(1);
 
-    totalPrice += Number(delivery.price)
     order.totalPrice = totalPrice;
     await manager.save(order);
 
