@@ -23,7 +23,6 @@ export class OrdersService {
     private readonly productService: ProductsService,
 
     private readonly productVarientService: ProductVarientService,
-
     private readonly datasource: DataSource,
 ) {}
 
@@ -33,6 +32,7 @@ export class OrdersService {
       where: { id: createOrderDto.userId },
     });
     if (!user) throw new NotFoundException('User not found');
+
 
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);

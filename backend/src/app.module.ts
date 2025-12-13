@@ -16,6 +16,7 @@ import { PermissionModule } from './permission/permission.module';
 import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { MailModule } from './mail/mail.module';
+import { DeliveryModule } from './delivery/delivery.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { MailModule } from './mail/mail.module';
     PermissionModule,
     AuthModule,
     MailModule,
+    DeliveryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

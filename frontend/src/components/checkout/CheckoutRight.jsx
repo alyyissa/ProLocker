@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { createOrder } from "../../services/orders/orderServies";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
+import { getDeliveryFee } from "../../services/delivery/deliveryService";
 
 export default function CheckoutRight() {
   const { user } = useAuth();
@@ -18,13 +19,23 @@ export default function CheckoutRight() {
     apartment: "",
   });
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate()
+  const [deliveryFee, setDeliveryFee] = useState(0);
+  const navigate = useNavigate();
+
   const subtotal = cart.reduce(
     (sum, item) => sum + (item.product.priceAfterSale || item.product.price) * item.qty,
     0
   );
-  const deliveryFee = 3;
+
   const total = subtotal + deliveryFee;
+
+  useEffect(() => {
+    const fetchDeliveryFee = async () => {
+      const fee = await getDeliveryFee();
+      setDeliveryFee(fee);
+    };
+    fetchDeliveryFee();
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -60,7 +71,7 @@ export default function CheckoutRight() {
     } finally {
       setLoading(false);
     }
-    navigate('/profile')
+    navigate('/profile');
   };
 
   return (
@@ -89,7 +100,9 @@ export default function CheckoutRight() {
         <h2 className="text-xl font-semibold text-slate-900 mt-6 mb-2">Payment</h2>
         <div className="flex items-center gap-4 mb-4">
           <input type="radio" name="paymentMethod" value="cod" checked readOnly className="w-5 h-5 cursor-pointer" />
-          <label className="text-slate-900 font-semibold cursor-pointer">Cash on Delivery (COD) <span className="font-normal text-slate-500"> Delivey in 2-7 working days</span></label>
+          <label className="text-slate-900 font-semibold cursor-pointer">
+            Cash on Delivery (COD) <span className="font-normal text-slate-500"> Delivery in 2-7 working days</span>
+          </label>
         </div>
 
         <ul className="text-slate-500 font-medium space-y-2 mb-4">
