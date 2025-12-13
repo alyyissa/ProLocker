@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 const ProductCard = ({ product }) => {
   const isOnSale = product.priceAfterSale && product.priceAfterSale < product.price;
   const navigate = useNavigate();
+  const isFewLeft = product.status === "Few Left";
 
   return (
     <div className="group relative cursor-pointer">
@@ -41,6 +42,12 @@ const ProductCard = ({ product }) => {
           <p className="text-sm font-medium text-cocosecondary">
             ${product.price}
           </p>
+        )}
+
+        {isFewLeft && (
+            <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">
+              Few Left
+            </div>
         )}
       </div>
     </div>

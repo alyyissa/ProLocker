@@ -82,6 +82,8 @@ export class ProductsService {
     if (filters?.category) query.andWhere('category.category = :category', { category: filters.category });
     if (filters?.color) query.andWhere('color.color = :color', { color: filters.color });
 
+    query.andWhere('(product.quantity > 0 OR product.status = :fewLeft)', { fewLeft: 'Few Left' });
+    
     query.skip((page - 1) * limit).take(limit);
 
     if (date === 'latest') query.orderBy('product.createdAt', 'DESC');

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { getDeliveryFee } from "../../services/delivery/deliveryService";
 
-
 export default function CheckoutLeft() {
   const { cart, removeFromCart, addToCart, decrementQty } = useCart();
 
@@ -50,7 +49,14 @@ export default function CheckoutLeft() {
                     </p>
                   )}
                   <h6 className="text-[15px] text-slate-900 font-medium mt-4">
-                    ${item.product.priceAfterSale || item.product.price}
+                    {item.product.priceAfterSale && item.product.priceAfterSale < item.product.price ? (
+                      <>
+                        <span className="line-through text-gray-400">${item.product.price.toFixed(2)}</span>
+                        <span className="text-cocoprimary"> ${item.product.priceAfterSale.toFixed(2)}</span>
+                      </>
+                    ) : (
+                      <span>${item.product.price.toFixed(2)}</span>
+                    )}
                   </h6>
                 </div>
 
