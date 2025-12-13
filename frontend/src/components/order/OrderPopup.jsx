@@ -19,6 +19,8 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
     fetchDelivery();
   }, []);
 
+  console.log(order.orderItems)
+
   const finalTotal = Number(order.totalPrice || 0) + deliveryFee;
 
   return (
@@ -92,10 +94,17 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
           <div className="mt-4">
             <h3 className="text-base font-medium text-slate-900 mb-6">Order Items ({order.orderItems.length})</h3>
             <div className="space-y-4">
-              {order.orderItems.map((item) => (
+              {order.orderItems.map((item) => {
+              const originalTotal = Number(item.originalPrice) * Number(item.quantity);
+              const actualTotal = Number(item.unitPrice) * Number(item.quantity);
+                  console.log(actualTotal)
+              return (
                 <div key={item.id} className="flex items-start gap-4 max-sm:flex-col">
                   <div className="w-[70px] h-[70px] bg-gray-200 rounded-lg flex items-center justify-center shrink-0">
-                    <img src={item.productVarient.product.mainImage || "/placeholder.png"} className="w-14 h-14 object-contain rounded-sm" />
+                    <img
+                      src={item.productVarient.product.mainImage || "/placeholder.png"}
+                      className="w-14 h-14 object-contain rounded-sm"
+                    />
                   </div>
 
                   <div className="flex-1">
@@ -106,12 +115,18 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
                   </div>
 
                   <div className="text-right">
+                    {originalTotal > actualTotal && (
+                      <p className="text-slate-500 text-sm font-medium line-through">
+                        ${originalTotal.toFixed(2)}
+                      </p>
+                    )}
                     <p className="text-slate-900 text-sm font-semibold">
-                      ${(item.unitPrice * item.quantity).toFixed(2)}
+                      ${actualTotal.toFixed(2)}
                     </p>
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
           </div>
 

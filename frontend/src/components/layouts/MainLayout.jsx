@@ -3,13 +3,15 @@ import Navbar from "../Navbar";
 import Footer from "../Footer";
 import { Outlet, useLocation } from "react-router-dom";
 import Preloader from "../Preloader/Preloader";
+import Banner from "../Banner";
+import { getActiveBanner } from "../../services/banner/bannerService";
 
 const MainLayout = () => {
   const { pathname } = useLocation();
   const [isLoading, setIsLoading] = useState(true);
+  const [banner, setBanner] = useState(null)
 
   useEffect(() => {
-    // Show loader on every route change
     setIsLoading(true);
     window.scrollTo(0, 0);
 
@@ -20,6 +22,17 @@ const MainLayout = () => {
     return () => clearTimeout(timer);
   }, [pathname]);
 
+  useEffect(() => {
+    const fetchBanner = async () => {
+      try {
+        const activeBanner = await getActiveBanner();
+        setBanner(activeBanner);
+      } catch (err) {
+        console.error("Failed to fetch banner:", err);
+      }
+    };
+    fetchBanner();
+  }, []);
   return (
     <>
       <Preloader show={isLoading} />
@@ -31,7 +44,8 @@ const MainLayout = () => {
           visibility: isLoading ? 'hidden' : 'visible'
         }}
       >
-        <Navbar />
+        {banner && banner.isActive && <Banner text={banner.text} />}
+        <Navbar bannerExists={banner && banner.isActive}/>
         <Outlet />
         <a
           href="https://wa.me/96170915687"

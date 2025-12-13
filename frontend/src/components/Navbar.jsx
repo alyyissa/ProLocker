@@ -11,7 +11,7 @@ const placeholderTexts = [
   "Type and explore..."
 ]
 
-const Navbar = () => {
+const Navbar = ({bannerExists}) => {
 
   const [placeholder, setPlaceholder] = useState("");
   const [textIndex, setTextIndex] = useState(0);
@@ -28,7 +28,9 @@ const Navbar = () => {
 
   const { isLoggedIn, logoutUser } = useAuth();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  const topClass = bannerExists ? "top-8" : "top-0";
 
   const handleLogout = async () => {
     try {
@@ -105,7 +107,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className={`w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 hover:bg-cocoprimary fixed top-0 py-5 md:py-8 z-60 transition-colors duration-300
+      <div className={`w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 hover:bg-cocoprimary fixed ${topClass} py-5 md:py-8 z-60 transition-colors duration-300
         ${!isHome || scrolled || open ? "bg-cocoprimary" : "bg-transparent"}`}>
           <div className='flex flex-row items-center justify-between'>
             <button onClick={() => setOpen(!open)} aria-label="Close menu" className='md:hidden'>

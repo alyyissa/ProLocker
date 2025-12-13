@@ -116,8 +116,6 @@ export class OrdersService {
   });
 }
 
-
-
   async findAll(filters: OrderFilterDto) {
     const {status, date, page = 1, limit= 1} = filters;
 
@@ -198,7 +196,25 @@ export class OrdersService {
   async findOne(id: number, userId:number) {
     const order = await this.orderRepository.findOne({
       where: {id},
-      relations: ['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product']
+      relations: ['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product'],
+      select: {
+      orderItems: {
+        id: true,
+        quantity: true,
+        unitPrice: true,
+        totalPrice: true,
+        originalPrice: true,
+        productVarient: {
+          id: true,
+          size: true,
+          product: {
+            id: true,
+            name: true,
+            mainImage: true
+          }
+        }
+      }
+    }
     });
     if(!order) throw new NotFoundException('Order not found');
 
@@ -206,6 +222,13 @@ export class OrdersService {
     throw new ForbiddenException('You are not allowed to access this order');
     }
     return order;
+  }
+
+  async findOneByAdmin(orderId: number) {
+    return this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product']
+    });
   }
 
   async findForUser(

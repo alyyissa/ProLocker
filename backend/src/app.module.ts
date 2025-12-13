@@ -17,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { MailModule } from './mail/mail.module';
 import { DeliveryModule } from './delivery/delivery.module';
+import { BannerModule } from './banner/banner.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { DeliveryModule } from './delivery/delivery.module';
     AuthModule,
     MailModule,
     DeliveryModule,
+    BannerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

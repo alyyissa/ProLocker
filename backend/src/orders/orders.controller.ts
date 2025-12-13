@@ -30,6 +30,12 @@ export class OrdersController {
   findOne(@Param('id') id: string, @Req() req) {
     return this.ordersService.findOne(+id, req.user.id);
   }
+  
+  @Get('admin/:id')
+  async findOneAdmin(@Param('id') id: string) {
+    const orderId = +id;
+    return this.ordersService.findOneByAdmin(orderId);
+  }
 
   @Patch(':id')
   updateStatus(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
