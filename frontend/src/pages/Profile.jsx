@@ -3,9 +3,18 @@ import { getMyOrders } from "../services/orders/orderServies";
 import { useAuth } from "../context/AuthContext";
 import OrderPopup from "../components/order/OrderPopup";
 import { getDeliveryFee } from "../services/delivery/deliveryService";
+import { useNavigate } from "react-router-dom";
+
 
 const Profile = () => {
-    const { user } = useAuth();
+    const { user, logoutUser } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+    if (!user) {
+        navigate("/");
+    }
+    }, [user, navigate]);
 
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
@@ -22,6 +31,16 @@ const Profile = () => {
     const openPopup = (order) => {
     setSelectedOrder(order);
     setShowPopup(true);
+    }; 
+
+    const handleLogout = async () => {
+        try {
+        await logoutUser()
+        setUserDropdown(false)
+        navigate('/')
+        } catch (error) {
+        console.log(error)
+        }
     };
 
     const closePopup = () => {
@@ -65,8 +84,11 @@ const Profile = () => {
                 You have no orders yet
             </h2>
             <p className="text-slate-600">Your orders will appear here once you place one.</p>
-            <button className="mt-10 rounded-xl bg-cocoprimary py-3 px-12 font-semibold text-background cursor-pointer" onClick={handleLogout}>
-                Logout
+            <button
+            className="mt-10 rounded-xl bg-cocoprimary py-3 px-12 font-semibold text-background cursor-pointer"
+            onClick={logoutUser}
+            >
+            Logout
             </button>
             </div>
         </div>

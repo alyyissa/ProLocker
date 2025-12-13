@@ -89,7 +89,9 @@ export default function CheckoutRight() {
                 value={form[field]}
                 onChange={handleChange}
                 placeholder={`Enter ${field.charAt(0).toUpperCase() + field.slice(1)}`}
-                className="px-4 py-2.5 w-full text-sm text-slate-900 bg-white border border-gray-400 rounded-md focus:outline-black"
+                className="px-4 py-2.5 w-full text-sm text-slate-900 bg-white border placeholder-slate-400
+              focus:placeholder-slate-300 border-gray-400 rounded-md focus:outline-none
+                focus:ring-1 focus:ring-cocoprimary focus:border-cocoprimary"
                 required={field !== "apartment" && field !== "email"}
               />
             </div>

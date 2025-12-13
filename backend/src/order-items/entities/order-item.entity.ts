@@ -31,5 +31,11 @@ export class OrderItem {
         type: 'int',
         nullable: false,
     })
+    originalPrice: number;
+
+    @Column({
+        type: 'int',
+        nullable: false,
+    })
     totalPrice: number;
 }

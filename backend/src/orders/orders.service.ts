@@ -74,25 +74,36 @@ export class OrdersService {
         relations: ['product'],
       });
 
-      if (!productVarient) throw new NotFoundException(`Product ${item.productVarientId} not found`);
+      if (!productVarient) {
+        throw new NotFoundException(`Product ${item.productVarientId} not found`);
+      }
 
-      await this.productVarientService.reduceStock(item.productVarientId, item.quantity, manager);
+      await this.productVarientService.reduceStock(
+        item.productVarientId,
+        item.quantity,
+        manager
+      );
 
-      const actualPrice = productVarient.product.sale > 0
-        ? productVarient.product.price - (productVarient.product.price * productVarient.product.sale) / 100
-        : productVarient.product.price;
+      const originalPrice = productVarient.product.price;
+
+      const actualPrice =
+        productVarient.product.sale > 0
+          ? originalPrice - (originalPrice * productVarient.product.sale) / 100
+          : originalPrice;
 
       const orderItem = new OrderItem();
       orderItem.order = order;
       orderItem.productVarient = productVarient;
       orderItem.quantity = item.quantity;
+
+      orderItem.originalPrice = originalPrice;
       orderItem.unitPrice = actualPrice;
       orderItem.totalPrice = actualPrice * item.quantity;
 
       await manager.save(orderItem);
 
       totalPrice += orderItem.totalPrice;
-    }
+  }
 
     order.totalPrice = totalPrice;
     await manager.save(order);
