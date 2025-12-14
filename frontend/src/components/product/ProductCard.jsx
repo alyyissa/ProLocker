@@ -28,7 +28,7 @@ const ProductCard = ({ product }) => {
 
       <div className="mt-3 space-y-1">
         <h3 className="text-sm font-semibold text-gray-900">
-          {product.name}
+          {product.name} -{product.color.color}
         </h3>
 
         {isOnSale ? (

@@ -54,6 +54,7 @@ const ProductView = () => {
     addToCart(product, variant, quantity);
   };
 
+  console.log(product)
   return (
     <div className="pt-[69px] md:pt-[109px] px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
       <div className="lg:max-w-6xl max-w-xl mx-auto py-10">
@@ -89,6 +90,7 @@ const ProductView = () => {
             <h3 className="text-lg sm:text-xl font-semibold text-slate-900">
               {product.name} | {product.category?.category || "No category"}
             </h3>
+            <p className="text-md sm:text-lg font-semibold text-slate-900">{product.color.color}</p>
             <p className="text-slate-500 mt-1 text-sm ">Delivery Price Added at checkout</p>
 
             <div className="flex items-center flex-wrap gap-4 mt-4">
