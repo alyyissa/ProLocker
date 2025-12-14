@@ -16,3 +16,12 @@ export const getProductBySlug = async (slug) => {
         throw error
     }
 }
+
+export const ProductService = {
+  search: async (query) => {
+    if (!query || query.length < 2) return [];
+    const res = await api.get(`/products/search?q=${query}`);
+    return res.data;
+  },
+};
+

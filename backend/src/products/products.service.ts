@@ -229,4 +229,33 @@ export class ProductsService {
       message: `${product.name} has been ${isActive ? 'activated': 'deactivated'}`
     }
   }
+
+  async searchProducts(query: string) {
+    if (!query || query.trim().length < 2) {
+      return [];
+    }
+
+    return await this.productRepository
+      .createQueryBuilder('product')
+      .select([
+        'product.id',
+        'product.name',
+        'product.slug',
+        'product.price',
+        'product.priceAfterSale',
+        'product.mainImage',
+        'product.status',
+      ])
+      .where('product.isActive = :isActive', { isActive: true })
+      .andWhere('(product.quantity > 0 OR product.status = :fewLeft)', {
+        fewLeft: ProductStatus.FewLeft,
+      })
+      .andWhere('LOWER(product.name) LIKE LOWER(:query)', {
+        query: `%${query}%`,
+      })
+      .orderBy('product.createdAt', 'DESC')
+      .take(6)
+      .getMany();
+  }
+
 }

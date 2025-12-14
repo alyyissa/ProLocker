@@ -43,6 +43,12 @@ export class ProductsController {
     return this.productsService.remove(+id);
   }
 
+  @Get('search')
+  search(@Query('q') q: string) {
+    return this.productsService.searchProducts(q);
+  }
+
+
   @Get('most-sold')
   getMostSold(){
     return this.productsService.getMostSoldProducts();
