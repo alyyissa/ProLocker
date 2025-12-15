@@ -4,6 +4,7 @@ import Statistics from '../components/home/Statistics';
 import Categories from '../components/home/Categories';
 import Preloader from '../components/Preloader/Preloader';
 import Map from '../components/home/Map';
+import MostSold from '../components/home/MostSold';
 
 const Home = () => {
   return (
@@ -11,6 +12,7 @@ const Home = () => {
       <Hero />
       <Statistics />
       <Categories />
+      <MostSold />
       <Map />
     </>
   )

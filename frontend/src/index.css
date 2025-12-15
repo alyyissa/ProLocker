@@ -32,3 +32,11 @@
   font-weight: 400;
   font-style: normal;
 }
+
+.swiper-pagination-custom .swiper-pagination-bullet {
+  background-color: #ec1b21;
+  opacity: 0.8;
+}
+.swiper-pagination-custom .swiper-pagination-bullet-active {
+  background-color: #000000;
+}
