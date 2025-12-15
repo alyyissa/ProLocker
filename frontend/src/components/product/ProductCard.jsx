@@ -18,7 +18,7 @@ const ProductCard = ({ product }) => {
           )}
 
           <img
-            src={product.image}
+            src={product.mainImage}
             alt={product.name}
             className="w-full aspect-square object-cover rounded-lg bg-gray-200 group-hover:opacity-75 transition"
           />
@@ -39,7 +39,7 @@ const ProductCard = ({ product }) => {
             </p>
           </div>
         ) : (
-          <p className="text-sm font-medium text-cocosecondary">
+          <p className="text-sm font-bold text-cocosecondary">
             ${product.price}
           </p>
         )}

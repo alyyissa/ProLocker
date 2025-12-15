@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { getProductBySlug } from "../services/products/productsService";
 import SizeSelector from "../components/product/SizeSelection";
+import RelatedProducts from "../components/product/RelatedItems";
 
 const ProductView = () => {
   const { slug } = useParams();
@@ -54,10 +55,9 @@ const ProductView = () => {
     addToCart(product, variant, quantity);
   };
 
-  console.log(product)
   return (
     <div className="pt-[69px] md:pt-[109px] px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
-      <div className="lg:max-w-6xl max-w-xl mx-auto py-10">
+      <div className="lg:max-w-6xl max-w-xl mx-auto pt-10">
         <div className="grid items-start grid-cols-1 lg:grid-cols-2 gap-12 max-sm:gap-8">
           {/* Images */}
           <div className="w-full lg:sticky top-0">
@@ -135,6 +135,9 @@ const ProductView = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="mb-10 lg:max-w-6xl max-w-xl mx-auto">
+        <RelatedProducts productId={product.id}/>
       </div>
     </div>
   );

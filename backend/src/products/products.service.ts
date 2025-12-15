@@ -258,4 +258,31 @@ export class ProductsService {
       .getMany();
   }
 
+  async getRelatedProducts(productId: number, limit = 10) {
+  const product = await this.productRepository.findOne({
+    where: { id: productId },
+    relations: ['category'],
+  });
+
+  if (!product) throw new NotFoundException('Product not found');
+
+  return await this.productRepository
+    .createQueryBuilder('product')
+    .leftJoinAndSelect('product.color', 'color')
+    .leftJoinAndSelect('product.category', 'category')
+    .leftJoinAndSelect('product.gender', 'gender')
+    .where('product.categoryId = :categoryId', {
+      categoryId: product.category.id,
+    })
+    .andWhere('product.id != :productId', { productId })
+    .andWhere('product.isActive = true')
+    .andWhere('(product.quantity > 0 OR product.status = :fewLeft)', {
+      fewLeft: ProductStatus.FewLeft,
+    })
+    .orderBy('RAND()')
+    .take(limit)
+    .getMany();
+  }
+
+
 }

@@ -66,4 +66,12 @@ export class ProductsController {
   ){
     return this.productsService.toggleActive(id, isActive);
   }
+
+  @Get(':id/related')
+  getRelatedProducts(
+    @Param('id') id: number,
+    @Query('limit') limit?: number
+  ) {
+    return this.productsService.getRelatedProducts(+id, limit ?? 10);
+  }
 }

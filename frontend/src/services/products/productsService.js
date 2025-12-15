@@ -25,3 +25,7 @@ export const ProductService = {
   },
 };
 
+export const getRelatedProducts = async (productId) => {
+  const res = await api.get(`/products/${productId}/related`);
+  return res.data;
+};
