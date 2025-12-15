@@ -100,7 +100,7 @@ const SideCart = ({ show, onClose }) => {
             </p>
 
             <Link to="/checkout">
-              <button className="w-full bg-indigo-600 text-white py-2 rounded-md cursor-pointer">
+              <button className="w-full bg-tertiary hover:bg-tertiary-hover text-white py-2 rounded-md cursor-pointer transition duration-300">
                 Checkout
               </button>
             </Link>

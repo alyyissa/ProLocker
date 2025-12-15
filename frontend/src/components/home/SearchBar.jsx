@@ -113,16 +113,15 @@ const SearchBar = ({ scrolled }) => {
   // Handle click on a product
   const handleSelectProduct = (slug) => {
     navigate(`/products/${slug}`);
-    setQuery("");          // clear input
-    setPlaceholder("");    // clear placeholder
-    setTextIndex(0);       // reset typing
+    setQuery("");
+    setPlaceholder("");
+    setTextIndex(0);
     setCharIndex(0);
-    setOpen(false);        // close dropdown
+    setOpen(false);
   };
 
   return (
     <div className="relative text-gray-600">
-      {/* Input */}
       <input
         type="search"
         name="search"
@@ -139,7 +138,6 @@ const SearchBar = ({ scrolled }) => {
         }`}
       />
 
-      {/* Search icon */}
       <button type="submit" className="absolute right-0 top-0 mt-4 mr-4 text-background">
         <svg className="h-4 w-4 fill-current" viewBox="0 0 56.966 56.966">
           <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23
@@ -149,7 +147,6 @@ const SearchBar = ({ scrolled }) => {
         </svg>
       </button>
 
-      {/* Dropdown */}
       {open && (
         <div className="absolute top-[55px] left-0 w-full bg-white rounded-xl shadow-xl z-50 overflow-hidden">
           {loading && <p className="p-4 text-sm text-gray-500">Searching...</p>}
@@ -158,7 +155,7 @@ const SearchBar = ({ scrolled }) => {
             <div
               key={product.id}
               onMouseDown={() => handleSelectProduct(product.slug)}
-              className={`flex items-center gap-3 p-3 cursor-pointer ${
+              className={`flex items-center gap-6 p-3 cursor-pointer ${
                 index === activeIndex ? "bg-gray-200" : "hover:bg-gray-100"
               }`}
             >
@@ -169,7 +166,18 @@ const SearchBar = ({ scrolled }) => {
               />
               <div>
                 <p className="text-sm font-medium">{highlight(product.name, query)}</p>
-                <p className="text-xs text-gray-500">${product.priceAfterSale ?? product.price}</p>
+                {product.priceAfterSale &&
+                  product.priceAfterSale < product.price && (
+                    <span className="text-gray-400 line-through text-xs">
+                      ${product.price}
+                    </span>
+                  )}
+                  &nbsp;
+                <span className="text-xs font-semibold">
+                    ${product.priceAfterSale && product.priceAfterSale < product.price
+                    ? product.priceAfterSale
+                    : product.price}
+                </span>
               </div>
             </div>
           ))}

@@ -34,7 +34,7 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
         </button>
 
         {/* TOP HEADER */}
-        <div className="bg-indigo-600 px-6 py-3">
+        <div className="bg-tertiary px-6 py-3">
           <div className="flex items-center gap-5">
             <h2 className="text-lg font-semibold text-white">Order Confirmation</h2>
             <span className="bg-white/20 text-white text-xs font-medium px-2.5 py-1 rounded-full">

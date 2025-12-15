@@ -6,6 +6,8 @@
     --color-primary: #ec1b21;
     --color-coprimary: #000000;
     --color-cocoprimary:#343436;
+    --color-tertiary: #2563eb;
+    --color-tertiary-hover: #1d4ed8
 }
 
 .field-input {

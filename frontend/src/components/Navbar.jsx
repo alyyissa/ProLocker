@@ -21,7 +21,7 @@ const Navbar = ({bannerExists}) => {
 
   const location = useLocation();
   const isHome = location.pathname === "/";
-
+  const isPordocust = location.pathname === "/products"
   const { isLoggedIn, logoutUser } = useAuth();
 
   const navigate = useNavigate();
@@ -164,7 +164,7 @@ const Navbar = ({bannerExists}) => {
           </div>
         </div>
 
-        {isHome && (
+        {(isHome || isPordocust) && (
           <div className='w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 bg-transparent fixed top-0 pt-20 z-50 flex md:hidden justify-center'>
             <SearchBar/>
           </div>

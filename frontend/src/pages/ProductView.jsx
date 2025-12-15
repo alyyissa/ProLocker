@@ -88,9 +88,9 @@ const ProductView = () => {
           {/* Product Info */}
           <div className="w-full">
             <h3 className="text-lg sm:text-xl font-semibold text-slate-900">
-              {product.name} | {product.category?.category || "No category"}
+              {product.name}
             </h3>
-            <p className="text-md sm:text-lg font-semibold text-slate-900">{product.color.color}</p>
+            <p className="text-md sm:text-lg font-semibold text-slate-900">{product.category?.category || "No category"}</p>
             <p className="text-slate-500 mt-1 text-sm ">Delivery Price Added at checkout</p>
 
             <div className="flex items-center flex-wrap gap-4 mt-4">
@@ -128,7 +128,7 @@ const ProductView = () => {
             <div className="mt-6 flex flex-wrap gap-4">
               <button
                 onClick={handleAddToCart}
-                className="px-4 py-3 w-[45%] border border-blue-600 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium cursor-pointer"
+                className="px-4 py-3 w-[45%] border bg-tertiary hover:bg-tertiary-hover text-white text-sm font-semibold cursor-pointer transition duration-300"
               >
                 Add to cart
               </button>
