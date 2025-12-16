@@ -8,6 +8,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
 import { useNavigate } from 'react-router-dom';
+import AOS from 'aos'
+import 'aos/dist/aos.css';
 
 const MostSold = () => {
     const [products, setProducts] = useState([]);
@@ -27,7 +29,12 @@ const MostSold = () => {
     const handleExploreMore = () => {
         navigate('/products')
     }
-
+    useEffect(() => {
+        AOS.init({
+            duration: 1000,
+            once: false,
+        });
+        }, []);
     if (!products.length) return null;
   return (
     <>
@@ -35,7 +42,7 @@ const MostSold = () => {
         title="Best Sold"
         subtitle="Here are the top sold items sold in our store"
         />
-        <div className="mt-10 w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 mb-10">
+        <div className="mt-10 w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 mb-10"  data-aos="fade-up" data-aos-delay="200">
             <Swiper
                 slidesPerView={1}
                 spaceBetween={10}
@@ -75,7 +82,7 @@ const MostSold = () => {
                         Explore More
                     </button>
                 </div>
-            </div>
+        </div>
     </>
   )
 }
