@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Title from '../Title'
 import { getCategories } from '../../services/categories/categoriesService'
-import { data } from 'react-router-dom'
 
 const Categories = () => {
     const [categories, setCategories] = useState([])
@@ -31,7 +30,7 @@ const Categories = () => {
             {categories.map((cat) => (
                 <div
                 key={cat.id}
-                className="border border-primary rounded-xl p-4 text-center shadow-md hover:scale-105 transition"
+                className="border border-primary rounded-xl p-4 text-center shadow-md hover:scale-102 transition duration-300 cursor-pointer"
                 data-aos ="fade-up"
                 data-aos-delay='300'
                 >

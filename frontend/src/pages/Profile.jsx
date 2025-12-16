@@ -226,7 +226,7 @@ const Profile = () => {
                     className={`px-3 py-1 rounded-md text-sm font-medium transition cursor-pointer 
                         ${
                         meta.page === i + 1
-                            ? "bg-indigo-600 text-white"
+                            ? "bg-tertiary text-white"
                             : "bg-white border border-gray-300 hover:bg-gray-50"
                         }`}
                     >

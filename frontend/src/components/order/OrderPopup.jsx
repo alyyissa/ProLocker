@@ -22,6 +22,12 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
   console.log(order.orderItems)
 
   const finalTotal = Number(order.totalPrice || 0) + deliveryFee;
+  const statusStyles = {
+    PENDING: "bg-yellow-100 text-yellow-900",
+    CONFIRMED: "bg-blue-100 text-blue-900",
+    DELIVERED: "bg-green-100 text-green-900",
+    DECLINED: "bg-red-100 text-red-900",
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-99 p-4">
@@ -37,9 +43,13 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
         <div className="bg-tertiary px-6 py-3">
           <div className="flex items-center gap-5">
             <h2 className="text-lg font-semibold text-white">Order Confirmation</h2>
-            <span className="bg-white/20 text-white text-xs font-medium px-2.5 py-1 rounded-full">
-              {order.status}
-            </span>
+            <span
+            className={`px-3 py-1.5 text-xs font-medium rounded-md ${
+                statusStyles[order.status] ?? "bg-gray-100 text-gray-800"
+            }`}
+            >
+            {order.status}
+            </span> 
           </div>
           <p className="text-slate-200 text-sm mt-2">Thank you for your order!</p>
         </div>
@@ -61,7 +71,7 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
 
             <div>
               <p className="text-slate-500 text-sm font-semibold">Total</p>
-              <p className="text-sm font-medium text-indigo-700 mt-2">
+              <p className="text-sm font-medium text-tertiary mt-2">
                 ${finalTotal.toFixed(2)}
               </p>
             </div>
@@ -81,7 +91,7 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
               </div>
               <div>
                 <p className="text-slate-500 text-sm font-semibold">Address</p>
-                <p className="text-slate-900 text-sm font-medium mt-2">{order.address}, {order.city}</p>
+                <p className="text-slate-900 text-sm font-medium mt-2">{order.address} - {order.city}</p>
               </div>
               <div>
                 <p className="text-slate-500 text-sm font-semibold">Phone</p>
@@ -146,7 +156,7 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
 
               <div className="flex justify-between pt-3 border-t border-gray-300">
                 <p className="text-[15px] font-semibold text-slate-900">Total</p>
-                <p className="text-[15px] font-semibold text-indigo-700">${finalTotal.toFixed(2)}</p>
+                <p className="text-[15px] font-semibold text-tertiary">${finalTotal.toFixed(2)}</p>
               </div>
             </div>
           </div>
