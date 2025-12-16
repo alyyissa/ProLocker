@@ -7,10 +7,11 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
+import { useNavigate } from 'react-router-dom';
 
 const MostSold = () => {
     const [products, setProducts] = useState([]);
-
+    const navigate = useNavigate()
     useEffect(() => {
         const fetchProducts = async () => {
         try {
@@ -23,6 +24,10 @@ const MostSold = () => {
         fetchProducts();
     }, []);
 
+    const handleExploreMore = () => {
+        navigate('/products')
+    }
+
     if (!products.length) return null;
   return (
     <>
@@ -30,7 +35,7 @@ const MostSold = () => {
         title="Best Sold"
         subtitle="Here are the top sold items sold in our store"
         />
-        <div className="mt-10 w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 mb-15">
+        <div className="mt-10 w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 mb-10">
             <Swiper
                 slidesPerView={1}
                 spaceBetween={10}
@@ -50,6 +55,26 @@ const MostSold = () => {
                 </SwiperSlide>
                 ))}
             </Swiper>
+            <div className='flex items-center justify-center mt-5'>
+                <button
+                        onClick={handleExploreMore}
+                        className="px-6 py-3 rounded-md font-medium transition-all duration-300 cursor-pointer"
+                        style={{
+                            backgroundColor: 'var(--color-tertiary)',
+                            color: 'white',
+                            border: 'none',
+                            outline: 'none'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = 'var(--color-tertiary-hover)'; // #1d4ed8
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = 'var(--color-tertiary)'; // #2563eb
+                        }}
+                    >
+                        Explore More
+                    </button>
+                </div>
             </div>
     </>
   )
