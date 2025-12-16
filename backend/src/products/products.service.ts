@@ -73,9 +73,11 @@ export class ProductsService {
       .leftJoinAndSelect('product.category', 'category');
 
     if (filters?.size) {
-      query.leftJoin('product.varients', 'varient')
-          .leftJoin('varient.size', 'size')
-          .andWhere('size.id = :size', { size: filters.size });
+      query
+        .leftJoin('product.varients', 'varient')
+        .leftJoin('varient.size', 'size')
+        .andWhere('size.id = :size', { size: filters.size })
+        .andWhere('varient.quantity > 0');
     }
 
     if (filters?.gender) query.andWhere('gender.id = :gender', { gender: filters.gender });

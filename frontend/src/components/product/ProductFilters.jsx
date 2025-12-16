@@ -115,7 +115,7 @@ const ProductFilters = ({ filters, setFilters }) => {
           {colors.map((color) => (
             <button
               key={color.id}
-              onClick={() => updateFilter("color", color.id)}
+              onClick={() => updateFilter("color", color.color)}
               style={{ backgroundColor: color.color.toLowerCase() }}
               className={`w-8 h-8 rounded-full border-2 ${
                 filters.color === color.id
