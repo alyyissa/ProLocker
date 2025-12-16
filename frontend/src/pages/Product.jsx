@@ -26,9 +26,11 @@ const Products = () => {
     }
   }
   const [filters, setFilters] = useState({
-    category: "",
-    color: "",
-    size: "",
+    category: null,
+    color: null,
+    size: null,
+    onSale: null,
+    date: null
   });
   
   useEffect(() => {

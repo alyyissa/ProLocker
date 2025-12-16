@@ -55,7 +55,7 @@ const ProductFilters = ({ filters, setFilters }) => {
   };
 
   const clearAll = () => {
-    setFilters({ category: null, color: null, size: null });
+    setFilters({ category: null, color: null, size: null, onSale: null, date: null });
   };
 
   return (
@@ -124,6 +124,49 @@ const ProductFilters = ({ filters, setFilters }) => {
               } hover:scale-105 transition-transform`}
             />
           ))}
+        </div>
+      </FilterPanel>
+      
+      {/** OnSale */}
+      <FilterPanel title="Sale">
+        <div className="flex flex-col gap-2 mt-2">
+          <button
+            onClick={() => updateFilter("onSale", true)}
+            className={`px-3 py-2 border rounded-sm text-sm font-medium ${
+              filters.onSale
+                ? "bg-cocoprimary text-white border-cocoprimary"
+                : "bg-gray-50 text-slate-600 border-gray-300 hover:bg-white"
+            }`}
+          >
+            On Sale Only
+          </button>
+        </div>
+      </FilterPanel>
+      
+      {/** Date newest */}
+      <FilterPanel title="Sort">
+        <div className="flex flex-col gap-2 mt-2">
+          <button
+            onClick={() => updateFilter("date", "latest")}
+            className={`px-3 py-2 border rounded-sm text-sm font-medium ${
+              filters.date === "latest"
+                ? "bg-cocoprimary text-white border-cocoprimary"
+                : "bg-gray-50 text-slate-600 border-gray-300 hover:bg-white"
+            }`}
+          >
+            Newest
+          </button>
+
+          <button
+            onClick={() => updateFilter("date", "oldest")}
+            className={`px-3 py-2 border rounded-sm text-sm font-medium ${
+              filters.date === "oldest"
+                ? "bg-cocoprimary text-white border-cocoprimary"
+                : "bg-gray-50 text-slate-600 border-gray-300 hover:bg-white"
+            }`}
+          >
+            Oldest
+          </button>
         </div>
       </FilterPanel>
     </div>

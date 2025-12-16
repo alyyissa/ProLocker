@@ -14,9 +14,8 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(
-    @Query() query: ProductQueryDto) {
-    const { gender, category, color, size, date , page = 1 , limit = 12 } = query;
+  findAll(@Query() query: ProductQueryDto) {
+    const { gender, category, color, size, onSale, date, page = 1, limit = 12 } = query;
 
     const filters: any = {};
 
@@ -24,6 +23,11 @@ export class ProductsController {
     if (size) filters.size = +size;
     if (category) filters.category = category;
     if (color) filters.color = color;
+    
+    // Simple fix - just pass the boolean value as-is
+    if (onSale !== undefined) {
+      filters.onSale = onSale;
+    }
 
     return this.productsService.findAll(filters, { page, limit, date });
   }

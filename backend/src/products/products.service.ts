@@ -60,7 +60,7 @@ export class ProductsService {
     return { message: 'Product Created successfully', product };
   }
 
-  async findAll(filters?: { gender?: number; category?: string; color?: string; size?: number },
+  async findAll(filters?: { gender?: number; category?: string; color?: string; size?: number; onSale?: boolean },
     options: { page?: number; limit?: number; date?: 'latest' | 'oldest' } = {}
   ){
 
@@ -73,16 +73,19 @@ export class ProductsService {
       .leftJoinAndSelect('product.category', 'category');
 
     if (filters?.size) {
-      query
-        .leftJoin('product.varients', 'varient')
-        .leftJoin('varient.size', 'size')
-        .andWhere('size.id = :size', { size: filters.size })
-        .andWhere('varient.quantity > 0');
+      query.leftJoin('product.varients', 'varient')
+          .leftJoin('varient.size', 'size')
+          .andWhere('size.id = :size', { size: filters.size })
+          .andWhere('varient.quantity > 0');
     }
 
     if (filters?.gender) query.andWhere('gender.id = :gender', { gender: filters.gender });
     if (filters?.category) query.andWhere('category.category = :category', { category: filters.category });
     if (filters?.color) query.andWhere('color.color = :color', { color: filters.color });
+
+    if (filters?.onSale) {
+    query.andWhere('product.sale > 0');
+    }
 
     query.andWhere('(product.quantity > 0 OR product.status = :fewLeft)', { fewLeft: 'Few Left' });
     

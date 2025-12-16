@@ -24,4 +24,7 @@ export class ProductQueryDto {
     @IsOptional()
     @IsPositive()
     page ?: number = 1;
+
+    @IsOptional()
+    onSale?: string;
 }
