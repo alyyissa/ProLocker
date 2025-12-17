@@ -16,6 +16,11 @@ export class ProductVarientController {
   findAll() {
     return this.productVarientService.findAll();
   }
+  
+  @Get('product/:productId')
+  findByProduct(@Param('productId') productId: string) {
+    return this.productVarientService.findByProduct(+productId);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

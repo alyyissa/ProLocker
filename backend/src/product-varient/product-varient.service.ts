@@ -37,6 +37,13 @@ export class ProductVarientService {
     return `This action returns all productVarient`;
   }
 
+  async findByProduct(productId: number) {
+  return this.variantRepository.find({
+    where: { product: { id: productId } },
+    relations: ['size', 'product']
+  });
+}
+
   async findOne(id: number) {
     const product = await this.productService.findOneById(id);
     const varients = await this.variantRepository.find({

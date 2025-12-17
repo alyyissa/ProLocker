@@ -155,7 +155,7 @@ const AddProduct = () => {
 
   return (
     <div className="py-10 flex flex-col justify-between bg-white">
-      <div className="max-w-4xl mx-auto w-full px-4">
+      <div className="max-w-5xl mx-auto w-full px-4">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Add New Product</h1>
         
         {error && (
