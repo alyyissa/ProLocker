@@ -6,8 +6,8 @@ export class Banner {
   id: number;
 
   @Column({ type: 'varchar', length: 255 })
-  text: string; // The banner message
+  text: string;
 
   @Column({ type: 'boolean', default: true })
-  isActive: boolean; // If the banner is visible
+  isActive: boolean;
 }

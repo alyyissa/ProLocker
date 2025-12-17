@@ -16,6 +16,7 @@ import Profile from './pages/Profile'
 import AdminLayout from './components/layouts/AdminLayout'
 import Orders from './components/admin/Orders'
 import Products from './components/admin/Products'
+import Categories from './components/admin/Categories'
 
 function App() {
   useEffect(() =>{
@@ -50,6 +51,7 @@ function App() {
         <Route index element/>
         <Route path="orders" element={<Orders />} />
         <Route path='products' element={<Products />}/>
+        <Route path='category' element={<Categories />}/>
       </Route>
 
     </Routes>
