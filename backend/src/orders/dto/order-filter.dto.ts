@@ -18,4 +18,9 @@ export class OrderFilterDto {
     @IsOptional()
     @IsPositive()
     page?: number;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
+    
 }

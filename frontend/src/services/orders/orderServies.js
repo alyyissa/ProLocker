@@ -30,6 +30,7 @@ export const getOrderById = async (orderId) => {
 export const getOrders = async ({
   status,
   date,
+  search,
   page = 1,
   limit = 10,
 } = {}) => {
@@ -39,6 +40,7 @@ export const getOrders = async ({
       date,
       page,
       limit,
+      search,
     },
   });
 

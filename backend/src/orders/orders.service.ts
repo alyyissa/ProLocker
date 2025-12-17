@@ -117,65 +117,70 @@ export class OrdersService {
 }
 
   async findAll(filters: OrderFilterDto) {
-    const {status, date, page = 1, limit = 10} = filters;
+    const {status, date, search, page = 1, limit = 10} = filters;
   
-  // Force page to be at least 1
-  const currentPage = Math.max(1, page);
-  const currentLimit = Math.max(1, limit);
+    const currentPage = Math.max(1, page);
+    const currentLimit = Math.max(1, limit);
   
-  // Create base query
-  const queryBuilder = this.orderRepository
+   const queryBuilder = this.orderRepository
     .createQueryBuilder('order')
     .leftJoinAndSelect('order.user', 'user')
     .leftJoinAndSelect('order.orderItems', 'orderItems')
+    .leftJoinAndSelect('orderItems.productVarient', 'productVarient')
+    .leftJoinAndSelect('productVarient.product', 'product') 
+    .leftJoinAndSelect('productVarient.size', 'size')
     .orderBy('order.createdAt', 'DESC');
 
   if (status) {
     queryBuilder.andWhere('order.status = :status', { status });
   }
+  if (search) {
+    queryBuilder.andWhere('order.trackingNumber LIKE :search', { 
+      search: `%${search}%` 
+    });
+  }
 
     if (date) {
-  switch (date) {
-    case 'today':
-      queryBuilder.andWhere('DATE(order.createdAt) = CURDATE()');
-      break;
+    switch (date) {
+      case 'today':
+        queryBuilder.andWhere('DATE(order.createdAt) = CURDATE()');
+        break;
 
-    case 'yesterday':
-      queryBuilder.andWhere('DATE(order.createdAt) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)');
-      break;
+      case 'yesterday':
+        queryBuilder.andWhere('DATE(order.createdAt) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)');
+        break;
 
-    case 'thisWeek':
-      queryBuilder.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(CURDATE(), 1)');
-      break;
+      case 'thisWeek':
+        queryBuilder.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(CURDATE(), 1)');
+        break;
 
-    case 'lastWeek':
-      queryBuilder.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL 1 WEEK), 1)');
-      break;
+      case 'lastWeek':
+        queryBuilder.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL 1 WEEK), 1)');
+        break;
 
-    case 'thisMonth':
-      queryBuilder.andWhere('MONTH(order.createdAt) = MONTH(CURDATE()) AND YEAR(order.createdAt) = YEAR(CURDATE())');
-      break;
+      case 'thisMonth':
+        queryBuilder.andWhere('MONTH(order.createdAt) = MONTH(CURDATE()) AND YEAR(order.createdAt) = YEAR(CURDATE())');
+        break;
 
-    case 'lastMonth':
-      queryBuilder.andWhere(`
-        MONTH(order.createdAt) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
-        AND YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
-      `);
-      break;
+      case 'lastMonth':
+        queryBuilder.andWhere(`
+          MONTH(order.createdAt) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+          AND YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+        `);
+        break;
 
-    case 'thisYear':
-      queryBuilder.andWhere('YEAR(order.createdAt) = YEAR(CURDATE())');
-      break;
+      case 'thisYear':
+        queryBuilder.andWhere('YEAR(order.createdAt) = YEAR(CURDATE())');
+        break;
 
-    case 'lastYear':
-      queryBuilder.andWhere('YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))');
-      break;
+      case 'lastYear':
+        queryBuilder.andWhere('YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))');
+        break;
   }
 }
 
-    const total = await queryBuilder.getCount();
+  const total = await queryBuilder.getCount();
   
-  // If no results, return early
   if (total === 0) {
     return {
       data: [],
@@ -197,8 +202,37 @@ export class OrdersService {
     .take(currentLimit)
     .getMany();
 
+    const formattedData = data.map(order => ({
+      id: order.id,
+      trackingNumber: order.trackingNumber,
+      status: order.status,
+      firstName: order.firstName,
+      lastName: order.lastName,
+      phoneNumber: order.phoneNumber,
+      address: order.address,
+      city: order.city,
+      totalPrice: order.totalPrice,
+      createdAt: order.createdAt,
+      orderItems: order.orderItems.map(item => ({
+        id: item.id,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        originalPrice: item.originalPrice,
+        totalPrice: item.totalPrice,
+        productVarient: {
+          id: item.productVarient?.id,
+          size: item.productVarient?.size?.symbol || item.productVarient?.size,
+          product: {
+            id: item.productVarient?.product?.id,
+            name: item.productVarient?.product?.name,
+            mainImage: item.productVarient?.product?.mainImage,
+          }
+        }
+      }))
+    }));
+
   return {
-    data,
+    data:formattedData,
     total,
     page: validPage,
     limit: currentLimit,

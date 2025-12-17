@@ -19,7 +19,6 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
     fetchDelivery();
   }, []);
 
-  console.log(order.orderItems)
 
   const finalTotal = Number(order.totalPrice || 0) + deliveryFee;
   const statusStyles = {
@@ -28,6 +27,7 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
     DELIVERED: "bg-green-100 text-green-900",
     DECLINED: "bg-red-100 text-red-900",
   };
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-99 p-4">
@@ -107,7 +107,6 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
               {order.orderItems.map((item) => {
               const originalTotal = Number(item.originalPrice) * Number(item.quantity);
               const actualTotal = Number(item.unitPrice) * Number(item.quantity);
-                  console.log(actualTotal)
               return (
                 <div key={item.id} className="flex items-start gap-4 max-sm:flex-col">
                   <div className="w-[70px] h-[70px] bg-gray-200 rounded-lg flex items-center justify-center shrink-0">
