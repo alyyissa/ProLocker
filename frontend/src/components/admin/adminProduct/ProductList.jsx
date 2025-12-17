@@ -338,7 +338,7 @@ const handleUpdateSale = async (productId, newSale) => {
                       {/* Product Column */}
                       <td className="px-6 py-4">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-12 w-12 rounded-lg overflow-hidden bg-gray-100">
+                          <div className="shrink-0 h-12 w-12 rounded-lg overflow-hidden bg-gray-100">
                             {product.mainImage ? (
                               <img 
                                 src={product.mainImage} 
