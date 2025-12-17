@@ -71,8 +71,8 @@ const ProductFilters = ({ filters, setFilters }) => {
         </button>
       </div>
 
-      {/* Brand */}
-      <FilterPanel title="Brand" defaultOpen={true}>
+      {/* Category */}
+      <FilterPanel title="Category" defaultOpen={true}>
         <div className="flex flex-col gap-2 mt-2">
           {categories.map((cat) => (
             <button

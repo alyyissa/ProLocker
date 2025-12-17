@@ -12,14 +12,14 @@ export class CreateProductDto {
     price: number;
 
     @IsOptional()
-    @IsUrl()
+    // @IsUrl()
     mainImage?: string
 
     @IsOptional()
     @IsArray()
-    @ArrayNotEmpty()
+    // @ArrayNotEmpty()
     @ArrayUnique()
-    @IsUrl({}, { each: true })
+    // @IsUrl({}, { each: true })
     galleryImages?: string[]; 
 
     @IsInt()

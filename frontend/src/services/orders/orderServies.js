@@ -46,3 +46,13 @@ export const getOrders = async ({
 
   return data;
 };
+
+export const updateOrderStatus = async (orderId, status) => {
+  try {
+    const response = await api.patch(`/orders/${orderId}`, { status });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+

@@ -24,7 +24,7 @@ const AdminLayout = () => {
     const sidebarLinks = [
         { name: "Dashboard", path: "", icon: dashboardicon },
         { name: "Orders", path: "orders", icon: overviewicon },
-        { name: "Chat", path: "chat", icon: chaticon },
+        { name: "Products", path: "products", icon: chaticon },
     ];
 
     return (

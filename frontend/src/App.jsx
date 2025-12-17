@@ -15,6 +15,7 @@ import ProductView from './pages/ProductView'
 import Profile from './pages/Profile'
 import AdminLayout from './components/layouts/AdminLayout'
 import Orders from './components/admin/Orders'
+import Products from './components/admin/Products'
 
 function App() {
   useEffect(() =>{
@@ -48,6 +49,7 @@ function App() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element/>
         <Route path="orders" element={<Orders />} />
+        <Route path='products' element={<Products />}/>
       </Route>
 
     </Routes>

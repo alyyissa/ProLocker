@@ -3,7 +3,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Product } from 'src/products/entities/product.entity';
 import { ProductsService } from 'src/products/products.service';
 
@@ -46,11 +46,11 @@ export class CategoriesService {
   async findAll() {
   const categories = await this.categoryRepository.find();
 
-  // Count products for each category without loading product data
   const categoriesWithQuantity = await Promise.all(
     categories.map(async (cat) => {
       const count = await this.productRepository.count({
-        where: { category: { id: cat.id } },
+        where: { category: { id: cat.id }, quantity: MoreThan(0) },
+        
       });
 
       return {

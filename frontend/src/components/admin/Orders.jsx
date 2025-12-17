@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { getOrders } from "../../services/orders/orderServies";
+import { getOrders, updateOrderStatus } from "../../services/orders/orderServies";
 import OrderPopup from "../order/OrderPopup";
 
 const Orders = () => {
@@ -9,6 +9,9 @@ const Orders = () => {
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const [showStatusDropdown, setShowStatusDropdown] = useState(null);
+  const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
   
   const [searchTerm, setSearchTerm] = useState("");
@@ -176,7 +179,53 @@ const Orders = () => {
 const handleClosePopup = () => {
   setIsPopupOpen(false);
   setSelectedOrder(null);
+}; 
+
+const handleUpdateStatus = async (orderId, newStatus) => {
+  try {
+    setUpdatingOrderId(orderId);
+    await updateOrderStatus(orderId, newStatus);
+    
+    // Refresh orders after status update
+    await fetchOrders();
+    
+    // Close dropdown and show success message
+    setShowStatusDropdown(null);
+    
+    // Optional: Show success toast/notification
+    console.log(`Order ${orderId} status updated to ${newStatus}`);
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    // Optional: Show error message
+  } finally {
+    setUpdatingOrderId(null);
+  }
 };
+
+// Toggle status dropdown
+const toggleStatusDropdown = (orderId) => {
+  setShowStatusDropdown(showStatusDropdown === orderId ? null : orderId);
+};
+
+// Close status dropdown
+const closeStatusDropdown = () => {
+  setShowStatusDropdown(null);
+};
+
+// Close dropdown when clicking outside
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (showStatusDropdown && !event.target.closest('.status-dropdown')) {
+      setShowStatusDropdown(null);
+    }
+  };
+
+  document.addEventListener('click', handleClickOutside);
+  return () => {
+    document.removeEventListener('click', handleClickOutside);
+  };
+}, [showStatusDropdown]);
+
 
   return (
     <>
@@ -188,7 +237,7 @@ const handleClosePopup = () => {
           </h3>
           <button
             onClick={handleClearFilters}
-            className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition"
+            className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition cursor-pointer"
           >
             Clear Filters
           </button>
@@ -384,13 +433,54 @@ const handleClosePopup = () => {
                               {formatStatus(order.status)}
                             </span>
                           </td>
-                          <td className="p-4">
-                            <button className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100 transition">
-                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                              </svg>
-                            </button>
-                          </td>
+                          <td className="p-4 relative">
+  <div className="status-dropdown">
+    <button 
+      className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100 transition cursor-pointer"
+      onClick={() => toggleStatusDropdown(order.id)}
+      disabled={updatingOrderId === order.id}
+    >
+      {updatingOrderId === order.id ? (
+        <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+      ) : (
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+        </svg>
+      )}
+    </button>
+    
+    {/* Status Dropdown Menu */}
+    {showStatusDropdown === order.id && (
+      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+        <div className="py-1">
+          <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-100">
+            Change Status
+          </div>
+          {statusOptions
+            .filter(option => option.value !== "" && option.value !== order.status)
+            .map((option) => (
+              <button
+                key={option.value}
+                onClick={() => handleUpdateStatus(order.id, option.value)}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                disabled={updatingOrderId === order.id}
+              >
+                {option.label}
+              </button>
+            ))}
+          <div className="border-t border-gray-100">
+            <button
+              onClick={closeStatusDropdown}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</td>
                         </tr>
                       ))
                     )}
