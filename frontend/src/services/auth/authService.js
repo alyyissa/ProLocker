@@ -11,6 +11,20 @@ export const signup = async(data) =>{
 }
 export const resendCode = (email) => api.post("/auth/resend-code", { email });
 
-export const verifyEmail = (email, code) =>  api.post("/auth/verify-email", { email, code });
+export const verifyEmail = async (email, code) => {
+  try {
+    const response = await api.post('/auth/verify-email', { email, code });
+    console.log("verifyEmail API response:", response.data);
+    console.log("Response status:", response.status);
+    return response.data;
+  } catch (error) {
+    console.error("verifyEmail API error:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
+    throw error;
+  }
+};
 
 export const logoutUser = () => api.post("/auth/logout");

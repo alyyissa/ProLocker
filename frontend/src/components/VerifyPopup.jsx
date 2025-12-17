@@ -41,16 +41,38 @@ const VerifyPopup = ({ email, onClose }) => {
   const handleVerify = async () => {
   try {
     setLoading(true);
-
+    
     const code = otp.join("");
+    console.log("Verifying with email:", email, "code:", code);
+    
     const res = await verifyEmail(email, code);
-
-    loginUser(res.user, res.accessToken, res.refreshToken);
-
-    toast.success("Account verified successfully! Redirecting...");
-
-    navigate('/')
+    console.log("Full verification response:", res);
+    
+    // Check if res exists
+    if (!res) {
+      toast.error("No response from server");
+      return;
+    }
+    if (res.user && res.accessToken && res.refreshToken) {
+      loginUser(res.user, res.accessToken, res.refreshToken);
+      console.log("loginUser called successfully");
+      
+      toast.success("Account verified successfully! Redirecting...");
+      setTimeout(() => navigate('/'), 1000); // Give time for state to update
+    } else {
+      console.error("Missing required fields in response:", {
+        hasUser: !!res.user,
+        hasAccessToken: !!res.accessToken,
+        hasRefreshToken: !!res.refreshToken
+      });
+      toast.error("Verification succeeded but login data is incomplete");
+    }
   } catch (err) {
+    console.error("Verification error details:", {
+      message: err.message,
+      response: err.response?.data,
+      status: err.response?.status
+    });
     toast.error(err.response?.data?.message || "Verification failed");
   } finally {
     setLoading(false);

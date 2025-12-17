@@ -26,7 +26,6 @@ const Signup = () => {
   const [showVerifyPopup, setShowVerifyPopup] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
 
-  // Validation rules
   const validateForm = () => {
     const newErrors = {};
     if (!formData.firstName.trim()) newErrors.firstName = "First name is required";

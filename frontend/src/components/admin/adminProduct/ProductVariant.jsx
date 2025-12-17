@@ -400,7 +400,7 @@ const ProductVariant = () => {
                     className="w-full p-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 flex items-center gap-3"
                   >
                     {product.mainImage && (
-                      <div className="w-12 h-12 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+                      <div className="w-12 h-12 rounded-md overflow-hidden bg-gray-100 shrink-0">
                         <img 
                           src={product.mainImage} 
                           alt={product.name}
@@ -521,7 +521,7 @@ const ProductVariant = () => {
               </div>
 
               {/* Changes Summary */}
-              <div className="mt-8 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+              <div className="mt-8 p-5 bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div className="text-center md:text-left">
                     <p className="text-sm font-medium text-blue-700 mb-1">Total Stock</p>
@@ -570,7 +570,7 @@ const ProductVariant = () => {
               <button
                 type="submit"
                 disabled={loading || (changes.created + changes.updated === 0)}
-                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm hover:shadow"
+                className="px-8 py-3 bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm hover:shadow"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">

@@ -3,7 +3,7 @@ import { getMyOrders } from "../services/orders/orderServies";
 import { useAuth } from "../context/AuthContext";
 import OrderPopup from "../components/order/OrderPopup";
 import { getDeliveryFee } from "../services/delivery/deliveryService";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const Profile = () => {
@@ -84,6 +84,11 @@ const Profile = () => {
                 You have no orders yet
             </h2>
             <p className="text-slate-600">Your orders will appear here once you place one.</p>
+            <br />
+            <a href="/products" className="hover:underline cursor-pointer font-semibold">
+                Start Shopping Now  <i className="fa-solid fa-arrow-right items-center pt-[3px] md:pt-0.5"></i>
+            </a>
+            <br />
             <button
             className="mt-10 rounded-xl bg-cocoprimary py-3 px-12 font-semibold text-background cursor-pointer"
             onClick={logoutUser}

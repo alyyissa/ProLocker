@@ -117,35 +117,24 @@ export class AuthService {
             throw new Error('JWT_REFRESH_SECRET is not configured');
         }
 
-        // Verify the refresh token
         const decoded = jwt.verify(refreshToken, refreshSecret) as any;
-        
-        // Check if decoded has sub property
         if (!decoded || !decoded.sub) {
             throw new ForbiddenException("Invalid refresh token");
         }
         
         const userId = parseInt(decoded.sub);
-        
-        // Find user by ID
         const user = await this.userRepo.findOne({ where: { id: userId } });
         if (!user || !user.refreshToken) {
             throw new ForbiddenException("Access Denied");
         }
-
-        // Compare the refresh token with hashed version in DB
         const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
         if (!isValid) {
             throw new ForbiddenException("Access Denied");
         }
-
-        // Generate new tokens
         const tokens = await this.getToken(user.id, user.email);
 
-        // Update refresh token in DB
         await this.updateRefreshToken(user.id, tokens.refreshToken);
 
-        // Return the same format as login
         return {
             accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken,
@@ -167,7 +156,6 @@ export class AuthService {
     }
 }
 
-    // KEEP ALL YOUR OTHER METHODS EXACTLY AS THEY ARE
     async verifyEmail(email: string, code: string) {
         console.log("=== verifyEmail called ===");
         console.log("Input email:", email);
