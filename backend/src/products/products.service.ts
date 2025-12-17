@@ -194,15 +194,33 @@ export class ProductsService {
 
     if (!product) throw new NotFoundException('Product not found');
 
-    product.quantity = product.varients.reduce((sum, varient) => sum + (varient.quantity || 0), 0);
+    console.log('=== DEBUG refreshProductData ===');
+    console.log('Product ID:', productId);
+    console.log('Product varients array:', product.varients);
+    console.log('Varients length:', product.varients?.length);
+    
+    if (product.varients && product.varients.length > 0) {
+        console.log('First varient:', product.varients[0]);
+        console.log('First varient quantity:', product.varients[0].quantity);
+    }
+    
+    const totalQuantity = product.varients.reduce((sum, varient) => sum + (varient.quantity || 0), 0);
+    console.log('Calculated total quantity:', totalQuantity);
+
+    product.quantity = totalQuantity;
 
     if(product.quantity === 0) product.status = ProductStatus.OutOfStock;
     else if(product.quantity < 3) product.status = ProductStatus.FewLeft;
     else product.status = ProductStatus.Available;
 
+    console.log('New product quantity:', product.quantity);
+    console.log('New product status:', product.status);
+
     if (manager) await manager.save(product);
     else await this.productRepository.save(product);
-  }
+    
+    console.log('=== END DEBUG ===');
+}
 
   async getMostSoldProducts(){
     return await  this.productRepository
@@ -255,6 +273,31 @@ export class ProductsService {
       .andWhere('(product.quantity > 0 OR product.status = :fewLeft)', {
         fewLeft: ProductStatus.FewLeft,
       })
+      .andWhere('LOWER(product.name) LIKE LOWER(:query)', {
+        query: `%${query}%`,
+      })
+      .orderBy('product.createdAt', 'DESC')
+      .take(6)
+      .getMany();
+  }
+
+  async searchProductsByAdmin(query: string) {
+    if (!query || query.trim().length < 2) {
+      return [];
+    }
+
+    return await this.productRepository
+      .createQueryBuilder('product')
+      .select([
+        'product.id',
+        'product.name',
+        'product.slug',
+        'product.price',
+        'product.priceAfterSale',
+        'product.mainImage',
+        'product.status',
+      ])
+      .where('product.isActive = :isActive', { isActive: true })
       .andWhere('LOWER(product.name) LIKE LOWER(:query)', {
         query: `%${query}%`,
       })

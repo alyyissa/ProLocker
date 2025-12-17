@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { getProductBySlug } from "../services/products/productsService";
 import SizeSelector from "../components/product/SizeSelection";
-import RelatedProducts from "../components/product/RelatedItems";
+import RelatedProducts from "../components/product/RelatedProducts";
 
 const ProductView = () => {
   const { slug } = useParams();

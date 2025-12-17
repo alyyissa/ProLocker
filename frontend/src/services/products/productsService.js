@@ -31,6 +31,12 @@ export const ProductService = {
     const res = await api.get(`/products/search?q=${query}`);
     return res.data;
   },
+  searchAdmin: async (query) => {
+    if (!query || query.length < 2) return [];
+    const res = await api.get(`/products/search/admin?q=${query}`);
+    return res.data;
+  },
+
 };
 
 export const getRelatedProducts = async (productId) => {

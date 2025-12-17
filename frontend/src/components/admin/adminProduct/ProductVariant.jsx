@@ -61,7 +61,7 @@ const ProductVariant = () => {
 
       setSearchLoading(true);
       try {
-        const results = await ProductService.search(searchQuery);
+        const results = await ProductService.searchAdmin(searchQuery);
         setProducts(results);
       } catch (err) {
         console.error('Error searching products:', err);

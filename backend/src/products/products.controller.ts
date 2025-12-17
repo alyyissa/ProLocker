@@ -52,6 +52,10 @@ export class ProductsController {
     return this.productsService.searchProducts(q);
   }
 
+  @Get('search/admin')
+  searchByAdmin(@Query('q') q: string) {
+    return this.productsService.searchProductsByAdmin(q);
+  }
 
   @Get('most-sold')
   getMostSold(){
