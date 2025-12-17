@@ -36,7 +36,30 @@ export const ProductService = {
     const res = await api.get(`/products/search/admin?q=${query}`);
     return res.data;
   },
+  getProductsForAdmin: async (filters = {}, page = 1, limit = 12) => {
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(filters).filter(
+        ([key, value]) => {
+          if (key === 'sale') return value !== null && value !== undefined;
+          return value !== null && value !== undefined && value !== '';
+        }
+      )
+    );
+    
+    const params = {
+      ...cleanedFilters,
+      page,
+      limit,
+    };
 
+    try {
+      const res = await api.get('/products/admin/list', { params });
+      return res.data;
+    } catch (error) {
+      console.error('Error fetching admin products:', error);
+      throw error;
+    }
+  },
 };
 
 export const getRelatedProducts = async (productId) => {

@@ -106,13 +106,6 @@ export class ProductsService {
     };
   }
 
-  async findForAdmin(){
-    const data = this.productRepository.find({
-      relations: ['color', 'category', 'gender', 'varients', 'varients.size']
-    })
-    return data
-  }
-
   async findOne(slug: string): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { slug },
@@ -332,5 +325,52 @@ export class ProductsService {
     .getMany();
   }
 
+  async findAllForAdmin(filters?: { gender?: number; category?: string; color?: string; size?: number; onSale?: boolean },
+    options: { page?: number; limit?: number; date?: 'latest' | 'oldest' } = {}
+  ){
+
+    const { page = 1, limit = 12, date } = options;
+
+    const query = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.gender', 'gender')
+      .leftJoinAndSelect('product.color', 'color')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.varients', 'varients')
+
+    if (filters?.size) {
+      query.leftJoin('product.varients', 'varient')
+          .leftJoin('varient.size', 'size')
+          .andWhere('size.id = :size', { size: filters.size });
+    }
+
+    if (filters?.gender) query.andWhere('gender.id = :gender', { gender: filters.gender });
+    if (filters?.category) query.andWhere('category.category = :category', { category: filters.category });
+    if (filters?.color) query.andWhere('color.color = :color', { color: filters.color });
+
+    if (filters?.onSale !== undefined) {
+      if (filters.onSale) {
+        query.andWhere('product.sale > 0');
+      } else {
+        query.andWhere('(product.sale = 0 OR product.sale IS NULL)');
+      }
+    }
+
+    query.skip((page - 1) * limit).take(limit);
+
+    if (date === 'latest') query.orderBy('product.createdAt', 'DESC');
+    else if (date === 'oldest') query.orderBy('product.createdAt', 'ASC');
+    else query.orderBy('product.createdAt', 'DESC');
+
+    const [data , total] = await query.getManyAndCount();
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    };
+  }
 
 }

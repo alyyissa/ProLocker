@@ -24,17 +24,11 @@ export class ProductsController {
     if (category) filters.category = category;
     if (color) filters.color = color;
     
-    // Simple fix - just pass the boolean value as-is
     if (onSale !== undefined) {
       filters.onSale = onSale;
     }
 
     return this.productsService.findAll(filters, { page, limit, date });
-  }
-
-  @Get('for-admin')
-  findForAdmin(){
-    return this.productsService.findForAdmin()
   }
 
   @Patch(':id')
@@ -82,4 +76,35 @@ export class ProductsController {
   ) {
     return this.productsService.getRelatedProducts(+id, limit ?? 10);
   }
+
+  @Get('admin/list')
+  findAllForAdmin(
+  @Query('page') page?: number,
+  @Query('limit') limit?: number,
+  @Query('gender') gender?: number,
+  @Query('category') category?: string,
+  @Query('color') color?: string,
+  @Query('size') size?: number,
+  @Query('sale') sale?: string,
+  @Query('date') date?: 'latest' | 'oldest'
+) {
+  const onSale = sale === '1' ? true : sale === '0' ? false : undefined;
+  
+  const filters = { 
+    gender, 
+    category, 
+    color, 
+    size, 
+    onSale
+  };
+  
+  const options = { 
+    page: page ? +page : 1, 
+    limit: limit ? +limit : 12, 
+    date 
+  };
+  
+  return this.productsService.findAllForAdmin(filters, options);
+}
+
 }

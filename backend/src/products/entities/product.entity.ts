@@ -38,7 +38,7 @@ export class Product {
     @Column({   
                 type: 'enum',
                 enum: ProductStatus,
-                default: ProductStatus.Available
+                default: ProductStatus.OutOfStock
             })
     status: string;
     
