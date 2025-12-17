@@ -13,6 +13,8 @@ import Product from './pages/Product'
 import Checkout from './pages/Checkout'
 import ProductView from './pages/ProductView'
 import Profile from './pages/Profile'
+import AdminLayout from './components/layouts/AdminLayout'
+import Orders from './components/admin/Orders'
 
 function App() {
   useEffect(() =>{
@@ -42,6 +44,10 @@ function App() {
         <Route path='/products' element={<Product />}/>
         <Route path='/checkout' element={<Checkout />}/>
         <Route path='/products/:slug' element={<ProductView />} />
+      </Route>
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element/>
+        <Route path="orders" element={<Orders />} />
       </Route>
 
     </Routes>

@@ -27,3 +27,20 @@ export const getOrderById = async (orderId) => {
   }
 };
 
+export const getOrders = async ({
+  status,
+  date,
+  page = 1,
+  limit = 10,
+} = {}) => {
+  const { data } = await api.get("/orders", {
+    params: {
+      status,
+      date,
+      page,
+      limit,
+    },
+  });
+
+  return data;
+};

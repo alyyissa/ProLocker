@@ -117,70 +117,93 @@ export class OrdersService {
 }
 
   async findAll(filters: OrderFilterDto) {
-    const {status, date, page = 1, limit= 1} = filters;
-
-    const query = this.orderRepository.
-    createQueryBuilder('order')
+    const {status, date, page = 1, limit = 10} = filters;
+  
+  // Force page to be at least 1
+  const currentPage = Math.max(1, page);
+  const currentLimit = Math.max(1, limit);
+  
+  // Create base query
+  const queryBuilder = this.orderRepository
+    .createQueryBuilder('order')
     .leftJoinAndSelect('order.user', 'user')
-    .leftJoinAndSelect('order.orderItems', 'orderItems');
+    .leftJoinAndSelect('order.orderItems', 'orderItems')
+    .orderBy('order.createdAt', 'DESC');
 
-    if(status){
-      query.andWhere('order.status = :status', {status});
-    }
+  if (status) {
+    queryBuilder.andWhere('order.status = :status', { status });
+  }
 
     if (date) {
-      switch (date) {
-        case 'today':
-          query.andWhere('DATE(order.createdAt) = CURDATE()');
-          break;
+  switch (date) {
+    case 'today':
+      queryBuilder.andWhere('DATE(order.createdAt) = CURDATE()');
+      break;
 
-        case 'yesterday':
-          query.andWhere('DATE(order.createdAt) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)');
-          break;
+    case 'yesterday':
+      queryBuilder.andWhere('DATE(order.createdAt) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)');
+      break;
 
-        case 'thisWeek':
-          query.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(CURDATE(), 1)');
-          break;
+    case 'thisWeek':
+      queryBuilder.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(CURDATE(), 1)');
+      break;
 
-        case 'lastWeek':
-          query.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL 1 WEEK), 1)');
-          break;
+    case 'lastWeek':
+      queryBuilder.andWhere('YEARWEEK(order.createdAt, 1) = YEARWEEK(DATE_SUB(CURDATE(), INTERVAL 1 WEEK), 1)');
+      break;
 
-        case 'thisMonth':
-          query.andWhere('MONTH(order.createdAt) = MONTH(CURDATE()) AND YEAR(order.createdAt) = YEAR(CURDATE())');
-          break;
+    case 'thisMonth':
+      queryBuilder.andWhere('MONTH(order.createdAt) = MONTH(CURDATE()) AND YEAR(order.createdAt) = YEAR(CURDATE())');
+      break;
 
-        case 'lastMonth':
-          query.andWhere(`
-            MONTH(order.createdAt) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
-            AND YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
-          `);
-          break;
+    case 'lastMonth':
+      queryBuilder.andWhere(`
+        MONTH(order.createdAt) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+        AND YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+      `);
+      break;
 
-        case 'thisYear':
-          query.andWhere('YEAR(order.createdAt) = YEAR(CURDATE())');
-          break;
+    case 'thisYear':
+      queryBuilder.andWhere('YEAR(order.createdAt) = YEAR(CURDATE())');
+      break;
 
-        case 'lastYear':
-          query.andWhere('YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))');
-          break;
-      }
-    }
-    const total = await query.getCount();
-    const totalPages = Math.ceil(total / limit);
-    const currentPage = page > totalPages ? totalPages : page;
+    case 'lastYear':
+      queryBuilder.andWhere('YEAR(order.createdAt) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))');
+      break;
+  }
+}
 
-    query.skip((currentPage - 1) * limit).take(limit);
-
-    const [data] = await query.orderBy('order.createdAt', 'DESC').getManyAndCount();
-
+    const total = await queryBuilder.getCount();
+  
+  // If no results, return early
+  if (total === 0) {
     return {
-      data,
-      total,
-      page: currentPage,
-      limit,
-      totalPages: Math.ceil(total / limit)
+      data: [],
+      total: 0,
+      page: 1,
+      limit: currentLimit,
+      totalPages: 1
     };
+  }
+
+  // Calculate and apply pagination
+  const totalPages = Math.ceil(total / currentLimit);
+  const validPage = Math.min(currentPage, totalPages);
+  const offset = (validPage - 1) * currentLimit;
+  
+  // Apply pagination
+  const data = await queryBuilder
+    .skip(offset)
+    .take(currentLimit)
+    .getMany();
+
+  return {
+    data,
+    total,
+    page: validPage,
+    limit: currentLimit,
+    totalPages
+  };
   }
 
   private generateTrackingNumber(): string {
@@ -299,7 +322,6 @@ export class OrdersService {
     totalPages,
   };
 }
-
 
   async updateStatus(id: number, updateOrderDto: UpdateOrderDto) {
     const order = await this.orderRepository.findOne({where: {id}, relations:['orderItems', 'orderItems.productVarient', 'orderItems.productVarient.product']});

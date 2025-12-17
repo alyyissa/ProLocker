@@ -114,7 +114,7 @@ const Products = () => {
                 Showing products in category: <span className="font-semibold">{filters.category}</span>
                 <button 
                   onClick={() => handleSetFilters({...filters, category: null})}
-                  className="ml-2 text-red-500 hover:text-red-700"
+                  className="ml-2 text-red-500 hover:text-red-700 cursor-pointer font-semibold"
                 >
                   ✕
                 </button>
