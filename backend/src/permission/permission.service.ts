@@ -1,49 +1,34 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Permission } from './entity/permission.entity';
 import { Repository } from 'typeorm';
-import { UpdatePermissionDto } from './dto/update-permission.dto';
-import { CreatePermissionDto } from './dto/create-permission.dto';
 import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class PermissionService {
-    constructor(
-        @InjectRepository(Permission)
-        private permRepo: Repository<Permission>,
+  private readonly logger = new Logger(PermissionService.name);
 
-        @InjectRepository(User)
-        private userRepo: Repository<User>
-    ){}
+  constructor(
+    @InjectRepository(Permission)
+    private permRepo: Repository<Permission>,
 
-    async addAdmin(userId: number){
-        const user = await this.userRepo.findOne({where: {id: userId}});
+    @InjectRepository(User)
+    private userRepo: Repository<User>
+  ){}
 
-        if(!user) throw new NotFoundException(`User not found`);
-
-        const exists = await this.permRepo.count({where: {userId}});
-
-        if(exists > 0) throw new ConflictException('User already admin');
-
-        const admin = this.permRepo.create({userId});
-
-        await this.permRepo.save(admin)
-
-        return {message: 'ADmin added'}
-    }
-
-    async isAdmin(userId: number): Promise<boolean>{
-        const count = await this.permRepo.count({where: {userId}});
-        return count > 0;
-    }
-
-    async delete(userId: number){
-        const exists = await this.permRepo.count({where: {userId}});
-
-        if(exists == 0 ) throw new ConflictException('User is not found');
-
-        await this.permRepo.delete({userId})
-
-        return {message: 'Admin removed'}
-    }
+  async isAdmin(userId: number): Promise<boolean>{
+    this.logger.debug(`Checking admin status for user ID: ${userId}`);
+    
+    // First check if user exists
+    const user = await this.userRepo.findOne({where: {id: userId}});
+    this.logger.debug(`User found: ${!!user}`);
+    
+    const count = await this.permRepo.count({where: {userId}});
+    this.logger.debug(`Permission count for user ${userId}: ${count}`);
+    
+    const isAdmin = count > 0;
+    this.logger.debug(`User ${userId} admin status: ${isAdmin}`);
+    
+    return isAdmin;
+  }
 }

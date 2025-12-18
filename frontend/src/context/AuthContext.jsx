@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { logoutUser as logoutApi } from "../services/auth/authService";
+import { logoutUser as logoutApi, checkIsAdmin  } from "../services/auth/authService";
 import { toast } from "react-toastify";
 
 const AuthContext = createContext();
@@ -7,22 +7,63 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isCheckingAdmin, setIsCheckingAdmin] = useState(false);
+
+  const verifyAdminStatus = async (currentUser = user) => {
+  if (!currentUser) {
+    console.log('AuthContext: No user, cannot check admin status');
+    setIsAdmin(false);
+    return false;
+  }
+
+  setIsCheckingAdmin(true);
+  try {
+    console.log('AuthContext: Calling checkIsAdmin API for user:', currentUser.id);
+    
+    // Use the imported checkIsAdmin function
+    const data = await checkIsAdmin();
+    const isUserAdmin = data.isAdmin === true;
+    
+    console.log('AuthContext: Setting isAdmin to:', isUserAdmin);
+    
+    setIsAdmin(isUserAdmin);
+    localStorage.setItem("isAdmin", isUserAdmin.toString());
+    
+    return isUserAdmin;
+  } catch (error) {
+    console.error("Error verifying admin status:", error);
+    setIsAdmin(false);
+    localStorage.removeItem("isAdmin");
+    return false;
+  } finally {
+    setIsCheckingAdmin(false);
+  }
+};
 
   useEffect(() => {
-    const initializeAuth = () => {
+    const initializeAuth = async () => {
       try {
         const accessToken = localStorage.getItem("accessToken");
         const refreshToken = localStorage.getItem("refreshToken");
         const storedUser = localStorage.getItem("user");
+        const storedIsAdmin = localStorage.getItem("isAdmin");
         
-        if (storedUser && storedUser.trim() !== "") {
+        if (storedUser && storedUser.trim() !== "" && accessToken && refreshToken) {
           try {
             const parsedUser = JSON.parse(storedUser);
-            if (parsedUser && 
-                typeof parsedUser === 'object' && 
-                accessToken && 
-                refreshToken) {
+            if (parsedUser && typeof parsedUser === 'object') {
               setUser(parsedUser);
+              
+              // Check admin status if we have a stored value
+              if (storedIsAdmin !== null) {
+                setIsAdmin(storedIsAdmin === "true");
+              }
+              
+              // Verify admin status with API in background
+              setTimeout(() => {
+                verifyAdminStatus();
+              }, 100);
             } else {
               clearAuthData();
             }
@@ -31,6 +72,7 @@ export const AuthProvider = ({ children }) => {
           }
         } else {
           setUser(null);
+          setIsAdmin(false);
         }
       } catch (error) {
         clearAuthData();
@@ -46,26 +88,39 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
+    localStorage.removeItem("isAdmin");
     setUser(null);
+    setIsAdmin(false);
   };
 
-  const loginUser = (userData, accessToken, refreshToken) => {
-    try {
-      if (!userData || !accessToken || !refreshToken) {
-        throw new Error("Invalid login data");
-      }
-      
-      const userJson = JSON.stringify(userData);
-      localStorage.setItem("user", userJson);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      setUser(userData);
-      
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
+  const loginUser = async (userData, accessToken, refreshToken) => {
+  try {
+    if (!userData || !accessToken || !refreshToken) {
+      throw new Error("Invalid login data");
     }
-  };
+    
+    const userJson = JSON.stringify(userData);
+    localStorage.setItem("user", userJson);
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+    
+    // Set user state first
+    setUser(userData);
+    
+    console.log('AuthContext: User set, checking admin status for user ID:', userData.id);
+    
+    // Check admin status after login - PASS the userData directly
+    const adminStatus = await verifyAdminStatus(userData);
+    
+    console.log('AuthContext: loginUser returning isAdmin:', adminStatus);
+    
+    return { user: userData, isAdmin: adminStatus };
+    
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+};
 
   const logoutUser = async () => {
     try {
@@ -78,6 +133,11 @@ export const AuthProvider = ({ children }) => {
       clearAuthData();
     }
   };
+
+  const refreshAdminStatus = async () => {
+    return await verifyAdminStatus();
+  };
+  
 
   const isLoggedIn = !!user;
 
@@ -93,7 +153,15 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, loginUser, logoutUser }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isLoggedIn, 
+      isAdmin,
+      isCheckingAdmin,
+      loginUser, 
+      logoutUser,
+      refreshAdminStatus
+    }}>
       {children}
     </AuthContext.Provider>
   );

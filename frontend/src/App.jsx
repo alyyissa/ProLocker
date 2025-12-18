@@ -17,6 +17,7 @@ import AdminLayout from './components/layouts/AdminLayout'
 import Orders from './components/admin/Orders'
 import Products from './components/admin/Products'
 import Categories from './components/admin/Categories'
+import AdminRoute from './components/AdminRoute'
 
 function App() {
   useEffect(() =>{
@@ -47,13 +48,14 @@ function App() {
         <Route path='/checkout' element={<Checkout />}/>
         <Route path='/products/:slug' element={<ProductView />} />
       </Route>
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element/>
-        <Route path="orders" element={<Orders />} />
-        <Route path='products' element={<Products />}/>
-        <Route path='category' element={<Categories />}/>
+      <Route element={<AdminRoute />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element/>
+          <Route path="orders" element={<Orders />} />
+          <Route path='products' element={<Products />}/>
+          <Route path='category' element={<Categories />}/>
+        </Route>
       </Route>
-
     </Routes>
     <ToastContainer
         position="top-right"

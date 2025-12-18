@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react'
-import { login } from '../../services/auth/authService'
+import {  login } from '../../services/auth/authService'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { toast } from 'react-toastify'
@@ -14,7 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
-
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate()
   
 
@@ -54,38 +54,56 @@ const Login = () => {
 
   try {
     const res = await login(email, password)
-    loginUser(res.user, res.accessToken, res.refreshToken)
-    toast.success(`Welcome back, ${res.user.firstName}!`, { position: "top-right", autoClose: 3000 })
-    navigate("/")
+    
+    // Store user data AND get admin status from loginUser
+    const loginResult = await loginUser(res.user, res.accessToken, res.refreshToken);
+    
+    // Show appropriate success message
+    if (loginResult.isAdmin) {
+      toast.success(`Welcome Admin ${res.user.firstName}!`, { 
+        position: "top-right", 
+        autoClose: 3000 
+      });
+      // Redirect admin to admin dashboard
+      navigate("/admin", { replace: true });
+    } else {
+      toast.success(`Welcome back, ${res.user.firstName}!`, { 
+        position: "top-right", 
+        autoClose: 3000 
+      });
+      // Redirect regular user to home
+      navigate("/", { replace: true });
+    }
+    
   } catch (err) {
     let message = "Wrong credentials"
 
     if (err.response?.status === 429) {
-    message = "Too many requests, try again later";
+      message = "Too many requests, try again later";
 
-    const ttl = import.meta.env.VITE_REQUEST_LOGIN_TIME;
-    const expiryTime = new Date(Date.now() + ttl * 1000);
-    localStorage.setItem("loginThrottleExpiry", expiryTime);
-    setThrottleTime(ttl);
+      const ttl = import.meta.env.VITE_REQUEST_LOGIN_TIME;
+      const expiryTime = new Date(Date.now() + ttl * 1000);
+      localStorage.setItem("loginThrottleExpiry", expiryTime);
+      setThrottleTime(ttl);
 
-    const interval = setInterval(() => {
-      setThrottleTime(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          localStorage.removeItem("loginThrottleExpiry");
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  }
-
-      toast.error(message)
-      setErrors({ global: message })
-    } finally {
-      setLoading(false)
+      const interval = setInterval(() => {
+        setThrottleTime(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            localStorage.removeItem("loginThrottleExpiry");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     }
+
+    toast.error(message)
+    setErrors({ global: message })
+  } finally {
+    setLoading(false)
   }
+}
 
 
 

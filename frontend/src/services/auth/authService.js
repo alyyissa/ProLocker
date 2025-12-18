@@ -28,3 +28,13 @@ export const verifyEmail = async (email, code) => {
 };
 
 export const logoutUser = () => api.post("/auth/logout");
+
+export const checkIsAdmin = async () => {
+  try {
+    const response = await api.get('/permissions/is-admin');
+    return response.data;
+  } catch (error) {
+    console.error('Error checking admin status:', error);
+    throw error;
+  }
+};

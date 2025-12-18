@@ -1,22 +1,29 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { PermissionService } from './permission.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { Logger } from '@nestjs/common';
 
-@Controller('permission')
+
+@Controller('permissions')
 export class PermissionController {
+  private readonly logger = new Logger(PermissionController.name);
+
   constructor(private readonly permissionService: PermissionService) {}
 
-  @Post(':userId')
-  addAdmin(@Param('userId') userId: string){
-    return this.permissionService.addAdmin(+userId)
-  }
-
-  @Get(':userId')
-  isAdmin(@Param('userId') userId: string) {
-    return this.permissionService.isAdmin(+userId);
-  }
-  
-  @Delete(':userId')
-  deleteAdmin(@Param('userId') userId: string){
-    return this.permissionService.delete(+userId)
+  @Get('is-admin')
+  @UseGuards(JwtAuthGuard)
+  async isAdmin(@Request() req) {
+    
+    const userId = req.user?.id || req.user?.sub || req.user?.userId;
+    
+    if (!userId) {
+      this.logger.error('No user ID found in request!');
+      return { isAdmin: false };
+    }
+    
+    const isAdmin = await this.permissionService.isAdmin(userId);
+    this.logger.debug(`User ${userId} is admin: ${isAdmin}`);
+    
+    return { isAdmin };
   }
 }

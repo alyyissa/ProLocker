@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ColorsService } from './colors.service';
 import { CreateColorDto } from './dto/create-color.dto';
 import { UpdateColorDto } from './dto/update-color.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
 
 @Controller('colors')
 export class ColorsController {
   constructor(private readonly colorsService: ColorsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard,AdminGuard)
   create(@Body() createColorDto: CreateColorDto) {
     return this.colorsService.create(createColorDto);
   }
