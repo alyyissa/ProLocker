@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 
 const SideCart = ({ show, onClose }) => {
+  const { user } = useAuth()
   const { cart, removeFromCart } = useCart();
 
   useEffect(() => {
@@ -40,7 +42,12 @@ const SideCart = ({ show, onClose }) => {
           </div>
 
           {cart.length === 0 ? (
-            <p className="text-background">Your cart is empty.</p>
+            <>
+              <p className="text-background">Your cart is empty.</p>
+              {!user ? (
+                <p className="text-background font-bold mt-10">You must <a href="/login" className="underline hover:no-underline">Login</a> to Order !!</p>
+              ) : <p>asd</p>}
+            </>
           ) : (
             <ul role="list" className="-my-6 divide-y divide-gray-200">
               {cart.map((item) => (
