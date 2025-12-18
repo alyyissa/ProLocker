@@ -47,4 +47,24 @@ export class OrdersController {
   remove(@Param('id') id: string) {
     return this.ordersService.remove(+id);
   }
+
+  @Get('admin/stats/sales-summary')
+@UseGuards(JwtAuthGuard, AdminGuard)
+async getSalesSummary() {
+  return this.ordersService.getSalesSummary();
+}
+
+@Get('admin/stats/revenue-trend')
+@UseGuards(JwtAuthGuard, AdminGuard)
+async getRevenueTrend(@Query('days') days: string) {
+  const daysNum = days ? parseInt(days) : 30;
+  return this.ordersService.getRevenueTrend(daysNum);
+}
+
+@Get('admin/stats/top-products')
+@UseGuards(JwtAuthGuard, AdminGuard)
+async getTopProducts(@Query('limit') limit: string) {
+  const limitNum = limit ? parseInt(limit) : 5;
+  return this.ordersService.getTopProducts(limitNum);
+}
 }

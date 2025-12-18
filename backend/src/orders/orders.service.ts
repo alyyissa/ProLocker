@@ -412,4 +412,102 @@ export class OrdersService {
     return 'Deleted successfully';
   }
 
+async getRevenueTrend(days: number = 30) {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  const query = await this.orderRepository
+    .createQueryBuilder('order')
+    .select("DATE(order.createdAt)", "date")
+    .addSelect("COUNT(order.id)", "orderCount")
+    .addSelect("SUM(order.totalPrice)", "totalRevenue")
+    .where('order.createdAt >= :startDate', { startDate })
+    .andWhere('order.status != :declinedStatus', { declinedStatus: OrderStatus.DECLINED })
+    .groupBy('DATE(order.createdAt)')
+    .orderBy('date', 'ASC')
+    .getRawMany();
+
+  // Format the data properly
+  return query.map(item => ({
+    date: item.date,
+    orderCount: parseInt(item.orderCount) || 0,
+    totalRevenue: parseFloat(item.totalRevenue) || 0
+  }));
+}
+
+async getSalesSummary() {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+
+  const todaySales = await this.orderRepository
+    .createQueryBuilder('order')
+    .select("SUM(order.totalPrice)", "total")
+    .addSelect("COUNT(order.id)", "count")
+    .where('DATE(order.createdAt) = DATE(:today)', { today })
+    .andWhere('order.status != :declined', { declined: OrderStatus.DECLINED })
+    .getRawOne();
+
+  const yesterdaySales = await this.orderRepository
+    .createQueryBuilder('order')
+    .select("SUM(order.totalPrice)", "total")
+    .addSelect("COUNT(order.id)", "count")
+    .where('DATE(order.createdAt) = DATE(:yesterday)', { yesterday })
+    .andWhere('order.status != :declined', { declined: OrderStatus.DECLINED })
+    .getRawOne();
+
+  const thisMonthSales = await this.orderRepository
+    .createQueryBuilder('order')
+    .select("SUM(order.totalPrice)", "total")
+    .addSelect("COUNT(order.id)", "count")
+    .where('order.createdAt >= :thisMonth', { thisMonth })
+    .andWhere('order.status != :declined', { declined: OrderStatus.DECLINED })
+    .getRawOne();
+
+  const statusDistribution = await this.orderRepository
+    .createQueryBuilder('order')
+    .select('order.status', 'status')
+    .addSelect('COUNT(order.id)', 'count')
+    .groupBy('order.status')
+    .getRawMany();
+
+  return {
+    today: {
+      revenue: parseFloat(todaySales?.total) || 0,
+      orders: parseInt(todaySales?.count) || 0
+    },
+    yesterday: {
+      revenue: parseFloat(yesterdaySales?.total) || 0,
+      orders: parseInt(yesterdaySales?.count) || 0
+    },
+    thisMonth: {
+      revenue: parseFloat(thisMonthSales?.total) || 0,
+      orders: parseInt(thisMonthSales?.count) || 0
+    },
+    statusDistribution: statusDistribution.map(item => ({
+      status: item.status,
+      count: parseInt(item.count)
+    }))
+  };
+}
+
+async getTopProducts(limit: number = 5) {
+  return await this.orderRepository
+    .createQueryBuilder('order')
+    .leftJoin('order.orderItems', 'orderItem')
+    .leftJoin('orderItem.productVarient', 'productVarient')
+    .leftJoin('productVarient.product', 'product')
+    .select('product.name', 'productName')
+    .addSelect('product.mainImage', 'productImage')
+    .addSelect('SUM(orderItem.quantity)', 'totalSold')
+    .addSelect('SUM(orderItem.totalPrice)', 'totalRevenue')
+    .where('order.status != :declined', { declined: OrderStatus.DECLINED })
+    .groupBy('product.id')
+    .orderBy('totalSold', 'DESC')
+    .limit(limit)
+    .getRawMany();
+}
 }

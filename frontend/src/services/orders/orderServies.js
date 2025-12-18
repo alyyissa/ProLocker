@@ -56,3 +56,17 @@ export const updateOrderStatus = async (orderId, status) => {
   }
 };
 
+export const getDashboardStats = async () => {
+  const res = await api.get('/orders/admin/stats/sales-summary');
+  return res.data;
+};
+
+export const getRevenueTrend = async (days = 30) => {
+  const res = await api.get(`/orders/admin/stats/revenue-trend?days=${days}`);
+  return res.data;
+};
+
+export const getTopProducts = async (limit = 5) => {
+  const res = await api.get(`/orders/admin/stats/top-products?limit=${limit}`);
+  return res.data;
+};
