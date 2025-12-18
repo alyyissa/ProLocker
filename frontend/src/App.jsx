@@ -18,6 +18,7 @@ import Orders from './components/admin/Orders'
 import Products from './components/admin/Products'
 import Categories from './components/admin/Categories'
 import AdminRoute from './components/AdminRoute'
+import Dashboard from './components/admin/Dashboard'
 
 function App() {
   useEffect(() =>{
@@ -50,7 +51,6 @@ function App() {
       </Route>
       <Route element={<AdminRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element/>
           <Route path="orders" element={<Orders />} />
           <Route path='products' element={<Products />}/>
           <Route path='category' element={<Categories />}/>

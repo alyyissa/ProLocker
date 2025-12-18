@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isCheckingAdmin, setIsCheckingAdmin] = useState(false);
+  const [isCheckingAdmin, setIsCheckingAdmin] = useState(true);
 
   const verifyAdminStatus = async (currentUser = user) => {
   if (!currentUser) {
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     
     // Use the imported checkIsAdmin function
     const data = await checkIsAdmin();
-    const isUserAdmin = data.isAdmin === true;
+    const isUserAdmin = Boolean(data.isAdmin);
     
     console.log('AuthContext: Setting isAdmin to:', isUserAdmin);
     
@@ -42,47 +42,42 @@ export const AuthProvider = ({ children }) => {
 };
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        const refreshToken = localStorage.getItem("refreshToken");
-        const storedUser = localStorage.getItem("user");
-        const storedIsAdmin = localStorage.getItem("isAdmin");
-        
-        if (storedUser && storedUser.trim() !== "" && accessToken && refreshToken) {
-          try {
-            const parsedUser = JSON.parse(storedUser);
-            if (parsedUser && typeof parsedUser === 'object') {
-              setUser(parsedUser);
-              
-              // Check admin status if we have a stored value
-              if (storedIsAdmin !== null) {
-                setIsAdmin(storedIsAdmin === "true");
-              }
-              
-              // Verify admin status with API in background
-              setTimeout(() => {
-                verifyAdminStatus();
-              }, 100);
-            } else {
-              clearAuthData();
-            }
-          } catch (parseError) {
-            clearAuthData();
-          }
-        } else {
-          setUser(null);
-          setIsAdmin(false);
-        }
-      } catch (error) {
+  const initializeAuth = async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
+      const storedUser = localStorage.getItem("user");
+
+      // No auth data → logged out
+      if (!storedUser || !accessToken || !refreshToken) {
         clearAuthData();
-      } finally {
-        setIsInitializing(false);
+        return;
       }
-    };
-    
-    initializeAuth();
-  }, []);
+
+      const parsedUser = JSON.parse(storedUser);
+
+      if (!parsedUser || typeof parsedUser !== "object") {
+        clearAuthData();
+        return;
+      }
+
+      // ✅ Set user immediately
+      setUser(parsedUser);
+
+      // 🔥 BLOCKING admin verification (NO timeout)
+      await verifyAdminStatus(parsedUser);
+
+    } catch (error) {
+      clearAuthData();
+    } finally {
+      // 🔒 Auth + admin status is now resolved
+      setIsInitializing(false);
+    }
+  };
+
+  initializeAuth();
+}, []);
+
 
   const clearAuthData = () => {
     localStorage.removeItem("accessToken");

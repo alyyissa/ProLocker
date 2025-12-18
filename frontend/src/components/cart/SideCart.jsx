@@ -45,8 +45,8 @@ const SideCart = ({ show, onClose }) => {
             <>
               <p className="text-background">Your cart is empty.</p>
               {!user ? (
-                <p className="text-background font-bold mt-10">You must <a href="/login" className="underline hover:no-underline">Login</a> to Order !!</p>
-              ) :  null}
+                <p className="text-background font-bold mt-10">You must <a href="/login" className="hover:underline">Login</a> to Order!!</p>
+              ) : <p>asd</p>}
             </>
           ) : (
             <ul role="list" className="-my-6 divide-y divide-gray-200">
