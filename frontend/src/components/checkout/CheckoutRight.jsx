@@ -44,7 +44,11 @@ export default function CheckoutRight() {
     e.preventDefault();
     if (cart.length === 0) return toast.error("Your cart is empty!");
     setLoading(true);
-
+    if (!user) {
+      toast.error("You must be logged in to place an order.");
+      setLoading(false);
+      return navigate("/login");
+    }
     try {
       const orderPayload = {
         userId: Number(user.id),
