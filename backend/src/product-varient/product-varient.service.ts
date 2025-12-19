@@ -105,14 +105,14 @@ export class ProductVarientService {
   }
 
   async reduceStock(productVarientId: number, quantity: number, manager: EntityManager) {
-    const variant = await manager.findOne(ProductVarient, { where: { id: productVarientId }, relations: ['product'] });
+    const variant = await manager.findOne(ProductVarient, { where: { id: productVarientId }, relations: ['product', 'size'] });
 
     if (!variant) {
       throw new NotFoundException('Product variant not found');
     }
 
     if(variant.quantity < quantity) {
-      throw new BadRequestException('Insufficient stock for the requested quantity');
+      throw new BadRequestException( variant.product.name +  '-' + variant.size.size  +' is out of stock for the requested quantity. Try reducing the quantity.');
     }
 
     variant.quantity -= quantity;

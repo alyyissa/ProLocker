@@ -36,7 +36,7 @@ export class OrdersService {
 
 
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 5);
 
     const recentOrderCount = await manager.count(Order, {
       where: {
