@@ -4,27 +4,33 @@ import TopProductsChart from './dashboard/TopProductsChart';
 import OrderStatusChart from './dashboard/OrderStatusChart';
 import StatCard from './dashboard/StatCard';
 import { getDashboardStats, getRevenueTrend, getTopProducts } from '../../services/orders/orderServies';
+import UserGrowthChart from './dashboard/UserGrowthChart';
+import { getUserGrowthStats } from '../../services/user/user';
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [revenueData, setRevenueData] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
+  const [userGrowthData, setUserGrowthData] = useState({ monthlyData: [], stats: {} });
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
         
-        const [statsData, revenueTrend, topProductsData] = await Promise.all([
+        const [statsData, revenueTrend, topProductsData, userGrowth] = await Promise.all([
           getDashboardStats(),
           getRevenueTrend(),
-          getTopProducts()
+          getTopProducts(),
+          getUserGrowthStats()
         ]);
         
         setStats(statsData);
         setRevenueData(revenueTrend);
         setTopProducts(topProductsData);
+        setUserGrowthData(userGrowth);
+        console.log('User Growth Data:', userGrowth);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -103,24 +109,24 @@ const Dashboard = () => {
         </div>
         
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            {stats?.recentOrders?.slice(0, 5).map((order, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                <div>
-                  <p className="font-medium text-gray-800">Order #{order.trackingNumber}</p>
-                  <p className="text-sm text-gray-600">{order.customerName} • ${order.total}</p>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  order.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
-                  order.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-blue-100 text-blue-800'
-                }`}>
-                  {order.status}
-                </span>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">User Growth</h2>
+            <div className="flex space-x-4">
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Total Users</p>
+                <p className="text-lg font-bold text-blue-600">
+                  {userGrowthData.stats?.totalUsers || 0}
+                </p>
               </div>
-            ))}
+              <div className="text-right">
+                <p className="text-sm text-gray-500">This Month</p>
+                <p className="text-lg font-bold text-green-600">
+                  {userGrowthData.stats?.newUsersThisMonth || 0}
+                </p>
+              </div>
+            </div>
           </div>
+          <UserGrowthChart data={userGrowthData?.monthlyData || []} />
         </div>
       </div>
     </div>

@@ -157,7 +157,6 @@ const RevenueChart = ({ data }) => {
     <div className="w-full">
       {/* Chart Header */}
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Revenue & Orders Trend</h2>
         <p className="text-gray-600 text-sm">
           Showing {safeData.length} days of data
         </p>

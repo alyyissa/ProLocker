@@ -24,7 +24,6 @@ const Orders = () => {
   const [totalOrders, setTotalOrders] = useState(0);
   const limit = 10;
 
-  // Status options
   const statusOptions = [
     { value: "", label: "All Status" },
     { value: "PENDING", label: "Pending" },
@@ -33,7 +32,6 @@ const Orders = () => {
     { value: "DECLINED", label: "Declined" },
   ];
 
-  // Date filter options
   const dateOptions = [
     { value: "All Dates", label: "All Dates" },
     { value: "today", label: "Today" },
@@ -46,18 +44,16 @@ const Orders = () => {
     { value: "lastYear", label: "Last Year" },
   ];
 
-  // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 500); // 500ms delay
+    }, 500);
 
     return () => {
       clearTimeout(timer);
     };
   }, [searchTerm]);
 
-  // Fetch orders function
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
@@ -87,30 +83,25 @@ const Orders = () => {
     }
   }, [currentPage, selectedStatus, selectedDate, debouncedSearchTerm, limit]);
 
-  // Fetch orders when filters change
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
 
-  // Handle search input
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
   };
 
-  // Handle status filter
   const handleStatusFilter = (e) => {
     setSelectedStatus(e.target.value);
-    setCurrentPage(1); // Reset to first page when filter changes
+    setCurrentPage(1);
   };
 
-  // Handle date filter
   const handleDateFilter = (e) => {
     setSelectedDate(e.target.value);
-    setCurrentPage(1); // Reset to first page when filter changes
+    setCurrentPage(1); 
   };
 
-  // Handle page change
   const handlePageChange = (page) => {
     const validPage = Math.max(1, page);
     if (validPage >= 1 && validPage <= totalPages) {
@@ -118,7 +109,6 @@ const Orders = () => {
     }
   };
 
-  // Status color styling
   const statusColor = (status) => {
     switch (status) {
       case "DELIVERED":
@@ -134,12 +124,10 @@ const Orders = () => {
     }
   };
 
-  // Format status for display
   const formatStatus = (status) => {
     return status.charAt(0) + status.slice(1).toLowerCase();
   };
 
-  // Format date for display
   const formatDate = (dateString) => {
     try {
       const date = new Date(dateString);
@@ -156,13 +144,11 @@ const Orders = () => {
     }
   };
 
-  // Format price for display
   const formatPrice = (price) => {
     if (price === undefined || price === null) return "$0.00";
     return `$${parseFloat(price).toFixed(2)}`;
   };
 
-  // Clear all filters
   const handleClearFilters = () => {
     setSearchTerm("");
     setSelectedStatus("");
@@ -175,7 +161,6 @@ const Orders = () => {
   setIsPopupOpen(true);
 };
 
-// Handle closing the popup
 const handleClosePopup = () => {
   setIsPopupOpen(false);
   setSelectedOrder(null);
@@ -186,33 +171,26 @@ const handleUpdateStatus = async (orderId, newStatus) => {
     setUpdatingOrderId(orderId);
     await updateOrderStatus(orderId, newStatus);
     
-    // Refresh orders after status update
     await fetchOrders();
     
-    // Close dropdown and show success message
     setShowStatusDropdown(null);
     
-    // Optional: Show success toast/notification
     console.log(`Order ${orderId} status updated to ${newStatus}`);
   } catch (error) {
     console.error('Error updating order status:', error);
-    // Optional: Show error message
   } finally {
     setUpdatingOrderId(null);
   }
 };
 
-// Toggle status dropdown
 const toggleStatusDropdown = (orderId) => {
   setShowStatusDropdown(showStatusDropdown === orderId ? null : orderId);
 };
 
-// Close status dropdown
 const closeStatusDropdown = () => {
   setShowStatusDropdown(null);
 };
 
-// Close dropdown when clicking outside
 useEffect(() => {
   const handleClickOutside = (event) => {
     if (showStatusDropdown && !event.target.closest('.status-dropdown')) {
@@ -226,6 +204,16 @@ useEffect(() => {
   };
 }, [showStatusDropdown]);
 
+useEffect(() => {
+  const intervalId = setInterval(() => {
+    console.log('Auto-refreshing orders...');
+    fetchOrders();
+  }, 300000); 
+
+  return () => {
+    clearInterval(intervalId);
+  };
+}, [fetchOrders]);
 
   return (
     <>

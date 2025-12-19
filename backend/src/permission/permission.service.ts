@@ -6,7 +6,6 @@ import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class PermissionService {
-  private readonly logger = new Logger(PermissionService.name);
 
   constructor(
     @InjectRepository(Permission)
@@ -17,17 +16,12 @@ export class PermissionService {
   ){}
 
   async isAdmin(userId: number): Promise<boolean>{
-    this.logger.debug(`Checking admin status for user ID: ${userId}`);
     
-    // First check if user exists
     const user = await this.userRepo.findOne({where: {id: userId}});
-    this.logger.debug(`User found: ${!!user}`);
     
     const count = await this.permRepo.count({where: {userId}});
-    this.logger.debug(`Permission count for user ${userId}: ${count}`);
     
     const isAdmin = count > 0;
-    this.logger.debug(`User ${userId} admin status: ${isAdmin}`);
     
     return isAdmin;
   }

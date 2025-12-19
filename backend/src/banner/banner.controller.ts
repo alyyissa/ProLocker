@@ -7,7 +7,6 @@ import { AdminGuard } from 'src/auth/guards/admin.guard';
 export class BannerController {
   constructor(private readonly bannerService: BannerService) {}
 
-  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('active')
   getActiveBanner() {
     return this.bannerService.getActiveBanner();

@@ -22,8 +22,6 @@ export class PermissionController {
     }
     
     const isAdmin = await this.permissionService.isAdmin(userId);
-    this.logger.debug(`User ${userId} is admin: ${isAdmin}`);
-    
     return { isAdmin };
   }
 }

@@ -543,10 +543,6 @@ const Categories = () => {
                               {category.category || category.name}
                             </h4>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-sm text-gray-600">
-                                {category.quantity || 0} products
-                              </span>
-                              <span className="text-xs text-gray-400">•</span>
                               <span className="text-xs text-gray-400">
                                 Slug: {category.slug}
                               </span>
@@ -593,19 +589,6 @@ const Categories = () => {
                             </div>
                           </div>
                         )}
-                        
-                        <div className="pt-3 border-t border-gray-100">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-500">ID: {category.id}</span>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              (category.quantity || 0) > 0 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {(category.quantity || 0) > 0 ? 'Has products' : 'No products'}
-                            </span>
-                          </div>
-                        </div>
                       </>
                     )}
                   </div>
@@ -729,12 +712,6 @@ const Categories = () => {
                             >
                               <DeleteIcon />
                             </button>
-                          </div>
-                        </div>
-                        
-                        <div className="pt-3 border-t border-gray-100">
-                          <div className="text-sm">
-                            <span className="text-gray-500">Color ID: {color.id}</span>
                           </div>
                         </div>
                       </>
