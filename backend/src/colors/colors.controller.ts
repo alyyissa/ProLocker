@@ -26,11 +26,13 @@ export class ColorsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard,AdminGuard)
   update(@Param('id') id: string, @Body() updateColorDto: UpdateColorDto) {
     return this.colorsService.update(+id, updateColorDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard,AdminGuard)
   remove(@Param('id') id: string) {
     return this.colorsService.remove(+id);
   }

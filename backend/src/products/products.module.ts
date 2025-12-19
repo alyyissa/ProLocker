@@ -7,11 +7,12 @@ import { CategoriesModule } from 'src/categories/categories.module';
 import { ColorsModule } from 'src/colors/colors.module';
 import { GenderModule } from 'src/gender/gender.module';
 import { SizesModule } from 'src/sizes/sizes.module';
+import { PermissionModule } from 'src/permission/permission.module';
 
 @Module({
   controllers: [ProductsController],
   providers: [ProductsService],
-  imports:[TypeOrmModule.forFeature([Product]), CategoriesModule, ColorsModule, GenderModule, SizesModule],
+  imports:[TypeOrmModule.forFeature([Product]), CategoriesModule, ColorsModule, GenderModule, SizesModule, PermissionModule],
   exports: [ProductsService],
 })
 export class ProductsModule {}
