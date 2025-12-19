@@ -6,6 +6,7 @@ import ProductCard from "../components/product/ProductCard";
 import { assets } from "../assets/assets";
 import { getProducts } from "../services/products/productsService";
 import Preloader from "../components/Preloader/Preloader";
+import { Helmet } from "react-helmet-async";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -14,9 +15,10 @@ const Products = () => {
   const [limit, setLimit] = useState(12);
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(false);
-  
   const [searchParams, setSearchParams] = useSearchParams();
-  
+    const seoTitleParts = ["ProLocker | Shop Products"];
+  const APP_URL = import.meta.env.VITE_APP_URL;
+
   const [filters, setFilters] = useState({
     category: searchParams.get('category') || null,
     color: searchParams.get('color') || null,
@@ -89,7 +91,36 @@ const Products = () => {
     fetchProducts();
   }, [filters, page]);
 
+  
+
+  if (filters.category) seoTitleParts.push(filters.category);
+  if (filters.color) seoTitleParts.push(filters.color);
+  if (filters.onSale) seoTitleParts.push("On Sale");
+
+  const seoTitle = seoTitleParts.join(" | ");
+
+  const seoDescription = filters.category
+    ? `Browse ${filters.category} products${filters.color ? ` in ${filters.color}` : ""}. High quality items with fast delivery.`
+    : "Browse all our products. High quality items with the best prices and fast delivery.";
   return (
+    <>
+    <Helmet>
+  <title>{seoTitle}</title>
+  <meta name="description" content={seoDescription} />
+
+  <link
+    rel="canonical"
+    href={`${APP_URL}/products${window.location.search}`}
+  />
+  <meta property="og:url" content={`${APP_URL}/products${window.location.search}`} />
+
+  {/* Open Graph */}
+  <meta property="og:title" content={seoTitle} />
+  <meta property="og:description" content={seoDescription} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={`${APP_URL}/products${window.location.search}`} />
+</Helmet>
+
     <div className="pt-[69px] md:pt-[109px] h-auto">
       <div
         className="w-full h-[228px] bg-center flex items-center justify-center"
@@ -220,6 +251,7 @@ const Products = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
