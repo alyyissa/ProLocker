@@ -70,4 +70,10 @@ export class User {
 
     @Column({ nullable: true, type: 'datetime' })
     codeGeneratedAt: Date | null;
+
+    @Column({ type: 'varchar', length: 100, nullable: true })
+    resetPasswordToken: string | null;
+
+    @Column({ type: 'datetime', nullable: true })
+    resetPasswordExpires: Date | null;
 }

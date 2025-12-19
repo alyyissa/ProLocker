@@ -45,4 +45,19 @@ export class AuthController {
     return this.authService.verifyEmail(body.email, body.code);
     }
 
+    @Post('forgot-password')
+    // @UseGuards(ThrottlerGuard)
+    @Throttle({ default: { limit: 3, ttl: 3600 } }) // 3 attempts per hour
+    async forgotPassword(@Body('email') email: string) {
+        return this.authService.forgotPassword(email);
+    }
+
+    @Post('reset-password')
+    @HttpCode(HttpStatus.OK)
+    async resetPassword(
+        @Body() body: { token: string; newPassword: string }
+    ) {
+        return this.authService.resetPassword(body.token, body.newPassword);
+    }
+
 }

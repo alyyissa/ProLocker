@@ -19,6 +19,8 @@ import Products from './components/admin/Products'
 import Categories from './components/admin/Categories'
 import AdminRoute from './components/AdminRoute'
 import Dashboard from './components/admin/Dashboard'
+import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword from './pages/auth/ResetPassword'
 
 function App() {
   useEffect(() =>{
@@ -48,6 +50,8 @@ function App() {
         <Route path='/products' element={<Product />}/>
         <Route path='/checkout' element={<Checkout />}/>
         <Route path='/products/:slug' element={<ProductView />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
       <Route element={<AdminRoute />}>
         <Route path="/admin" element={<AdminLayout />}>

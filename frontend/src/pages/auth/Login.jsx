@@ -144,6 +144,7 @@ const Login = () => {
         </div>
         <p className='text-gray-900 text-sm -mt-2 font-bold'>You should have an account to order!</p>
         <p className='text-gray-500 text-sm -mt-3'>Don't have account? <Link to={'/signup'}> <span className='underline hover:no-underline'> Signup</span></Link></p>
+        <p className='text-gray-500 text-sm -mt-3'> <Link to="/forgot-password" className='underline hover:no-underline'>Forget Password?</Link> </p>
         {errors.global && (
           <p className="text-red-500 text-sm mt-1">{errors.global}</p>
         )}

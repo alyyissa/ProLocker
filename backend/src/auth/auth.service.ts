@@ -9,13 +9,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, MoreThan } from 'typeorm';
 import { SignupDto } from './dto/signup.dto';
 import * as bcrypt from 'bcryptjs'
 import { LoginDto } from './dto/login.dto';
 import { generateVerificationCode } from './utils';
 import { MailService } from 'src/mail/mail.service';
 import * as jwt from 'jsonwebtoken'; // ADD THIS IMPORT
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -157,10 +158,6 @@ export class AuthService {
 }
 
     async verifyEmail(email: string, code: string) {
-        console.log("=== verifyEmail called ===");
-        console.log("Input email:", email);
-        console.log("Input code:", code);
-
         const user = await this.userRepo.findOne({ where: { email } });
         if (!user) {
             console.log("User not found for email:", email);
@@ -180,7 +177,6 @@ export class AuthService {
 
         const dbCode = user.verificationCode?.toString().trim();
         const inputCode = code?.toString().trim();
-        console.log("Comparing codes: DB =", dbCode, "Input =", inputCode);
 
         if (dbCode !== inputCode) {
             console.log("Verification codes do not match");
@@ -257,4 +253,92 @@ export class AuthService {
 
         return { message: "New verification code sent to your email" };
     }
+
+    async forgotPassword(email: string) {
+        // Find user by email
+        const user = await this.userRepo.findOne({ where: { email } });
+        
+        // For security reasons, don't reveal if user exists or not
+        if (!user) {
+            return { 
+                message: "If an account exists with this email, you will receive a password reset link shortly."
+            };
+        }
+
+        // Generate reset token
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        
+        // Create hash of reset token and save to database
+        const hashedToken = crypto
+            .createHash('sha256')
+            .update(resetToken)
+            .digest('hex');
+
+        // Set token and expiration (1 hour from now)
+        user.resetPasswordToken = hashedToken;
+        user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+        
+        await this.userRepo.save(user);
+
+        // Send email with the unhashed token
+        try {
+            await this.mailService.sendPasswordResetEmail(user.email, resetToken);
+        } catch (error) {
+            // Clear the reset token if email fails to send
+            user.resetPasswordToken = null;
+            user.resetPasswordExpires = null;
+            await this.userRepo.save(user);
+            throw new BadRequestException('Failed to send reset email');
+        }
+
+        return { 
+            message: "If an account exists with this email, you will receive a password reset link shortly."
+        };
+    }
+
+    async resetPassword(token: string, newPassword: string) {
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+    // Find user by token only
+    const user = await this.userRepo.findOne({
+        where: { resetPasswordToken: hashedToken }
+    });
+
+    if (!user) {
+        throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    // Check if token has expired (in JS)
+    if (!user.resetPasswordExpires || new Date(user.resetPasswordExpires) < new Date()) {
+        throw new BadRequestException('Reset token has expired');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password and clear reset token
+    user.password = hashedPassword;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+
+    await this.userRepo.save(user);
+
+    // Generate new tokens for auto-login
+    const tokens = await this.getToken(user.id, user.email);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    return {
+        message: "Password reset successfully",
+        user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        },
+        ...tokens
+    };
+}
+
 }
