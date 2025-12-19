@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { getProductBySlug } from "../services/products/productsService";
 import SizeSelector from "../components/product/SizeSelection";
 import RelatedProducts from "../components/product/RelatedProducts";
+import { toast } from "react-toastify";
 
 const ProductView = () => {
   const { slug } = useParams();
@@ -39,12 +40,24 @@ const ProductView = () => {
 
   if (!product) return <div>Loading...</div>;
 
-  const increment = () => setQuantity(q => q + 1);
+  const increment = () => {
+    if (quantity >= 2) {
+      toast.warning("You cannot select more than 2 items.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+    setQuantity(q => q + 1);
+  };
   const decrement = () => setQuantity(q => (q > 1 ? q - 1 : 1));
 
   const handleAddToCart = () => {
     if (!selectedSize) {
-      alert("Please select a size!");
+      toast.error("Please select a size before adding to cart.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -52,6 +65,12 @@ const ProductView = () => {
       (v) => v.size.id === selectedSize.id
     );
 
+    // Show success toast here since we removed it from CartContext
+    toast.success("Product added to cart!", {
+      position: "top-right",
+      autoClose: 3000,
+    });
+    
     addToCart(product, variant, quantity);
   };
 
@@ -91,7 +110,7 @@ const ProductView = () => {
               {product.name}
             </h3>
             <p className="text-md sm:text-lg font-semibold text-slate-900">{product.category?.category || "No category"}</p>
-            <p className="text-slate-500 mt-1 text-sm ">Delivery Price Added at checkout</p>
+            <p className="text-slate-500 mt-1 text-sm ">Delivery fees added at checkout</p>
 
             <div className="flex items-center flex-wrap gap-4 mt-4">
               <h4 className="text-slate-900 text-2xl sm:text-3xl font-semibold">
@@ -126,6 +145,7 @@ const ProductView = () => {
 
             {/* Actions */}
             <div className="mt-6 flex flex-wrap gap-4">
+              <p className="text-sm text-primary font-semibold">You cant select more than two pieces from each size!</p>
               <button
                 onClick={handleAddToCart}
                 className="px-4 py-3 w-[45%] border bg-tertiary hover:bg-tertiary-hover text-white text-sm font-semibold cursor-pointer transition duration-300"
