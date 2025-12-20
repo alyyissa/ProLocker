@@ -9,11 +9,12 @@ const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState({
     name: '',
-    imageUrl: ''
+    imageFile: null
   });
   const [editingCategory, setEditingCategory] = useState(null);
   const [loadingCategories, setLoadingCategories] = useState(false);
   
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
   // Colors state
   const [colors, setColors] = useState([]);
   const [newColor, setNewColor] = useState('');
@@ -54,65 +55,79 @@ const Categories = () => {
   };
 
   const handleAddCategory = async () => {
-    if (!newCategory.name.trim()) {
-      toast.error('Category name is required');
-      return;
+  if (!newCategory.name.trim()) {
+    toast.error('Category name is required');
+    return;
+  }
+
+  try {
+    setLoadingCategories(true);
+
+    const formData = new FormData();
+    formData.append('category', newCategory.name.trim());
+
+    if (newCategory.imageFile) {
+      formData.append('mainImage', newCategory.imageFile);
     }
 
-    try {
-      setLoadingCategories(true);
-      
-      const categoryData = {
-        category: newCategory.name.trim()
-      };
-      
-      if (newCategory.imageUrl.trim()) {
-        categoryData.mainImage = newCategory.imageUrl.trim();
-      }
-      
-      const response = await api.post('/categories', categoryData);
-      
-      toast.success('Category added successfully');
-      setNewCategory({ name: '', imageUrl: '' });
-      loadCategories();
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error ||
-                          error.message ||
-                          'Failed to add category';
-      toast.error(`Error: ${errorMessage}`);
-    } finally {
-      setLoadingCategories(false);
-    }
-  };
+    await api.post('/categories', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    toast.success('Category added successfully');
+    setNewCategory({ name: '', imageFile: null });
+    loadCategories();
+
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      'Failed to add category';
+
+    toast.error(`Error: ${errorMessage}`);
+  } finally {
+    setLoadingCategories(false);
+  }
+};
+
 
   const handleUpdateCategory = async (id, updatedData) => {
-    if (!updatedData.name.trim()) {
-      toast.error('Category name is required');
-      return;
+  if (!updatedData.name.trim()) {
+    toast.error('Category name is required');
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('category', updatedData.name.trim());
+
+    // Only append the image file if a new one is selected
+    if (updatedData.imageFile) {
+      formData.append('mainImage', updatedData.imageFile);
     }
 
-    try {
-      const categoryData = {
-        category: updatedData.name.trim()
-      };
-      
-      if (updatedData.imageUrl?.trim()) {
-        categoryData.mainImage = updatedData.imageUrl.trim();
-      }
-      
-      await api.patch(`/categories/${id}`, categoryData);
-      toast.success('Category updated successfully');
-      setEditingCategory(null);
-      loadCategories();
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error ||
-                          error.message ||
-                          'Failed to update category';
-      toast.error(`Error: ${errorMessage}`);
-    }
-  };
+    await api.patch(`/categories/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    toast.success('Category updated successfully');
+    setEditingCategory(null);
+    loadCategories();
+
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      'Failed to update category';
+    toast.error(`Error: ${errorMessage}`);
+  }
+};
 
   const handleDeleteCategory = async (id, categoryName) => {
     if (!window.confirm(`Are you sure you want to delete "${categoryName}"?`)) return;
@@ -439,15 +454,19 @@ const Categories = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   <span className="flex items-center gap-1">
                     <ImageIcon />
-                    Image URL (Optional)
+                    Category Image
                   </span>
                 </label>
                 <input
-                  type="text"
-                  value={newCategory.imageUrl}
-                  onChange={(e) => setNewCategory({...newCategory, imageUrl: e.target.value})}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    setNewCategory({
+                      ...newCategory,
+                      imageFile: e.target.files[0],
+                    })
+                  }
+                  className="w-full"
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Leave empty if you don't have an image
@@ -507,16 +526,19 @@ const Categories = () => {
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             <span className="flex items-center gap-1">
-                              <ImageIcon />
-                              Image URL
+                              <img src={editingCategory.mainImage} alt="" />
                             </span>
                           </label>
                           <input
-                            type="text"
-                            value={editingCategory.imageUrl || ''}
-                            onChange={(e) => setEditingCategory({...editingCategory, imageUrl: e.target.value})}
-                            placeholder="https://example.com/image.jpg"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) =>
+                              setEditingCategory({
+                                ...editingCategory,
+                                imageFile: e.target.files[0],
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                           />
                         </div>
                         
@@ -578,7 +600,7 @@ const Categories = () => {
                           <div className="mb-3">
                             <div className="h-32 w-full rounded-lg overflow-hidden bg-gray-100">
                               <img 
-                                src={category.mainImage} 
+                                src={`${BACKEND_URL}${category.mainImage}`} 
                                 alt={category.category || category.name}
                                 className="w-full h-full object-cover"
                                 onError={(e) => {

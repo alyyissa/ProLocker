@@ -18,30 +18,36 @@
       private  productRepository: Repository<Product>
     ){}
 
-    public async create(createCategoryDto: CreateCategoryDto) {
+    public async create(
+      createCategoryDto: CreateCategoryDto,
+      file: Express.Multer.File,
+    ) {
+      const slug = createCategoryDto.category
+        .toLowerCase()
+        .replace(/ /g, '-')
+        .replace(/[^\w-]+/g, '');
 
-      const slug = createCategoryDto.category.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-
-      const existing = await this.categoryRepository.findOne({ 
-        where: [ 
-          {category: createCategoryDto.category},
-          {slug},
-        ]
+      const existing = await this.categoryRepository.findOne({
+        where: [{ category: createCategoryDto.category }, { slug }],
       });
 
-      if(existing){
-        throw new BadRequestException('Category already exists. Choose a different name.');
+      if (existing) {
+        throw new BadRequestException('Category already exists.');
       }
 
-      const newCategory = this.categoryRepository.create({
-        ...createCategoryDto,
-        slug,
-      });
-      
+      const newCategory = new Category();
+      newCategory.category = createCategoryDto.category;
+      newCategory.slug = slug;
+      newCategory.mainImage = `/uploads/categories/${file.filename}`; // 👈 EXPLICIT
+
       await this.categoryRepository.save(newCategory);
 
-      return {  message: 'Created successfully', category: newCategory };
+      return {
+        message: 'Created successfully',
+        category: newCategory,
+      };
     }
+
 
     async findAll() {
     const categories = await this.categoryRepository.find();
@@ -69,33 +75,40 @@
       return category;
     }
 
-    async update(id: number, updateCategoryDto: UpdateCategoryDto) {
-      const category = await this.categoryRepository.findOne({where: {id}});
-      if(!category) throw new NotFoundException(`Category with ${id} not found`);
+    async update(
+      id: number, 
+      updateCategoryDto: UpdateCategoryDto, 
+      file?: Express.Multer.File
+    ) {
+      const category = await this.categoryRepository.findOne({ where: { id } });
+      if (!category) throw new NotFoundException(`Category with ${id} not found`);
 
-      const updatedData = { ...updateCategoryDto };
-      
-      if(updateCategoryDto.category){
+      const updatedData: Partial<Category> = { ...updateCategoryDto };
+
+      // Update slug if name changed
+      if (updateCategoryDto.category) {
         const slug = updateCategoryDto.category
           .toLowerCase()
           .replace(/ /g, '-')
           .replace(/[^\w-]+/g, '');
 
-          const existing = await this.categoryRepository.findOne({ 
-          where: { slug } 
-          });
-
+        const existing = await this.categoryRepository.findOne({ where: { slug } });
         if (existing && existing.id !== id) {
           throw new BadRequestException('Slug already exists. Choose a different name.');
         }
-        
-        updatedData['slug'] = slug;
+
+        updatedData.slug = slug;
+      }
+
+      // Update mainImage if a new file is uploaded
+      if (file) {
+        updatedData.mainImage = `/uploads/categories/${file.filename}`;
       }
 
       Object.assign(category, updatedData);
       await this.categoryRepository.save(category);
 
-      return `Category updated successfully`;
+      return { message: 'Category updated successfully', category };
     }
 
 

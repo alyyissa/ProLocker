@@ -9,7 +9,8 @@ import { PermissionModule } from 'src/permission/permission.module';
 @Module({
   controllers: [CategoriesController],
   providers: [CategoriesService],
-  imports:[TypeOrmModule.forFeature([Category, Product]), PermissionModule],
+  imports:[TypeOrmModule.forFeature([Category, Product]), PermissionModule,
+  ],
   exports:[CategoriesService]
 })
 export class CategoriesModule {}

@@ -6,9 +6,6 @@ export class CreateCategoryDto {
     @MaxLength(50)
     category: string
 
-    // @IsNotEmpty()
-    // @IsUrl()
-    @IsOptional()
-    mainImage?: string;
-
 }
+
+

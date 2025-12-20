@@ -37,7 +37,7 @@ const MostSold = () => {
         }, []);
     if (!products.length) return null;
   return (
-    <>
+    <div className='w-full mt-15'>
         <Title 
         title="Best Sold"
         subtitle="Here are the top sold items sold in our store"
@@ -62,7 +62,7 @@ const MostSold = () => {
                 </SwiperSlide>
                 ))}
             </Swiper>
-            <div className='flex items-center justify-center mt-5'>
+            <div className='flex items-center justify-center mt-8'>
                 <button
                         onClick={handleExploreMore}
                         className="px-6 py-3 rounded-md font-medium transition-all duration-300 cursor-pointer"
@@ -83,7 +83,7 @@ const MostSold = () => {
                     </button>
                 </div>
         </div>
-    </>
+    </div>
   )
 }
 
