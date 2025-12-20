@@ -54,7 +54,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-600 pt-6 mt-6">
-          <p className="text-[15px] text-slate-300">© ReadymadeUI. All rights reserved.</p>
+          <p className="text-[15px] text-slate-300">©{new Date().getFullYear()} - Powered By iZeinTech</p>
         </div>
       </div>
     </footer>
