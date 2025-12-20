@@ -20,45 +20,53 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
   ){}
 
-  async create(createProductDto: CreateProductDto) {
-    const category = await this.categoryService.findOne(createProductDto.categoryId);
-    if (!category) throw new NotFoundException('Category not found');
+  async create(createProductDto: CreateProductDto, files?: Express.Multer.File[]) {
+  const category = await this.categoryService.findOne(createProductDto.categoryId);
+  if (!category) throw new NotFoundException('Category not found');
 
-    const color = await this.colorService.findOne(createProductDto.colorId);
-    if (!color) throw new NotFoundException('Color not found');
+  const color = await this.colorService.findOne(createProductDto.colorId);
+  if (!color) throw new NotFoundException('Color not found');
 
-    const gender = await this.genderService.findOne(createProductDto.genderId);
-    if (!gender) throw new NotFoundException('Gender not found');
+  const gender = await this.genderService.findOne(createProductDto.genderId);
+  if (!gender) throw new NotFoundException('Gender not found');
 
-    let baseSlug = createProductDto.name
-      .toLowerCase()
-      .replace(/ /g, '-')
-      .replace(/[^\w-]+/g, '');
-
-    let slug = baseSlug;
-    let count = 1;
-
-    while (await this.productRepository.findOne({ where: { slug } })) {
-      slug = `${baseSlug}-${count}`;
-      count++;
-    }
-
-    const product = this.productRepository.create({
-        name: createProductDto.name,
-        price: createProductDto.price,
-        quantity: 0,
-        sale: createProductDto.sale ?? 0,
-        isActive: true,
-        category,
-        color,
-        gender,
-        slug,
-    });
-
-    await this.productRepository.save(product);
-
-    return { message: 'Product Created successfully', product };
+  let baseSlug = createProductDto.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+  let slug = baseSlug;
+  let count = 1;
+  while (await this.productRepository.findOne({ where: { slug } })) {
+    slug = `${baseSlug}-${count}`;
+    count++;
   }
+
+  let mainImage: string | undefined;
+  let galleryImages: string[] | undefined;
+
+  if (files && files.length > 0) {
+    mainImage = `/uploads/products/${files[0].filename}`;
+    if (files.length > 1) {
+      galleryImages = files.slice(1).map(file => `/uploads/products/${file.filename}`);
+    }
+  }
+
+  const product = this.productRepository.create({
+    name: createProductDto.name,
+    price: createProductDto.price,
+    quantity: 0,
+    sale: createProductDto.sale ?? 0,
+    isActive: true,
+    category,
+    color,
+    gender,
+    slug,
+    mainImage,
+    galleryImages,
+  });
+
+  await this.productRepository.save(product);
+
+  return { message: 'Product Created successfully', product };
+}
+
 
   async findAll(filters?: { gender?: number; category?: string; color?: string; size?: number; onSale?: boolean },
     options: { page?: number; limit?: number; date?: 'latest' | 'oldest' } = {}
@@ -186,19 +194,8 @@ export class ProductsService {
       : await this.productRepository.findOne({ where: { id: productId }, relations: ['varients'] });
 
     if (!product) throw new NotFoundException('Product not found');
-
-    console.log('=== DEBUG refreshProductData ===');
-    console.log('Product ID:', productId);
-    console.log('Product varients array:', product.varients);
-    console.log('Varients length:', product.varients?.length);
-    
-    if (product.varients && product.varients.length > 0) {
-        console.log('First varient:', product.varients[0]);
-        console.log('First varient quantity:', product.varients[0].quantity);
-    }
     
     const totalQuantity = product.varients.reduce((sum, varient) => sum + (varient.quantity || 0), 0);
-    console.log('Calculated total quantity:', totalQuantity);
 
     product.quantity = totalQuantity;
 
@@ -206,13 +203,9 @@ export class ProductsService {
     else if(product.quantity < 3) product.status = ProductStatus.FewLeft;
     else product.status = ProductStatus.Available;
 
-    console.log('New product quantity:', product.quantity);
-    console.log('New product status:', product.status);
-
     if (manager) await manager.save(product);
     else await this.productRepository.save(product);
     
-    console.log('=== END DEBUG ===');
 }
 
   async getMostSoldProducts(){

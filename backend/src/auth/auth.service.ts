@@ -27,7 +27,6 @@ export class AuthService {
         private readonly mailService: MailService
     ){}
 
-    // KEEP ALL YOUR EXISTING METHODS EXACTLY AS THEY ARE
     async signup(signupDto: SignupDto) {
         const exists = await this.userRepo.findOne({ where: { email: signupDto.email } });
         if (exists) throw new ConflictException('Email already exists');
@@ -109,10 +108,8 @@ export class AuthService {
         })
     }
 
-    // UPDATE THIS METHOD ONLY - it's the main change
     async refresh(refreshToken: string) {
     try {
-        // Get the refresh secret directly from process.env
         const refreshSecret = process.env.JWT_REFRESH_SECRET;
         if (!refreshSecret) {
             throw new Error('JWT_REFRESH_SECRET is not configured');

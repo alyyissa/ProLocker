@@ -11,17 +11,6 @@ export class CreateProductDto {
     @IsInt()
     price: number;
 
-    @IsOptional()
-    // @IsUrl()
-    mainImage?: string
-
-    @IsOptional()
-    @IsArray()
-    // @ArrayNotEmpty()
-    @ArrayUnique()
-    // @IsUrl({}, { each: true })
-    galleryImages?: string[]; 
-
     @IsInt()
     @Min(0, {message: 'sale must be at least 0'})
     @Min(0, {message: `sale cant be less than 0`})

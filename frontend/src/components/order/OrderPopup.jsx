@@ -3,7 +3,7 @@ import { getDeliveryFee } from '../../services/delivery/deliveryService';
 
 const OrderPopup = ({ isOpen, onClose, order }) => {
   const [deliveryFee, setDeliveryFee] = useState(0);
-
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
   // Lock scroll when popup is open
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'auto';
@@ -109,10 +109,10 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
               const actualTotal = Number(item.unitPrice) * Number(item.quantity);
               return (
                 <div key={item.id} className="flex items-start gap-4 max-sm:flex-col">
-                  <div className="w-[70px] h-[70px] bg-gray-200 rounded-lg flex items-center justify-center shrink-0">
+                  <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center shrink-0">
                     <img
-                      src={item.productVarient.product.mainImage || "/placeholder.png"}
-                      className="w-14 h-14 object-contain rounded-sm"
+                      src={`${BACKEND_URL}${item.productVarient.product.mainImage}`}
+                      className="w-full h-full object-contain rounded-sm"
                     />
                   </div>
 

@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductQueryDto } from './dto/product-query.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { getMulterStorage } from 'src/utils/upload.util';
 
 @Controller('products')
 export class ProductsController {
@@ -12,8 +14,13 @@ export class ProductsController {
 
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  @UseInterceptors(
+    FilesInterceptor('images', 5, {
+      storage: getMulterStorage('products'),
+    }),
+  )
+  create(@Body() createProductDto: CreateProductDto, @UploadedFiles() files: Express.Multer.File[]) {
+    return this.productsService.create(createProductDto, files);
   }
 
   @Get()

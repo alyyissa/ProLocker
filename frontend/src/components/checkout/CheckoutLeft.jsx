@@ -4,7 +4,7 @@ import { getDeliveryFee } from "../../services/delivery/deliveryService";
 
 export default function CheckoutLeft() {
   const { cart, removeFromCart, addToCart, decrementQty } = useCart();
-
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
   const subtotal = cart.reduce(
     (sum, item) => sum + (item.product.priceAfterSale || item.product.price) * item.qty,
     0
@@ -32,9 +32,9 @@ export default function CheckoutLeft() {
               key={`${item.product.id}-${item.variant.id}`}
               className="flex gap-4 max-sm:flex-col border-b border-gray-300 pb-4"
             >
-              <div className="w-24 h-24 shrink-0 bg-purple-50 p-2 rounded-md">
+              <div className="w-24 h-24 shrink-0 bg-purple-50 rounded-md">
                 <img
-                  src={item.product.mainImage || item.product.galleryImages?.[0]}
+                  src={`${BACKEND_URL}${item.product.mainImage}`}
                   className="w-full h-full object-contain"
                   alt={item.product.name}
                 />

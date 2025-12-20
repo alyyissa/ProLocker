@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 const SideCart = ({ show, onClose }) => {
   const { user } = useAuth()
   const { cart, removeFromCart } = useCart();
-
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     document.body.style.overflow = show ? "hidden" : "";
     return () => (document.body.style.overflow = "");
@@ -57,7 +57,7 @@ const SideCart = ({ show, onClose }) => {
                 >
                   <div className="w-24 h-24 rounded-md overflow-hidden shrink-0 border">
                     <img
-                      src={item.product.mainImage || item.product.galleryImages?.[0]}
+                      src={`${BACKEND_URL}${item.product.mainImage}`}
                       alt={item.product.name}
                       className="object-cover w-full h-full"
                     />

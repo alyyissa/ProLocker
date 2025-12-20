@@ -9,7 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Profile = () => {
     const { user, logoutUser } = useAuth();
     const navigate = useNavigate();
-
+    const BACKEND_URL = import.meta.env.VITE_API_URL;
     useEffect(() => {
     if (!user) {
         navigate("/");
@@ -165,9 +165,9 @@ const Profile = () => {
                     <div className="flex flex-wrap items-center gap-8">
                         {order.orderItems.map((item) => (
                         <div key={item.id} className="flex items-center gap-4">
-                            <div className="w-16 h-16 bg-gray-100 p-1 rounded-md overflow-hidden">
+                            <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden">
                             <img
-                                src={item.productVarient.product.mainImage || 'https://pearlbrandsonline.com/wp-content/uploads/2025/06/710932304522.jpg'}
+                                src={`${BACKEND_URL}${item.productVarient.product.mainImage}`}
                                 alt={item.productVarient.product.name}
                                 className="w-full h-full object-contain"
                             />

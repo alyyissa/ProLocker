@@ -7,6 +7,7 @@ import RelatedProducts from "../components/product/RelatedProducts";
 import { toast } from "react-toastify";
 
 const ProductView = () => {
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -21,22 +22,30 @@ const ProductView = () => {
   ];
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const data = await getProductBySlug(slug);
+  const fetchProduct = async () => {
+    try {
+      const data = await getProductBySlug(slug);
 
-        if (!data.galleryImages || data.galleryImages.length === 0) {
-          data.galleryImages = dummyGallery;
-        }
+      // Ensure all image URLs are absolute
+      const mainImg = data.mainImage ? `${BACKEND_URL}${data.mainImage}` : null;
+      const galleryImgs = data.galleryImages && data.galleryImages.length > 0
+        ? data.galleryImages.map(img => `${BACKEND_URL}${img}`)
+        : dummyGallery;
 
-        setProduct(data);
-        setSelectedImage(data.mainImage || data.galleryImages[0]);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchProduct();
-  }, [slug]);
+      setProduct({
+        ...data,
+        mainImage: mainImg,
+        galleryImages: mainImg ? [mainImg, ...galleryImgs] : galleryImgs
+      });
+
+      setSelectedImage(mainImg || galleryImgs[0]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchProduct();
+}, [slug]);
 
   if (!product) return <div>Loading...</div>;
 

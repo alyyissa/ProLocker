@@ -46,8 +46,8 @@ export class AuthController {
     }
 
     @Post('forgot-password')
-    // @UseGuards(ThrottlerGuard)
-    @Throttle({ default: { limit: 3, ttl: 3600 } }) // 3 attempts per hour
+    @UseGuards(ThrottlerGuard)
+    @Throttle({ default: { limit: 3, ttl: 3600 } })
     async forgotPassword(@Body('email') email: string) {
         return this.authService.forgotPassword(email);
     }

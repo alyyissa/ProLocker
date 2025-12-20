@@ -3,6 +3,7 @@ import { getCategories } from '../../../services/categories/categoriesService';
 import { getColors } from '../../../services/color/ColorService';
 import { getSize } from '../../../services/size/sizeService';
 import { createProduct } from '../../../services/products/productsService';
+import api from '../../../services/api';
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -10,10 +11,12 @@ const AddProduct = () => {
     price: '',
     sale: '',
     mainImage: '',
+    mainImageFile: null,
     galleryImages: ['', '', '', ''],
+    galleryImageFiles: [null, null, null, null],
     status: 'ACTIVE',
     colorId: '',
-    genderId: '',
+    genderId: 1,
     categoryId: ''
   });
 
@@ -64,90 +67,91 @@ const AddProduct = () => {
   };
 
   const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // In a real app, you would upload the file to a server
-      // and get back a URL. For now, we'll create a local URL.
-      const imageUrl = URL.createObjectURL(file);
-      setFormData(prev => ({
-        ...prev,
-        mainImage: imageUrl
-      }));
-    }
-  };
+  const file = e.target.files[0];
+  if (file) {
+    const imageUrl = URL.createObjectURL(file);
+    setFormData(prev => ({
+      ...prev,
+      mainImage: imageUrl,
+      mainImageFile: file,
+    }));
+  }
+};
 
-  // Handle gallery file upload
-  const handleGalleryFileUpload = (index, e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      handleGalleryImageChange(index, imageUrl);
-    }
-  };
+const handleGalleryFileUpload = (index, e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const imageUrl = URL.createObjectURL(file);
+    const newFiles = [...(formData.galleryImageFiles || [null, null, null, null])];
+    newFiles[index] = file;
+    handleGalleryImageChange(index, imageUrl);
+    setFormData(prev => ({
+      ...prev,
+      galleryImageFiles: newFiles
+    }));
+  }
+};
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   setLoading(true);
   setError('');
   setSuccess('');
 
   try {
-    // Validate all required fields
-    const requiredFields = [
-      { field: 'name', value: formData.name, message: 'Product name is required' },
-      { field: 'price', value: formData.price, message: 'Price is required' },
-      { field: 'colorId', value: formData.colorId, message: 'Please select a color' },
-      { field: 'categoryId', value: formData.categoryId, message: 'Please select a category' }
-    ];
+    if (!formData.name) throw new Error('Product name is required');
+    if (!formData.price) throw new Error('Price is required');
+    if (!formData.colorId) throw new Error('Please select a color');
+    if (!formData.categoryId) throw new Error('Please select a category');
 
-    for (const { field, value, message } of requiredFields) {
-      if (!value && value !== 0) { // Allow 0 as valid
-        throw new Error(message);
-      }
+    const data = new FormData();
+    data.append('name', formData.name.trim());
+    data.append('price', formData.price);
+    data.append('sale', formData.sale || 0);
+    data.append('status', 'Out of Stock');
+    data.append('colorId', formData.colorId);
+    data.append('genderId', formData.genderId || 1);
+    data.append('categoryId', formData.categoryId);
+
+    // Append main image first
+    if (formData.mainImageFile) {
+      data.append('images', formData.mainImageFile);
     }
 
-    // Prepare data for API with proper parsing
-    const productData = {
-      name: formData.name,
-      price: parseInt(formData.price),
-      sale: formData.sale ? parseInt(formData.sale) : 0,
-      status: 'Out of Stock', // Hardcode to match your backend enum
-      colorId: parseInt(formData.colorId),
-      genderId: parseInt(formData.genderId) || 1,
-      categoryId: parseInt(formData.categoryId),
-      // Comment out images for now
-      // mainImage: formData.mainImage,
-      // galleryImages: formData.galleryImages.filter(img => img.trim() !== '')
-    };
+    // Append gallery images next
+    if (formData.galleryImageFiles) {
+      formData.galleryImageFiles.forEach((file) => {
+        if (file) data.append('images', file);
+      });
+    }
 
+    await api.post('/products', data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
 
-    // Call API
-    const response = await createProduct(productData);
-    
     setSuccess('Product added successfully!');
-    
-    // Reset form
     setFormData({
       name: '',
       price: '',
       sale: '',
       mainImage: '',
+      mainImageFile: null,
       galleryImages: ['', '', '', ''],
+      galleryImageFiles: [null, null, null, null],
       status: 'Available',
       colorId: '',
-      genderId: 1, // Reset to default value
+      genderId: 1,
       categoryId: ''
     });
 
   } catch (err) {
-    if (err.message && err.message.startsWith('Please select') || err.message.includes('is required')) {
-      setError(err.message);
-    } else {
-      setError(err.response?.data?.message || 'Failed to add product');
-    }
+    const errorMessage =
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      err.message ||
+      'Failed to add product';
+    setError(errorMessage);
     console.error('Error creating product:', err);
-    console.error('Error details:', err.response?.data);
   } finally {
     setLoading(false);
   }

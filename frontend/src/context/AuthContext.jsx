@@ -12,20 +12,15 @@ export const AuthProvider = ({ children }) => {
 
   const verifyAdminStatus = async (currentUser = user) => {
   if (!currentUser) {
-    console.log('AuthContext: No user, cannot check admin status');
     setIsAdmin(false);
     return false;
   }
 
   setIsCheckingAdmin(true);
   try {
-    console.log('AuthContext: Calling checkIsAdmin API for user:', currentUser.id);
     
-    // Use the imported checkIsAdmin function
     const data = await checkIsAdmin();
     const isUserAdmin = Boolean(data.isAdmin);
-    
-    console.log('AuthContext: Setting isAdmin to:', isUserAdmin);
     
     setIsAdmin(isUserAdmin);
     localStorage.setItem("isAdmin", isUserAdmin.toString());

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 const ProductCard = ({ product }) => {
+  const BACKEND_URL = import.meta.env.VITE_API_URL;
   const isOnSale = product.priceAfterSale && product.priceAfterSale < product.price;
   const navigate = useNavigate();
   const isFewLeft = product.status === "Few Left";
@@ -18,7 +19,7 @@ const ProductCard = ({ product }) => {
           )}
 
           <img
-            src={product.mainImage}
+            src={`${BACKEND_URL}${product.mainImage}`}
             alt={product.name}
             className="w-full aspect-square object-cover rounded-lg bg-gray-200 group-hover:opacity-75 transition"
           />
