@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const ProductView = () => {
-  const BACKEND_URL = import.meta.env.VITE_API_URL;
+  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL;
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);

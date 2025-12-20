@@ -41,7 +41,8 @@ async function bootstrap() {
     `/uploads/${productsFolder}`,
     express.static(join(__dirname, '..', uploadsBase, productsFolder)),
   );
-
+  app.setGlobalPrefix('api');
+  
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

@@ -3,7 +3,7 @@ import { getDeliveryFee } from '../../services/delivery/deliveryService';
 
 const OrderPopup = ({ isOpen, onClose, order }) => {
   const [deliveryFee, setDeliveryFee] = useState(0);
-  const BACKEND_URL = import.meta.env.VITE_API_URL;
+  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL;
   // Lock scroll when popup is open
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'auto';

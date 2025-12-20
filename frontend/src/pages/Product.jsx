@@ -17,7 +17,7 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
     const seoTitleParts = ["ProLocker | Shop Products"];
-  const APP_URL = import.meta.env.VITE_APP_URL;
+  const APP_URL = import.meta.env.VITE_FOLDERS_URL;
 
   const [filters, setFilters] = useState({
     category: searchParams.get('category') || null,

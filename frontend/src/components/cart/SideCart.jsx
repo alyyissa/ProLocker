@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 const SideCart = ({ show, onClose }) => {
   const { user } = useAuth()
   const { cart, removeFromCart } = useCart();
-  const BACKEND_URL = import.meta.env.VITE_API_URL;
+  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL;
   useEffect(() => {
     document.body.style.overflow = show ? "hidden" : "";
     return () => (document.body.style.overflow = "");

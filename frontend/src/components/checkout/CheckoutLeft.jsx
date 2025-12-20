@@ -4,7 +4,7 @@ import { getDeliveryFee } from "../../services/delivery/deliveryService";
 
 export default function CheckoutLeft() {
   const { cart, removeFromCart, addToCart, decrementQty } = useCart();
-  const BACKEND_URL = import.meta.env.VITE_API_URL;
+  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL;
   const subtotal = cart.reduce(
     (sum, item) => sum + (item.product.priceAfterSale || item.product.price) * item.qty,
     0

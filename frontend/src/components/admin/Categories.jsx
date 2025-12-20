@@ -14,7 +14,7 @@ const Categories = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [loadingCategories, setLoadingCategories] = useState(false);
   
-  const BACKEND_URL = import.meta.env.VITE_API_URL;
+  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL;
   // Colors state
   const [colors, setColors] = useState([]);
   const [newColor, setNewColor] = useState('');

@@ -20,7 +20,7 @@ const ProductList = () => {
     total: 0,
     totalPages: 0
   });
-  const [editingSale, setEditingSale] = useState(null); // { productId: number, value: string }
+  const [editingSale, setEditingSale] = useState(null);
 const [updating, setUpdating] = useState(false);
 
 const handleUpdateSale = async (productId, newSale) => {
