@@ -21,6 +21,7 @@ import AdminRoute from './components/AdminRoute'
 import Dashboard from './components/admin/Dashboard'
 import ForgotPassword from './pages/auth/ForgotPassword'
 import ResetPassword from './pages/auth/ResetPassword'
+import NotFound from './pages/NofFound'
 
 function App() {
   useEffect(() =>{
@@ -52,6 +53,8 @@ function App() {
         <Route path='/products/:slug' element={<ProductView />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="*" element={<NotFound />} />
+        <Route path="/404" element={<NotFound />} />
       </Route>
       <Route element={<AdminRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
