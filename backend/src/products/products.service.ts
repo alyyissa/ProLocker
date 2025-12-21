@@ -208,26 +208,50 @@ export class ProductsService {
     
 }
 
-  async getMostSoldProducts(){
-    return await  this.productRepository
-      .createQueryBuilder('product')
-      .leftJoin('product.varients', 'varient')
-      .leftJoin('varient.orderItems', 'orderItem')
-      .select('product.id', 'id')
-      .addSelect('product.mainImage', 'mainImage')
-      .addSelect('product.priceAfterSale', 'priceAfterSale')
-      .addSelect('product.sale', 'sale')
-      .addSelect('ANY_VALUE(product.name)', 'name')
-      .addSelect('ANY_VALUE(product.price)', 'price')
-      .addSelect('SUM(orderItem.quantity)', 'totalSold')
-      .addSelect('ANY_VALUE(product.slug)', 'slug')
-      .where('product.deletedAt IS NULL')
-      .andWhere('product.quantity > 0')
-      .groupBy('product.id')
-      .orderBy('totalSold', 'DESC')
-      .limit(10)
-      .getRawMany();
+  async getMostSoldProducts() {
+  // 1️⃣ Try to get most sold products
+  const mostSold = await this.productRepository
+    .createQueryBuilder('product')
+    .leftJoin('product.varients', 'varient')
+    .leftJoin('varient.orderItems', 'orderItem')
+    .select('product.id', 'id')
+    .addSelect('product.mainImage', 'mainImage')
+    .addSelect('product.priceAfterSale', 'priceAfterSale')
+    .addSelect('product.sale', 'sale')
+    .addSelect('ANY_VALUE(product.name)', 'name')
+    .addSelect('ANY_VALUE(product.price)', 'price')
+    .addSelect('ANY_VALUE(product.slug)', 'slug')
+    .addSelect('SUM(orderItem.quantity)', 'totalSold')
+    .where('product.deletedAt IS NULL')
+    .andWhere('product.quantity > 0')
+    .groupBy('product.id')
+    .orderBy('totalSold', 'DESC')
+    .limit(10)
+    .getRawMany();
+
+  // 2️⃣ If we have at least 5 most sold products → return them
+  if (mostSold.length >= 5) {
+    return mostSold;
   }
+
+  // 3️⃣ Otherwise, fallback: return any 10 products
+  return await this.productRepository
+    .createQueryBuilder('product')
+    .select([
+      'product.id AS id',
+      'product.mainImage AS mainImage',
+      'product.priceAfterSale AS priceAfterSale',
+      'product.sale AS sale',
+      'product.name AS name',
+      'product.price AS price',
+      'product.slug AS slug',
+    ])
+    .where('product.deletedAt IS NULL')
+    .andWhere('product.quantity > 0')
+    .orderBy('product.createdAt', 'DESC') // or RAND() if you prefer
+    .limit(10)
+    .getRawMany();
+}
 
   async toggleActive(productId: number, isActive: boolean){
     const product = await this.productRepository.findOne({where: {id: productId}})
