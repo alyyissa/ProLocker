@@ -209,7 +209,6 @@ export class ProductsService {
 }
 
   async getMostSoldProducts() {
-  // 1️⃣ Try to get most sold products
   const mostSold = await this.productRepository
     .createQueryBuilder('product')
     .leftJoin('product.varients', 'varient')
@@ -229,12 +228,9 @@ export class ProductsService {
     .limit(10)
     .getRawMany();
 
-  // 2️⃣ If we have at least 5 most sold products → return them
   if (mostSold.length >= 5) {
     return mostSold;
   }
-
-  // 3️⃣ Otherwise, fallback: return any 10 products
   return await this.productRepository
     .createQueryBuilder('product')
     .select([
@@ -248,7 +244,7 @@ export class ProductsService {
     ])
     .where('product.deletedAt IS NULL')
     .andWhere('product.quantity > 0')
-    .orderBy('product.createdAt', 'DESC') // or RAND() if you prefer
+    .orderBy('product.createdAt', 'DESC')
     .limit(10)
     .getRawMany();
 }

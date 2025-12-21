@@ -4,7 +4,7 @@ import { getCategories } from '../../services/categories/categoriesService'
 import { useNavigate } from 'react-router-dom'
 
 const Categories = () => {
-    const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL;
+    const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL_CATEGORIES;
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()

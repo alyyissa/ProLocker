@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 const ProductCard = ({ product }) => {
-  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL;
+  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL_PRODUCTS;
   const isOnSale = product.priceAfterSale && product.priceAfterSale < product.price;
   const navigate = useNavigate();
   const isFewLeft = product.status === "Few Left";

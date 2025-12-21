@@ -9,7 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Profile = () => {
     const { user, logoutUser } = useAuth();
     const navigate = useNavigate();
-    const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL;
+    const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL_PRODUCTS;
     useEffect(() => {
     if (!user) {
         navigate("/");
