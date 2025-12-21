@@ -102,6 +102,19 @@ const Products = () => {
   const seoDescription = filters.category
     ? `Browse ${filters.category} products${filters.color ? ` in ${filters.color}` : ""}. High quality items with fast delivery.`
     : "Browse all our products. High quality items with the best prices and fast delivery.";
+
+    useEffect(() => {
+  if (showFilters) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+
+  return () => {
+    document.body.style.overflow = "";
+  };
+}, [showFilters]);
+
   return (
     <>
     <Helmet>
@@ -175,8 +188,9 @@ const Products = () => {
           
           {/* Slide Filters */}
           <div
-            className={`fixed right-0 top-0 w-64 h-full bg-white shadow-lg p-5 z-50
-            transition-transform duration-300 transform pt-20 md:pt-30
+            className={`fixed right-0 top-0 w-64 h-full bg-white shadow-lg p-5 z-[99]
+            transition-transform duration-300 transform pt-10
+            overflow-y-auto overscroll-contain
             ${showFilters ? "translate-x-0" : "translate-x-full"}`}
           >
             <div className="flex justify-between items-center mb-4">

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProductService } from "../../services/products/productsService";
 
-
 const highlight = (text, query) => {
   if (!query) return text;
   const regex = new RegExp(`(${query})`, "ig");
@@ -14,14 +13,14 @@ const highlight = (text, query) => {
     )
   );
 };
-
+  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL;
 const placeholderTexts = [
   "What are you looking for?",
   "Search for the products you need",
   "Type and explore..."
 ];
 
-const SearchBar = ({ scrolled }) => {
+const SearchBar = ({ scrolled, bannerExists  }) => {
   const navigate = useNavigate();
 
   const [query, setQuery] = useState("");
@@ -131,14 +130,15 @@ const SearchBar = ({ scrolled }) => {
         onKeyDown={handleKeyDown}
         onFocus={() => results.length && setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
-        className={`pl-7 h-[45px] w-[400px] py-5 rounded-full text-md focus:outline-none bg-transparent backdrop-blur-md border ${
+        className={`pl-7 h-[45px] w-[340px] md:w-[400px] py-5 rounded-full text-md focus:outline-none bg-transparent backdrop-blur-md border ${
           scrolled
             ? "text-cocoprimary placeholder-gray-500 border-cocoprimary"
             : "text-background placeholder-gray-300 border-gray-300"
-        }`}
+        }
+        ${bannerExists ? "mt-12" : "mt-0"}`}
       />
 
-      <button type="submit" className="absolute right-0 top-0 mt-4 mr-4 text-background">
+      <button type="submit" className={`absolute right-0 top-0 mt-4 mr-4 text-background ${bannerExists ? 'top-12': 'top-0'}`}>
         <svg className="h-4 w-4 fill-current" viewBox="0 0 56.966 56.966">
           <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23
             s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92
@@ -148,7 +148,7 @@ const SearchBar = ({ scrolled }) => {
       </button>
 
       {open && (
-        <div className="absolute top-[55px] left-0 w-full bg-white rounded-xl shadow-xl z-50 overflow-hidden">
+        <div className="absolute top-[100px] md:top-13 left-0 w-full bg-white rounded-xl shadow-xl z-50 overflow-hidden">
           {loading && <p className="p-4 text-sm text-gray-500">Searching...</p>}
           {!loading && results.length === 0 && <p className="p-4 text-sm text-gray-500">No results found</p>}
           {results.map((product, index) => (
@@ -160,7 +160,7 @@ const SearchBar = ({ scrolled }) => {
               }`}
             >
               <img
-                src={product.mainImage || "/placeholder.png"}
+                src={`${BACKEND_URL}${product.mainImage}`}
                 alt={product.name}
                 className="w-10 h-10 object-cover rounded"
               />

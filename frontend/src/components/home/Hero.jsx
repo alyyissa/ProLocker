@@ -20,7 +20,7 @@ const Hero = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   return (
 
-    <div className="w-full relative h-screen z-10">
+    <div className="w-full relative h-dvh z-10">
       <Swiper
         modules={[Autoplay, EffectFade]}
         effect="fade"

@@ -26,7 +26,7 @@ const Navbar = ({bannerExists}) => {
 
   const navigate = useNavigate();
 
-  const topClass = bannerExists ? "top-8" : "top-0";
+  const topClass = bannerExists ? "top-12" : "top-0";
 
   const handleLogout = async () => {
     try {
@@ -105,9 +105,33 @@ const Navbar = ({bannerExists}) => {
               <ul className="space-y-4 text-background font-semibold">
                 <li><Link to="/" onClick={() => setOpen(false)}>Home</Link></li>
                 <li><Link to="/products" onClick={() => setOpen(false)}>Products</Link></li>
-                <li><Link to="/sale" onClick={() => setOpen(false)}>Sale</Link></li>
-                <li><Link to="/latest" onClick={() => setOpen(false)}>Latest Products</Link></li>
+                <li><Link to="/products?onSale=true" onClick={() => setOpen(false)}>Sale</Link></li>
+                <li><Link to="/products?date=latest" onClick={() => setOpen(false)}>Latest Products</Link></li>
               </ul>
+              <div className="my-6 border-t border-background/30"></div>
+              {/* Auth section */}
+              {!isLoggedIn ? (
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    navigate("/login");
+                  }}
+                  className="w-full py-3 rounded-full bg-background text-cocoprimary font-semibold hover:opacity-90 transition"
+                >
+                  Login
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    logoutUser();
+                    setOpen(false);
+                    navigate("/");
+                  }}
+                  className="w-full py-3 rounded-full bg-background text-cocoprimary font-semibold hover:opacity-90 transition"
+                >
+                  Logout
+                </button>
+              )}
             </aside>
             {open && (
               <div
@@ -166,7 +190,7 @@ const Navbar = ({bannerExists}) => {
 
         {(isHome || isPordocust) && (
           <div className='w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 bg-transparent fixed top-0 pt-20 z-50 flex md:hidden justify-center'>
-            <SearchBar/>
+            <SearchBar bannerExists={bannerExists}/>
           </div>
         )}
         {openCart && <SideCart show={openCart} onClose= {() => setOpenCart(false)}/>}
