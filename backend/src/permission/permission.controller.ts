@@ -2,6 +2,7 @@ import { Controller, Delete, Get, Param, Post, Request, UseGuards } from '@nestj
 import { PermissionService } from './permission.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Logger } from '@nestjs/common';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
 
 
 @Controller('permissions')
@@ -11,7 +12,7 @@ export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {}
 
   @Get('is-admin')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard,AdminGuard)
   async isAdmin(@Request() req) {
     
     const userId = req.user?.id || req.user?.sub || req.user?.userId;
