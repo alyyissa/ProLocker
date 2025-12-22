@@ -10,11 +10,24 @@ const MainLayout = () => {
   const { pathname } = useLocation();
   const [isLoading, setIsLoading] = useState(true);
   const [banner, setBanner] = useState(null)
+  
+  const location = useLocation();
+    const noPaddingRoutes = [
+    "/",
+    "/login",
+    "/signup",
+    "/forgot-password",
+    "/reset-password",
+    "/404",
+  ];
+
+  const isHome = noPaddingRoutes.includes(location.pathname);
+
 
   useEffect(() => {
     setIsLoading(true);
     window.scrollTo(0, 0);
-
+    
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
@@ -46,7 +59,18 @@ const MainLayout = () => {
       >
         {banner && banner.isActive && <Banner text={banner.text} />}
         <Navbar bannerExists={banner && banner.isActive}/>
-        <Outlet />
+        <div
+          className={`
+            transition-all duration-300
+            ${!isHome &&
+              (banner?.isActive
+                ? "pt-[110px] md:pt-[156px]"
+                : "pt-[69px] md:pt-[108px]")
+            }
+          `}
+        >
+          <Outlet />
+        </div>
         <a
           href="https://wa.me/96170915687"
           target="_blank"

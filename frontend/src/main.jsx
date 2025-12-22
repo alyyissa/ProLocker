@@ -9,12 +9,12 @@ import { HelmetProvider } from 'react-helmet-async';
 
 createRoot(document.getElementById('root')).render(
   <HelmetProvider>
+    <AuthProvider>
     <BrowserRouter>
       <CartProvider>
-        <AuthProvider>
           <App />
-        </AuthProvider>
       </CartProvider>
     </BrowserRouter>
+    </AuthProvider>
   </HelmetProvider>
 )

@@ -3,7 +3,6 @@ import { getDeliveryFee } from '../../services/delivery/deliveryService';
 
 const OrderPopup = ({ isOpen, onClose, order }) => {
   const [deliveryFee, setDeliveryFee] = useState(0);
-  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL_PRODUCTS;
   // Lock scroll when popup is open
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'auto';
@@ -111,7 +110,7 @@ const OrderPopup = ({ isOpen, onClose, order }) => {
                 <div key={item.id} className="flex items-start gap-4 max-sm:flex-col">
                   <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center shrink-0">
                     <img
-                      src={`${BACKEND_URL}${item.productVarient.product.mainImage}`}
+                      src={`${item.productVarient.product.mainImage}`}
                       className="w-full h-full object-contain rounded-sm"
                     />
                   </div>

@@ -134,7 +134,7 @@ const Products = () => {
   <meta property="og:url" content={`${APP_URL}/products${window.location.search}`} />
 </Helmet>
 
-    <div className="pt-[69px] md:pt-[109px] h-auto">
+    <div className=" h-auto">
       <div
         className="w-full h-[228px] bg-center flex items-center justify-center"
         style={{ backgroundImage: `url(${assets.bgProducts})` }}

@@ -4,7 +4,6 @@ import { getDeliveryFee } from "../../services/delivery/deliveryService";
 
 export default function CheckoutLeft() {
   const { cart, removeFromCart, addToCart, decrementQty } = useCart();
-  const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL_PRODUCTS;
   const subtotal = cart.reduce(
     (sum, item) => sum + (item.product.priceAfterSale || item.product.price) * item.qty,
     0
@@ -34,7 +33,7 @@ export default function CheckoutLeft() {
             >
               <div className="w-24 h-24 shrink-0 bg-purple-50 rounded-md">
                 <img
-                  src={`${BACKEND_URL}${item.product.mainImage}`}
+                  src={`${item.product.mainImage}`}
                   className="w-full h-full object-contain"
                   alt={item.product.name}
                 />

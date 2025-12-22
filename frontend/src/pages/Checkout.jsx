@@ -9,7 +9,7 @@ const Checkout = () => {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-[90dvh] pt-[69px] md:pt-[109px]">
+      <div className="min-h-[90dvh]">
         <div>
           <h1 className="ultra-regular text-4xl md:text-5xl text-background">
             YOUR CART
@@ -41,7 +41,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-20 md:py-40 w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16">
+    <div className="min-h-screen bg-gray-100 py-20 w-full px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16">
       <div className="flex flex-col md:flex-row gap-10 justify-center w-full">
         <CheckoutLeft />
         <CheckoutRight />

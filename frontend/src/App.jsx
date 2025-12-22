@@ -5,7 +5,7 @@ import MainLayout from './components/layouts/MainLayout'
 import '@fortawesome/fontawesome-free'
 import Login from './pages/auth/Login'
 import Signup from './pages/auth/Signup'
-import { ToastContainer } from 'react-toastify'
+import { ToastContainer, Slide  } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import AOS from 'aos'
 import GuestOnly from './pages/auth/GuestOnly'
@@ -64,17 +64,26 @@ function App() {
           <Route path='category' element={<Categories />}/>
         </Route>
       </Route>
+      
     </Routes>
     <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      draggablePercent={60}
+      theme="colored"
+      transition={Slide}
+      limit={3}
+      style={{
+        zIndex: 9999,
+      }}
+    />
       </>
   )
 }

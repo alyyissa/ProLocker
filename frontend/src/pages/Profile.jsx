@@ -9,7 +9,6 @@ import { Link, useNavigate } from "react-router-dom";
 const Profile = () => {
     const { user, logoutUser } = useAuth();
     const navigate = useNavigate();
-    const BACKEND_URL = import.meta.env.VITE_FOLDERS_URL_PRODUCTS;
     useEffect(() => {
     if (!user) {
         navigate("/");
@@ -75,7 +74,7 @@ const Profile = () => {
 
     if (!loading && orders.length === 0) {
     return (
-    <div className="pt-[69px] md:pt-[109px] px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
+    <div className="px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
         
         <div className="max-w-7xl mx-auto py-20">
             <h1 className="text-center mb-15 text-4xl ultra-regular">Profile</h1>
@@ -108,7 +107,7 @@ const Profile = () => {
         DECLINED: "bg-red-100 text-red-900",
         };
   return (
-    <div className="pt-[69px] md:pt-[109px] px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
+    <div className="px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
         <div className="max-w-7xl mx-auto py-20">
             <div className="flex flex-wrap justify-between items-center gap-6">
                 <div className="max-w-96">
@@ -167,7 +166,7 @@ const Profile = () => {
                         <div key={item.id} className="flex items-center gap-4">
                             <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden">
                             <img
-                                src={`${BACKEND_URL}${item.productVarient.product.mainImage}`}
+                                src={`${item.productVarient.product.mainImage}`}
                                 alt={item.productVarient.product.name}
                                 className="w-full h-full object-contain"
                             />

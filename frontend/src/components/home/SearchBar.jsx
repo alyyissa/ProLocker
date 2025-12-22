@@ -130,8 +130,8 @@ const SearchBar = ({ scrolled, bannerExists  }) => {
         onKeyDown={handleKeyDown}
         onFocus={() => results.length && setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
-        className={`pl-7 h-[45px] w-[340px] md:w-[400px] py-5 rounded-full text-md focus:outline-none bg-transparent backdrop-blur-md border ${
-          scrolled
+        className={`pl-7 h-[45px] w-[340px] md:w-[400px] py-5 rounded-full text-md focus:outline-none bg-transparent backdrop-blur-md border text-black md:text-background ${
+          scrolled 
             ? "text-cocoprimary placeholder-gray-500 border-cocoprimary"
             : "text-background placeholder-gray-300 border-gray-300"
         }

@@ -68,3 +68,115 @@
   font-family: "Zalando Sans SemiExpanded", sans-serif;
   font-style: normal;
 }
+
+/* Toast Responsive Styles - Mobile First Approach */
+.Toastify__toast {
+  font-family: inherit !important;
+  border-radius: 8px !important;
+  min-height: 44px !important;
+  padding: 12px 16px !important;
+}
+
+/* Small mobile screens (under 400px) */
+@media (max-width: 400px) {
+  .Toastify__toast-container {
+    width: 92vw !important;
+    left: 4vw !important;
+    right: 4vw !important;
+    padding: 0 !important;
+  }
+  
+  .Toastify__toast {
+    font-size: 13px !important;
+    min-height: 40px !important;
+    padding: 10px 14px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  .Toastify__toast-body {
+    padding: 0 6px !important;
+  }
+  
+  .Toastify__close-button {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 14px !important;
+    padding: 0 !important;
+  }
+}
+
+/* Mobile screens (400px - 640px) */
+@media (min-width: 401px) and (max-width: 640px) {
+  .Toastify__toast-container {
+    width: 90vw !important;
+    max-width: 400px !important;
+    left: 5vw !important;
+    right: 5vw !important;
+    padding: 0 !important;
+  }
+  
+  .Toastify__toast {
+    font-size: 14px !important;
+    min-height: 44px !important;
+    padding: 12px 16px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .Toastify__toast-body {
+    padding: 0 8px !important;
+  }
+}
+
+/* Tablet screens (641px - 1024px) - Center position */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .Toastify__toast-container--top-right {
+    top: 16px !important;
+    right: 16px !important;
+  }
+  
+  .Toastify__toast {
+    font-size: 15px !important;
+    min-height: 50px !important;
+  }
+}
+
+/* Desktop screens (1025px and up) - Original settings */
+@media (min-width: 1025px) {
+  .Toastify__toast-container--top-right {
+    top: 24px !important;
+    right: 24px !important;
+  }
+}
+
+/* Ensure toasts don't overflow on very small screens */
+@media (max-width: 350px) {
+  .Toastify__toast {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .Toastify__toast {
+    background: #1f2937 !important;
+    color: #f9fafb !important;
+  }
+  
+  .Toastify__toast--success {
+    background: #065f46 !important;
+  }
+  
+  .Toastify__toast--error {
+    background: #7f1d1d !important;
+  }
+  
+  .Toastify__toast--warning {
+    background: #92400e !important;
+  }
+  
+  .Toastify__toast--info {
+    background: #1e40af !important;
+  }
+}
