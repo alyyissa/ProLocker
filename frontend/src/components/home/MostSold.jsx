@@ -32,7 +32,8 @@ const MostSold = () => {
     useEffect(() => {
         AOS.init({
             duration: 1000,
-            once: false,
+            once: true,
+            easing: 'ease-out-cubic',
         });
         }, []);
     if (!products.length) return null;
