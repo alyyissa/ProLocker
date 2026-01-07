@@ -132,7 +132,7 @@ const ProductView = () => {
   };
 
   return (
-    <div className="pt-12 min-h-[94dvh]">
+    <div className="pt-12 min-h-screen">
       {/* ================= IMAGE MODAL ================= */}
       {isImageMaximized && (
         <div className="fixed inset-0 z-99 bg-black/90 flex items-center justify-center">

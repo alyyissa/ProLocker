@@ -74,7 +74,7 @@ const Profile = () => {
 
     if (!loading && orders.length === 0) {
     return (
-    <div className="px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
+    <div className="px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-screen">
         
         <div className="max-w-7xl mx-auto py-20">
             <h1 className="text-center mb-15 text-4xl ultra-regular">Profile</h1>
@@ -107,7 +107,7 @@ const Profile = () => {
         DECLINED: "bg-red-100 text-red-900",
         };
   return (
-    <div className="px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-[94dvh]">
+    <div className="px-3 sm:px-4 md:px-11 lg:px-13 xl:px-12 2xl:px-16 min-h-screen">
         <div className="max-w-7xl mx-auto py-20">
             <div className="flex flex-wrap justify-between items-center gap-6">
                 <div className="max-w-96">

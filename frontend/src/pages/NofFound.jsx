@@ -5,7 +5,7 @@ const NotFound = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="h-[94dvh] flex flex-col items-center justify-center text-center px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center text-center px-4">
       <h1 className="text-6xl sm:text-8xl mb-4 ultra-regular text-primary">404</h1>
       <p className="text-xl sm:text-2xl mb-6 ultra-regular text-primary">
         Oops! Page not found.

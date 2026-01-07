@@ -9,7 +9,7 @@ const Checkout = () => {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-[90dvh]">
+      <div className="min-h-screen">
         <div>
           <h1 className="ultra-regular text-4xl md:text-5xl text-background">
             YOUR CART
